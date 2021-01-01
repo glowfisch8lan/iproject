@@ -100,7 +100,8 @@ $this->registerJs( $js, $position = View::POS_END, $key = null );
             <div class="content">
                 <div class="container-fluid">
                     <div class="page-title">
-                        <h1><?= Html::encode($this->title)?></h1> </div>
+<!--                        <h1>--><?//= Html::encode($this->title)?><!--</h1> -->
+                        </div>
                     <div class="box box-primary">
                         <div>
                             <?= Breadcrumbs::widget([

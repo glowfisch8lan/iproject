@@ -138,15 +138,26 @@ use yii\widgets\ActiveForm;
                 <div class="card-body">
                     <h5 class="card-title"><?= $model->name;?></h5>
 
+                    <?
+                    $options = ['class' => 'btn btn-danger'];
+                    if ($model->id == 1) {
+                        Html::addCssClass($options, 'd-none');
+                    }
+                    ?>
                     <?= Html::a('Редактировать', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
                     <?= Html::a('Удалить', ['delete', 'id' => $model->id], [
-                        'class' => 'btn btn-danger',
+                        'class' => $options,
                         'data' => [
                             'confirm' => 'Are you sure you want to delete this item?',
                             'method' => 'post',
                         ],
-                    ]) ?>
 
+                    ]) ?>
+                    <?
+
+
+
+                    ?>
                     <?= DetailView::widget([
                         'model' => $model,
                         'attributes' => [

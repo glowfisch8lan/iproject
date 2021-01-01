@@ -2,18 +2,20 @@
 
 use app\modules\system\models\users\Groups;
 use yii\helpers\Html;
-use yii\helpers\ArrayHelper;
 use yii\widgets\ActiveForm;
 
 
-
+$this->title = 'Создание пользователя';
+$this->params['breadcrumbs'][] = ['label' => Yii::$app->controller->module->name, 'url' => '/system/settings'];
+$this->params['breadcrumbs'][] = ['label' => 'Пользователи', 'url' => '/system/' . Yii::$app->controller->id];
+$this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="user-create">
-    <div class="col-lg-12 user-form">
+<div class="box-body">
+    <div class="col-md-12">
+        <div class="col-lg-12 user-form">
         <div class="card">
-            <div class="card-header"></div>
+            <div class="card-header"><i class="fa fa-user-circle" aria-hidden="true"></i> Создание учетной записи</div>
             <div class="card-body">
-                <!-- <h5 class="card-title">Введите новые учетные данные</h5>-->
                 <?php $form = ActiveForm::begin(); ?>
 
                 <div class="form-row">
@@ -62,5 +64,5 @@ use yii\widgets\ActiveForm;
             </div>
         </div>
     </div>
-
+    </div>
 </div>

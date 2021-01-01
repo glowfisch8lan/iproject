@@ -96,7 +96,7 @@ class Groups extends ActiveRecord
 
     }
 
-    public function getAllGroupList(): array{
+    public static function getAllGroupList(): array{
         return self::find()->asArray()->all();
     }
 

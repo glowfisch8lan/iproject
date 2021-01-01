@@ -2,20 +2,20 @@
 
 use app\modules\system\models\users\Groups;
 use app\modules\system\models\users\Users;
-use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
-use yii\helpers\Json;
 use yii\widgets\ActiveForm;
 
-/* @var $this yii\web\View */
-/* @var $model app\models\User */
+
+$this->title = 'Редактирование пользователя: ' . $model->name;
+$this->params['breadcrumbs'][] = ['label' => Yii::$app->controller->module->name, 'url' => '/system/settings'];
+$this->params['breadcrumbs'][] = ['label' => 'Пользователи', 'url' => '/system/' . Yii::$app->controller->id];
+$this->params['breadcrumbs'][] = $this->title;
 ?>
-
-<div class="user-update">
-
+<div class="box-body">
+    <div class="col-md-12">
     <div class="col-lg-12 user-form">
         <div class="card">
-            <div class="card-header"></div>
+            <div class="card-header"><i class="fa fa-user-circle" aria-hidden="true"></i> <?=$model->name;?></div>
             <div class="card-body">
                 <?php $form = ActiveForm::begin(); ?>
 
@@ -51,20 +51,15 @@ use yii\widgets\ActiveForm;
 
                 <div class="form-group field-users-groups">
                     <input type="hidden" name="Users[groups]" value="">
-
                         <div id="users-groups">
 
                     <?
+                        $disabled = ($model->id == 1) ? 'disabled' : null;
                         foreach( Groups::getAllGroupList() as $val ){
-
-                            $boolean = 'checked';
-                            if( array_search( $val['name'], array_column( Users::getUserGroups($model->id), 'group')) === false ) {
-                                $boolean = null;
+                                $boolean = ( array_search( $val['name'], array_column( Users::getUserGroups($model->id), 'group')) === false ) ? null : 'checked';
+                                //TODO: Сделать проверку аккаунта на уровне движка;
+                                echo '<label><input type="checkbox" name="User[groups][]" value="' . $val['id'] . '"' . $boolean . ' ' .  $disabled . '> ' . $val['name'] . '</label><br>';
                             }
-                            echo '<label><input type="checkbox" name="User[groups][]" value="' . $val['id'] . '"' . $boolean . '>' . $val['name'] . '</label><br>';
-
-
-                        }
                     ?>
 
                         </div>
@@ -81,4 +76,5 @@ use yii\widgets\ActiveForm;
             </div>
         </div>
     </div>
+</div>
 </div>
