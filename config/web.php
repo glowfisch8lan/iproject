@@ -65,14 +65,14 @@ $config = [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
             'cookieValidationKey' => 'I97ZdigfE06A7OhDlh1_lqLPB9VM8DeL',
         ],
-        'session' => [
-            'class' => 'yii\redis\Session',
-            'redis' => [
-                'hostname' => '172.16.20.83',
-                'port' => 6379,
-                'database' => 4,
-            ]
-        ],
+//        'session' => [
+//            'class' => 'yii\redis\Session',
+//            'redis' => [
+//                'hostname' => '172.16.20.83',
+//                'port' => 6379,
+//                'database' => 4,
+//            ]
+//        ],
 /*        //RBAC settings; У НАС СВОЙ RBAC
         'authManager' => [
             'class' => 'yii\rbac\DbManager',

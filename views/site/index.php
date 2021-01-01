@@ -3,7 +3,7 @@
 /* @var $this yii\web\View */
 
 $this->title = 'ДВЮИ МВД России';
-use Yii;
+//use Yii;
 use app\assets\AppAsset;
 
 $bundle = AppAsset::register($this);

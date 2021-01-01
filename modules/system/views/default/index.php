@@ -1,5 +1,4 @@
 <?php
-use Yii;
 use yii\helpers\Html;
 use app\modules\system\SystemAsset;
 
