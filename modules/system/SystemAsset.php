@@ -10,20 +10,11 @@ class SystemAsset extends AssetBundle
         //'forceCopy' => true //отключает кеширование
     ];
     public $css = [
-		'vendor/bootstrap4/css/bootstrap.min.css',
-		'css/master.css',
-		'vendor/chartsjs/Chart.min.css',
-		'vendor/flagiconcss3/css/flag-icon.min.css'
-
+        'vendor/fontawesome/4.7.0/css/font-awesome.min.css',
+        'vendor/bootstrap4/css/bootstrap.min.css',
     ];
 	public $js = [
-    'vendor/bootstrap4/js/bootstrap.bundle.min.js',
-    'vendor/fontawesome5/js/solid.min.js',
-    'vendor/fontawesome5/js/fontawesome.min.js',
-   // 'vendor/chartsjs/Chart.min.js',
-  //  'js/dashboard-charts.js',
-        'js/script.js'
-		
+        'vendor/bootstrap4/js/bootstrap.bundle.min.js',
     ];
     public $depends = [
         'yii\web\YiiAsset'

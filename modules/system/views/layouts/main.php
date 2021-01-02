@@ -11,39 +11,16 @@ use app\modules\system\models\interfaces\modules\Module;
 
 $bundle = SystemAsset::register($this);
 
-$js = <<< JS
-$(document).ready(function(){
+$options = [
+        'position' => yii\web\View::POS_END,
+        'depends' => 'app\modules\system\SystemAsset'
+];
 
-    
-    var status =  localStorage.getItem('isHideSidebar');
-    
-    if( status == '1'){
-        $('#sidebar').addClass('active');
-    }
+$this->registerCssFile($bundle->baseUrl . '/css/master.css', $options);
+$this->registerCssFile($bundle->baseUrl . '/css/CRUD.css', $options);
 
-    // $('a').on('click', function() {
-    //    
-    //     if($(this).hasClass("active")){
-    //         localStorage.setItem('isHideSidebar',1);
-    //     }
-    //     else{
-    //         localStorage.setItem('isHideSidebar', 0);
-    //     }
-    //  });
-    
-    $('#sidebarCollapse').on('click', function() {
-        
-        if($("#sidebar").hasClass("active")){
-            localStorage.setItem('isHideSidebar',1);
-        }
-        else{
-            localStorage.setItem('isHideSidebar', 0);
-        }
-     });
-});
-JS;
-
-$this->registerJs( $js, $position = View::POS_END, $key = null );
+$this->registerJsFile( $bundle->baseUrl . '/js/script.js', $options, $key = null );
+$this->registerJsFile( $bundle->baseUrl . '/js/is-hide-sidebar.js', $options, $key = null );
 
 ?>
 <?php $this->beginPage() ?>

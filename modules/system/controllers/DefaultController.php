@@ -69,14 +69,13 @@ class DefaultController extends Controller
 
     public function actionLogin()
     {
-        $this->layout = '@app/views/layouts/main';
+        $this->layout = 'login';
 
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
         }
 
         $model = new LoginForm();
-        var_dump(Yii::$app->request->post());
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
             return $this->goBack();
         }

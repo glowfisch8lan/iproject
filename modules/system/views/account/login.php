@@ -6,14 +6,12 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use app\modules\system\SystemAsset;
 
-$bundle = SystemAsset::register($this);
-
+$bundle=\app\modules\system\SystemAsset::register($this);
 
 $this->title = 'Вход';
 $this->params['breadcrumbs'][] = $this->title;
-$this->registerCssFile($bundle->baseUrl . '/css/auth.css');
+
 ?>
 <div class="wrapper">
     <div class="auth-content">

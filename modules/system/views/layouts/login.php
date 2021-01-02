@@ -16,7 +16,7 @@ $options = [
 
 $this->registerCssFile($bundle->baseUrl . '/css/master.css');
 $this->registerCssFile($bundle->baseUrl . '/css/auth.css');
-$this->registerCssFile($bundle->baseUrl . '/vendor/bootstrap4/css/bootstrap.min.css');
+
 
 $this->registerJsFile( $bundle->baseUrl . '/vendor/bootstrap4/js/bootstrap.bundle.min.js', $options, $key = null );
 $this->registerJsFile( $bundle->baseUrl . '/vendor/fontawesome5/js/solid.min.js', $options, $key = null );
