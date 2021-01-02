@@ -17,14 +17,22 @@ class GridHelper extends GridView
     }
 
     public static function initWidget($data = []){
-       $dataProvider = $data['dataProvider'];
+        $dataProvider = $data['dataProvider'];
 
+        $headerCallback = function($url){
+            return Html::a('<i class="fa fa-plus" aria-hidden="true"></i></i>', $url,
+                ['class' => 'btn btn-outline-info']);
+        };
+        $urlCreate = '/'. Yii::$app->controller->module->id . '/' . Yii::$app->controller->id .  '/create';
+        $headerActionColumn = empty($data['searchModel']) ? $headerCallback($urlCreate) : null;
 
-       $ActionColumnDefault =   [
+        $ActionColumnDefault =   [
            'class' => 'app\modules\system\components\gridviewer\CustomActionColumns',
+           'header' => $headerActionColumn,
            'template' => '{update} {delete}',
            'headerOptions' => [
                'width' => 150,
+               'style' => 'text-align:center'
            ],
            'filterOptions' => ['style' =>'text-align: center;'],
            'contentOptions'=> ['style' =>'text-align: center;'],
@@ -48,7 +56,7 @@ class GridHelper extends GridView
                },
            ],
        ];
-       $pagerDefault =  [
+        $pagerDefault =  [
            'forcePageParam' => false,
            'pageSizeParam' => false,
            'pageSize' => 10
@@ -72,7 +80,7 @@ class GridHelper extends GridView
            'pager' => [
                'class' => '\yii\widgets\LinkPager',
                'options' => [
-                   'class' => 'pagination justify-content-center'
+                   'class' => 'pagination justify-content-start'
                    ],
                'pageCssClass' => 'page-item ',
                'disabledPageCssClass' => 'disabled',

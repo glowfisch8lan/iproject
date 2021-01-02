@@ -18,7 +18,8 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'lastname')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'birthday')->textInput() ?>
+    <?= $form->field($model, 'birthday')->textInput(['class' => 'datepicker-here form-control', 'data-language' => 'ru']) ?>
+
 
     <?= $form->field($model, 'personal_fields')->textInput(['maxlength' => true]) ?>
 

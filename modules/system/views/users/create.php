@@ -49,11 +49,17 @@ $this->params['breadcrumbs'][] = $this->title;
                 </div>
 
                 <div class="form-group">
+
+
                     <?
                     foreach( Groups::getAllGroupList() as $val ){
-                        echo '<label><input type="checkbox" name="Users[groups][]" value="' . $val['id'] . '" > ' . $val['name'] . '</label><br>';
+                        echo '<div class="custom-control custom-checkbox">';
+                        echo '<input type="checkbox" class="custom-control-input" name="Users[groups][]" id="switch' . $val['id'] . '" value="' . $val['id'] . '" >';
+                        echo '<label class="custom-control-label" for="switch' . $val['id'] . '">' . $val['name'] . '</label><br>';
+                        echo '</div>';
                     }
                     ?>
+
                 </div>
 
 
