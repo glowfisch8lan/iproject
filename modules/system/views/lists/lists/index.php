@@ -1,7 +1,7 @@
 <?php
 
 use yii\helpers\Html;
-use yii\grid\GridView;
+use app\modules\system\helpers\GridHelper;
 use yii\helpers\Url;
 use yii\widgets\Breadcrumbs;
 
@@ -15,7 +15,7 @@ $this->title = 'Справочник';
 
         <div class="box-body">
             <div class="col-md-12">
-                <?= GridView::widget([
+                <?=GridHelper::initWidget([
                     'dataProvider' => $dataProvider,
                     'columns' => [
                         [    'format' => 'raw',
@@ -26,7 +26,6 @@ $this->title = 'Справочник';
                             ],
                             'contentOptions' => ['class' => 'text-center'],
                         ],
-
                         [
                             'format' => 'raw',
                             'attribute' => 'name',
@@ -35,31 +34,31 @@ $this->title = 'Справочник';
                                     Html::a($data->name, [ '/' . $data->module->id . '/list-items', 'id' => $data->id], ['class' => 'link']);
                             }
                         ],
-
+                    ],
+                    'ActionColumn' =>
                         [
-                            'class' => 'yii\grid\ActionColumn',
-                            'template' => '{update} {delete}',
-                            'headerOptions' => [
-                                'width' => 150,
-                            ],
-                            'header' => '<div class="text-center"><a href="/'. $model->module->id . '/lists/create" class="btn btn-outline-info disabled btn-rounded" ><i class="fas fa-plus"></i></a></div>',
-                            'contentOptions'=> ['style'=>'text-align: center;'],
-                            'buttons' => [
-                                'update' => function ($url,$model,$key) {
-                                    return Html::a('<i class="fas fa-pen"></i>', 0,
-                                        ['class' => 'btn disabled btn-outline-info btn-rounded', 'data-method' => 'post']);
-                                },
-                                'delete' => function ($url,$model,$key) {
-                                    return Html::a('<i class="fas fa-trash"></i>', 0,
-                                        ['class' => 'btn disabled btn-outline-danger btn-rounded',
-                                            'data' => [
-                                                'confirm' => 'Вы действительно хотите удалить данный паттерн?',
-                                                'method' => 'post',
-                                            ]]);
-                                }
-                            ],
+                        'class' => 'yii\grid\ActionColumn',
+                        'template' => '{update} {delete}',
+                        'headerOptions' => [
+                            'width' => 150,
+                        ],
+                        'header' => '<div class="text-center"><a href="/'. $model->module->id . '/lists/create" class="btn btn-outline-info disabled" ><i class="fa fa-plus"></i></a></div>',
+                        'contentOptions'=> ['style'=>'text-align: center;'],
+                        'buttons' => [
+                            'update' => function ($url,$model,$key) {
+                                return Html::a('<i class="fa fa-pencil"></i>', 0,
+                                    ['class' => 'btn disabled btn-outline-info', 'data-method' => 'post']);
+                            },
+                            'delete' => function ($url,$model,$key) {
+                                return Html::a('<i class="fa fa-trash"></i>', 0,
+                                    ['class' => 'btn disabled btn-outline-danger',
+                                        'data' => [
+                                            'confirm' => 'Вы действительно хотите удалить данный паттерн?',
+                                            'method' => 'post',
+                                        ]]);
+                            }
                         ],
                     ],
-                ]); ?>
+                ]);?>
             </div>
         </div>

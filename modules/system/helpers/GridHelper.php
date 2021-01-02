@@ -10,50 +10,71 @@ use yii\helpers\Html;
 
 class GridHelper extends GridView
 {
-   public static function initWidget($data = []){
+
+    protected function renderFilterCellContent()
+    {
+        return Html::button('Reset', ['class' => 'btn btn-primary']);
+    }
+
+    public static function initWidget($data = []){
        $dataProvider = $data['dataProvider'];
-       $searchModel = $data['searchModel'];
-       $buttons =   [
-           'class' => 'yii\grid\ActionColumn',
+
+
+       $ActionColumnDefault =   [
+           'class' => 'app\modules\system\components\gridviewer\CustomActionColumns',
            'template' => '{update} {delete}',
            'headerOptions' => [
                'width' => 150,
            ],
-           'header' =>  '<div class="text-center"><a href="/'. Yii::$app->controller->module->id . '/' . Yii::$app->controller->id .  '/create" class="btn btn-outline-info btn-rounded"}\'><i class="fa fa-plus" aria-hidden="true"></i></a></div>',
-
-           'contentOptions'=> ['style'=>'text-align: center;'],
+           'filterOptions' => ['style' =>'text-align: center;'],
+           'contentOptions'=> ['style' =>'text-align: center;'],
            'buttons' => [
 
                'update' => function ($url,$model) {
-                   return Html::a('<i class="fas fas-pencil" aria-hidden="true"></i>', $url,
-                       ['class' => 'btn btn-outline-info btn-rounded',
+                   return Html::a('<i class="fa fa-pencil" aria-hidden="true"></i>', $url,
+                       ['class' => 'btn btn-outline-info',
                            'data' => [
                                'method' => 'post'
                            ]]);
                },
 
                'delete' => function ($url, $model){
-                   return Html::a('<i class="fa fa-trash-o" aria-hidden="true"></i>', $url,
-                       ['class' => 'btn btn-outline-danger btn-rounded',
+                   return Html::a('<i class="fa fa-trash" aria-hidden="true"></i>', $url,
+                       ['class' => 'btn btn-outline-danger',
                            'data' => [
-                               'confirm' => 'Вы действительно хотите удалить данный паттерн?',
+                               'confirm' => 'Вы действительно хотите удалить данную позицию?',
                                'method' => 'post'
                            ]]);
                },
            ],
        ];
+       $pagerDefault =  [
+           'forcePageParam' => false,
+           'pageSizeParam' => false,
+           'pageSize' => 10
+       ];
+
+       $searchModel = !empty($data['searchModel']) ? $data['searchModel'] : null;
+       $ActionColumn = !empty($data['ActionColumn']) ? $data['ActionColumn'] : $ActionColumnDefault;
+       $dataProvider->pagination = !empty($data['pagination']) ? $data['pagination'] : $pagerDefault;
+
        $columns = $data['columns'];
-       $columns[] = $buttons;
+       $columns[] = $ActionColumn;
+
 
        return GridView::widget([
            'dataProvider' => $dataProvider,
            'filterModel' => $searchModel,
+
            'tableOptions' => [
                'class' => 'table table-bordered table-hover'
            ],
            'pager' => [
                'class' => '\yii\widgets\LinkPager',
-               'pageCssClass' => 'page-item',
+               'options' => [
+                   'class' => 'pagination justify-content-center'
+                   ],
+               'pageCssClass' => 'page-item ',
                'disabledPageCssClass' => 'disabled',
                'linkContainerOptions' => [
                    'class' => 'page-item'
@@ -75,6 +96,7 @@ class GridHelper extends GridView
        ]);
 
     }
+
 }
 
 
