@@ -75,13 +75,13 @@ class Module extends \yii\base\Module
      *
      * @return array|false
      */
-    public static function getListModules(): array{
+    public static function getListModules($filter = true): array{
 
         $list = array_map(function ($item) {
             return basename($item);
         }, glob(realpath(Yii::getAlias('@app') . '/modules/') . '/*'));
 
-        $list = self::filterActive($list);
+        $list = ($filter) ? self::filterActive($list) : $list;
         return $list;
     }
 
