@@ -31,16 +31,12 @@ $config = [
                 'class' => 'app\modules\staff\Module',
                 'layout' => '@app/modules/system/views/layouts/main',
             ],
-            'journal' => [
-                'class' => 'app\modules\journal\Journal',
-                'layout' => '@app/modules/system/views/layouts/main'
-            ],
-            'dashboard' => [
-                'class' => 'app\modules\dashboard\Dashboard',
-                'layout' => '@app/modules/system/views/layouts/main'
-            ],
             'inventory' => [
                 'class' => 'app\modules\inventory\Module',
+                'layout' => '@app/modules/system/views/layouts/main'
+            ],
+            'tools' => [
+                'class' => 'app\modules\tools\Module',
                 'layout' => '@app/modules/system/views/layouts/main'
             ],
             'opcache'=>[

@@ -15,7 +15,7 @@ class Users extends ActiveRecord implements IdentityInterface
 
     public function rules(){
         return [
-            [['login', 'password', 'name', 'groups'], 'required', 'message' => 'Заполните поля!'],
+            [['login', 'name', 'groups'], 'required', 'message' => 'Заполните поля!'],
             ['login', 'unique'],
 
         ];

@@ -22,6 +22,13 @@ class Module extends \yii\base\Module
     public $visible = 'viewSystem';
 
     public $routes = [
+        [   'route' => '/system/modules',
+            'name' => 'Модули',
+            'access' => 'readSystemModules',
+            'description' => 'Доступ к подразделу Модули',
+            'visible' => true
+
+        ],
         [   'route' => '/system/users',
             'name' => 'Пользователи',
             'access' => 'viewUsers',
@@ -39,7 +46,6 @@ class Module extends \yii\base\Module
 
     private $excludedRules = [
         ['route' => '/system/default', 'name' => 'Главная страница', 'module' => 'system'] //альтернатива /my;
-
     ];
 
     public function behaviors(): array{

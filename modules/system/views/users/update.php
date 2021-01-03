@@ -56,9 +56,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?
                         $disabled = ($model->id == 1) ? 'disabled' : null;
                         foreach( Groups::getAllGroupList() as $val ){
-                                $boolean = ( array_search( $val['name'], array_column( Users::getUserGroups($model->id), 'group')) === false ) ? null : 'checked';
+                                $boolean = ( array_search( $val['name'], array_column( Users::getUserGroups($model->id), 'group') ) === false ) ? null : 'checked';
                                 //TODO: Сделать проверку аккаунта на уровне движка;
-                                echo '<label><input type="checkbox" name="User[groups][]" value="' . $val['id'] . '"' . $boolean . ' ' .  $disabled . '> ' . $val['name'] . '</label><br>';
+                                echo '<div class="custom-control custom-checkbox">'.'<input type="checkbox" class="custom-control-input" name="Users[groups][]" id="switch' . $val['id'] . '" value="' . $val['id'] . '"' .$boolean .' '.$disabled.'>'.'<label class="custom-control-label" for="switch' . $val['id'] . '">' . $val['name'] . '</label><br>'.'</div>';
                             }
                     ?>
 
@@ -70,7 +70,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 
                 <div class="form-group">
-                    <?= Html::submitButton('<i class="fas fa-save"></i> Сохранить', ['class' => 'btn btn-success']) ?>
+                    <?= Html::submitButton('<i class="fa fa-save"></i> Сохранить', ['class' => 'btn btn-success']) ?>
                 </div>
                 <?php ActiveForm::end(); ?>
             </div>

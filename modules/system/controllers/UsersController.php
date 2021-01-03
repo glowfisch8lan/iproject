@@ -12,6 +12,7 @@ use yii\web\NotFoundHttpException;
 use yii\web\ForbiddenHttpException;
 use app\modules\system\models\users\Groups;
 use app\modules\system\models\users\Users;
+use app\modules\system\models\users\UsersSearch;
 use app\modules\system\models\rbac\AccessControl;
 
 
@@ -37,14 +38,15 @@ class UsersController extends Controller
 
     public function actionIndex()
     {
+        {
+            $searchModel = new UsersSearch();
+            $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        $dataProvider = new ActiveDataProvider([
-            'query' => Users::find()
-        ]);
-
-        return $this->render('index', [
-            'dataProvider' => $dataProvider,
-        ]);
+            return $this->render('index', [
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider,
+            ]);
+        }
     }
 
     public function actionCreate()

@@ -48,7 +48,7 @@ $this->registerJsFile( $bundle->baseUrl . '/js/script.js', $options, $key = null
         <? $this->head() ?>
     </head>
 
-    <body>
+    <body class="d-flex flex-column min-vh-100">
     <? $this->beginBody() ?>
     <div class="wrapper">
         <nav id="sidebar">
@@ -60,6 +60,7 @@ $this->registerJsFile( $bundle->baseUrl . '/js/script.js', $options, $key = null
             </ul>
         </nav>
         <div id="body" class="active">
+
             <nav class="navbar navbar-expand-lg navbar-primary bg-primary">
                 <button type="button" id="sidebarCollapse" class="btn btn-outline-light default-light-menu" "data-pjax"="0"><i class="fa fa-bars"></i><span></span></button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -107,6 +108,7 @@ $this->registerJsFile( $bundle->baseUrl . '/js/script.js', $options, $key = null
             </div>
         </div>
     </div>
+
     <?php $this->endBody(); ?>
     </body>
 

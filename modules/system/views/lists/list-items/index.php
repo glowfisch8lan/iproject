@@ -20,7 +20,13 @@ $this->title = 'Справочник';
 
         <div class="box-body">
             <div class="col-md-12">
-                <?= GridHelper::initWidget([
+                <?
+                $headerCallback = function($url) use($model){
+                    return Html::a('<i class="fa fa-plus" aria-hidden="true"></i></i>', $url,
+                        ['class' => 'btn btn-outline-info', 'data' => ['method' => 'post', 'params' => ['parent_id' => $model->parent->id]]]);
+                };
+                $urlCreate = '/'. Yii::$app->controller->module->id . '/' . Yii::$app->controller->id .  '/create';
+                echo GridHelper::initWidget([
                     'dataProvider' => $dataProvider,
                     'columns' => [[
                         'format' => 'raw',
@@ -45,7 +51,28 @@ $this->title = 'Справочник';
                         ],
                         'contentOptions' => ['class' => 'text-center'],
                     ]],
+                    'ActionColumnHeader' => $headerCallback($urlCreate),
+                    'ActionColumnButtons' => [
+                        'update' => function ($url) use($model){
+                                return Html::a('<i class="fa fa-pencil" aria-hidden="true"></i>', $url,
+                                    ['class' => 'btn btn-outline-info',
+                                        'data' => [
+                                            'method' => 'post',
+                                            'params' => ['parent_id' => $model->parent->id]
+                                        ],
 
+                                    ]);
+                            },
+                        'delete' => function ($url) use($model){
+                                return Html::a('<i class="fa fa-trash" aria-hidden="true"></i>', $url,
+                                    ['class' => 'btn btn-outline-danger',
+                                        'data' => [
+                                            'confirm' => 'Вы действительно хотите удалить данную позицию?',
+                                            'method' => 'post',
+                                            'params' => ['parent_id' => $model->parent->id]
+                                        ]]);
+                            },
+                    ]
 
                 ]);?>
 

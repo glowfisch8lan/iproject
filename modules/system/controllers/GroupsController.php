@@ -103,16 +103,12 @@ class GroupsController extends Controller
         $model = new Groups();
         $model->permissions = Module::getAllPermissions();
 
-
         if(  $model->load(Yii::$app->request->post()) && $model->validate() ){
 
             $model->permissions = Json::encode($model->permissions);
 
 
-
-
             if( !$model->save() ){
-
                 throw ServerErrorHttpException('Ошибка при сохранении Роли!');
 
             }
@@ -130,6 +126,7 @@ class GroupsController extends Controller
         $model = $this->findModel($id);
         $model->usedPermissions = Json::Decode($model->getPermissions($id)[0]['permissions']);
 
+
         if( $model->load(Yii::$app->request->post()) && $model->validate() ){
 
             $model->permissions = Json::encode($model->permissions); //в таблице system_users храним все разрешения группы в json
@@ -137,7 +134,6 @@ class GroupsController extends Controller
             if( !$model->save() ){
                 throw ServerErrorHttpException('Ошибка при сохранении Группы!');
             }
-
             return $this->redirect('index');
         }
         return $this->render('update', [
