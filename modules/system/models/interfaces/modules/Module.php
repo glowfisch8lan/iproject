@@ -5,6 +5,7 @@ namespace app\modules\system\models\interfaces\modules;
 
 use Yii;
 use yii\helpers\ArrayHelper;
+use yii\web\NotFoundHttpException;
 
 /**
  * Class ModuleInterface
@@ -42,10 +43,46 @@ class Module extends \yii\base\Module
     protected $menuItems = [];
 
 
-    public static function register(){
+    public static function register($id): bool{
+
+        $module = self::findModule($id);
+
+        if(!$module){
+            throw new NotFoundHttpException('Модуль не установлен! Проверьте конфигурацию.');
+        }
+
+        if(self::checkRegister($module->id)){
+            return true;
+        }
+        $path = Yii::getAlias('@app') . '/modules/' . $module->id . '/';
+        if(!file_put_contents($path . md5($module->id), '')){
+            return false;
+        };
 
     }
 
+    public static function unregister($id): bool{
+
+        $module = self::findModule($id);
+
+        if(!$module){
+            throw new NotFoundHttpException('Модуль не установлен! Проверьте конфигурацию.');
+        }
+
+        $file = Yii::getAlias('@app') . '/modules/' . $module->id . '/' . md5($module->id);
+        if(file_exists(realpath($file))){
+            return unlink($file);
+        }
+        return false;
+    }
+    public static function findModule($id){
+
+        if(!(\Yii::$app->getModule($id))){
+            return false;
+        }
+        return \Yii::$app->getModule($id);
+
+    }
     /**
      * Проверка регистрации модуля;
      *
@@ -90,10 +127,10 @@ class Module extends \yii\base\Module
      *
      * @return array;
      */
-    public static function getAllModules(): array{
+    public static function getAllModules($includeDisabledModules = false): array{
 
         $modules = [];
-        $list = self::getListModules();
+        $list = self::getListModules($filter = !($includeDisabledModules) ? true : false);
         foreach($list as $module){
             $modules[] = Yii::$app->getModule($module);
         }
@@ -109,5 +146,20 @@ class Module extends \yii\base\Module
                 'access');
         }
         return $modules;
+    }
+
+    /**
+     * Создание списка модулей для вывода в GridView.
+     *
+     * @return array|false
+     */
+    public static function createArrayDataProvider(): array{
+
+        $modules = self::getAllModules($includeDisabledModules = true);
+        $data=[];
+        foreach($modules as $module){
+            $data[] = ['id' => $module->id, 'name' => $module->name, 'status' => self::checkRegister($module->id)];
+        }
+        return $data;
     }
 }
