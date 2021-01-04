@@ -8,7 +8,7 @@ class ArrayHelper extends \yii\helpers\ArrayHelper
 {
 
     /*
-     * Приводит индексный массив к  массиву вида [[ $key, $value ]];
+     * Перестройка индексного массива к  массиву вида [[ $key, $value ]];
      */
     public static function indexMap($array,$key){
 
@@ -19,6 +19,9 @@ class ArrayHelper extends \yii\helpers\ArrayHelper
         return $dataArray;
     }
 
+    /*
+     * Перестройка массива к  массиву вида [[ $key => $value1 . $value2 . $valueN ]];
+     */
     public static function mapMerge($array, $mainKey, $mergeKeys, $separator = null){
         $rows = [];
         foreach($array as $value){
