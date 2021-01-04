@@ -48,9 +48,9 @@
    по-умолчанию: app\modules\system\components\gridviewer\CustomActionColumns;
    => переопределена функция renderFilterCellContent() для вывода кнопки добавить в строку Фильтрации, для лучшего UI;
    
-   $data['ActionColumnHeader'] - кастомный заголовок "ActionColumn", соответствует полю "header":
+   $data['ActionColumnHeader'] - кастомный заголовок "ActionColumn", соответствует полю "header", чтобы выключить заголовок, задайте невидимый символ &nbsp;
    
-   $data['ActionColumnButtons'] - кастомный кнопки "ActionColumn", соответствует полю "buttons";
+   $data['ActionColumnButtons'] = [] - кастомный кнопки "ActionColumn", соответствует полю "buttons";
    
    $data['buttonsOptions']['template'] - кастомный шаблон расположения кнопок "ActionColumn", соответствует полю "template";
    
