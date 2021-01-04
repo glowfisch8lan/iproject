@@ -62,6 +62,7 @@ $this->registerJs( $js, $position = View::POS_END, $key = null );
 
     <?php $form = ActiveForm::begin(); ?>
     <input id="textbox_workers" type="text" />
+    <?var_dump(ArrayHelper::mapMerge(Workers::find()->asArray()->all(), 'id', ['lastname', 'firstname', 'middlename'], ' '));?>
     <?= $form->field($model, 'workers_id')->dropDownList(ArrayHelper::mapMerge(Workers::find()->asArray()->all(), 'id', ['lastname', 'firstname', 'middlename'], ' ')) ?>
 
     <?
@@ -74,7 +75,7 @@ $this->registerJs( $js, $position = View::POS_END, $key = null );
     <?= $form->field($model, 'vacancies_id')->listBox($arr, ['maxlength' => 255])->label('Вакансия') ?>
 
     <div class="form-group">
-        <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
+        <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>
