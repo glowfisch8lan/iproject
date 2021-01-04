@@ -33,3 +33,43 @@
         ['route' => '/system/default', 'name' => 'Главная страница', 'module' => 'system'] //роут, который не учитывать, при построении меню;
     ];
 ```
+
+<h5>GridHelper</h5>
+В Module.php определить переменные:
+
+```php
+   public static function initWidget($data = []){}
+   
+   $data['dataProvider'] - передается провайдер данных, по-умолчанию: null;
+   
+   $data['searchModel']  - передается Модель Поиска, по-умолчанию: null;
+   
+   $data['ActionColumn'] - кастомный класс "ActionColumn", 
+   по-умолчанию: app\modules\system\components\gridviewer\CustomActionColumns;
+   => переопределена функция renderFilterCellContent() для вывода кнопки добавить в строку Фильтрации, для лучшего UI;
+   
+   $data['ActionColumnHeader'] - кастомный заголовок "ActionColumn", соответствует полю "header":
+   
+   $data['ActionColumnButtons'] - кастомный кнопки "ActionColumn", соответствует полю "buttons";
+   
+   $data['buttonsOptions']['template'] - кастомный шаблон расположения кнопок "ActionColumn", соответствует полю "template";
+   
+   $data['buttonsOptions']['headerWidth'] - ширина header "ActionColumn", по-умолчанию: 150; 
+```
+
+
+
+
+
+
+    /*
+     * Перестройка индексного массива к  массиву вида [[ $key, $value ]];
+     */
+    public static function indexMap($array,$key){
+
+        $dataArray = [];var_dump($key);
+        foreach($array as $value) {
+            $dataArray[] = [(int) $key, (int) $value];
+        }
+        return $dataArray;
+    }
