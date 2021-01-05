@@ -14,8 +14,7 @@ use app\modules\system\models\users\Groups;
 use app\modules\system\models\users\Users;
 use app\modules\system\models\users\UsersSearch;
 use app\modules\system\models\rbac\AccessControl;
-
-
+use yii\web\ServerErrorHttpException;
 
 
 /**
@@ -53,10 +52,11 @@ class UsersController extends Controller
     {
             $model = new Users();
 
-            if ( $model->load(Yii::$app->request->post()) && $model->validate() && $model->save()) {
-
-                Groups::addMembers(ArrayHelper::indexMap($model->groups, $model->id)); //Добавляем список групп в system_users_groups заново;
-                return $this->redirect(['index']);
+            if ( $model->load(Yii::$app->request->post()) && $model->validate()) {
+                if($model->save()){
+                    Groups::addMembers(ArrayHelper::indexMap($model->groups, $model->id)); //Добавляем список групп в system_users_groups заново;
+                    return $this->redirect(['index']);
+                }
 
             }
             return $this->render('create', [
@@ -87,7 +87,15 @@ class UsersController extends Controller
 
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+        if($model->login == 'admin' && $id == 1){
+            throw new ForbiddenHttpException('Удаление учетной записи Администратора невозможно!');
+        }
+
+        if(!$model->delete()){
+            throw new ServerErrorHttpException('Ошибка удаления учетной записи');
+        }
+
         return $this->redirect(['index']);
     }
 

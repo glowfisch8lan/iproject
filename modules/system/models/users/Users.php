@@ -15,8 +15,19 @@ class Users extends ActiveRecord implements IdentityInterface
 
     public function rules(){
         return [
-            [['login', 'name', 'groups'], 'required', 'message' => 'Заполните поля!'],
+            [
+                ['login', 'name', 'groups'],
+                'required',
+                'message' => 'Заполните поля!'
+            ],
+            [
+                ['login', 'name', 'groups', 'password'],
+                'required',
+                'message' => 'Заполните поля!',
+                'on' => 'create'
+            ],
             ['login', 'unique'],
+            ['password', 'safe'],
 
         ];
 
@@ -25,22 +36,9 @@ class Users extends ActiveRecord implements IdentityInterface
     public function beforeSave($insert)
     {
 
-        if(parent::beforeSave($insert)){ //true
-
-
-           if (empty($this->password)){
-
-               $this->setPassword($this->oldAttributes['password']);
-
-           }
-           else{
-
-               $this->setPassword($this->password);
-
-           }
-
-
-        return true;
+        if(parent::beforeSave($insert)){
+          (empty($this->password) && Yii::$app->controller->action->id == 'update') ? $this->setPassword($this->oldAttributes['password']) : $this->setPassword($this->password);
+          return true;
         }
         return false;
     }
@@ -128,10 +126,14 @@ class Users extends ActiveRecord implements IdentityInterface
         return static::findOne(['login' => $login]);
     }
 
-    public function getId(){
-        return Yii::$app->user->identity->id;
-    }
+//    public function getId(){
+//        return Yii::$app->user->identity->id;
+//    }
 
+    public function getId()
+    {
+        return $this->id;
+    }
     public function getAuthKey(){
         //   return $this->authKey;
     }

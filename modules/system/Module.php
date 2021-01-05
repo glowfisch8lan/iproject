@@ -5,6 +5,7 @@ namespace app\modules\system;
 use Yii;
 use app\modules\system\models\rbac\AccessControl;
 use yii\web\ForbiddenHttpException;
+use app\modules\system\models\interfaces\modules\Modules;
 /**
  * user module definition class
  */
@@ -20,6 +21,8 @@ class Module extends \yii\base\Module
     public $link = 'system';
     public $icon = 'fa fa-cog';
     public $visible = 'viewSystem';
+    public $description = "Модуль управления учетными записями и группами, контроля доступа и иным системным функционалом";
+
 
     public $routes = [
         [   'route' => '/system/modules',
@@ -40,7 +43,6 @@ class Module extends \yii\base\Module
             'access' => 'viewGroups',
             'description' => 'Доступ к подразделу Группы',
             'visible' => true
-
         ],
     ];
 
@@ -48,7 +50,7 @@ class Module extends \yii\base\Module
         ['route' => '/system/default', 'name' => 'Главная страница', 'module' => 'system'] //альтернатива /my;
     ];
 
-    public function behaviors(): array{
+    public function behaviors() {
         return [
             'access' => [
                 'class' => \yii\filters\AccessControl::className(),
@@ -72,45 +74,57 @@ class Module extends \yii\base\Module
         ];
     }
 
-    private function checkAccessModule(): bool{
 
-        if(!AccessControl::checkAccess(Yii::$app->user->identity->id,$this->visible)){
-            throw new ForbiddenHttpException('You are not allowed to perform this action.');
-        }
-        return true;
-    }
+    /*
+     * Либо true, либо исключение;
+     */
+    private function verifyAccess(){
 
-    private function checkAccessCategory(): bool{
-        $action = '/' . Yii::$app->controller->module->id . '/' . Yii::$app->controller->id;
-        $user_id = Yii::$app->user->identity->id;
 
-        foreach($this->routes as $route){
 
-            if($route['route'] == $action) {
 
-                if(!AccessControl::checkAccess($user_id, $route['access'])){
+        $act = '/' . Yii::$app->controller->module->id . '/' . Yii::$app->controller->id;
+
+        foreach($this->excludedRules as $eRule){
+            if($eRule['route'] != $act){
+
+                //Проверка доступа к целому модулю;
+                if(!AccessControl::checkAccess(Yii::$app->user->identity->id,$this->visible)){
                     throw new ForbiddenHttpException('You are not allowed to perform this action.');
+                }
+
+                //Провера доступа к подразделу модуля;
+                $action = '/' . Yii::$app->controller->module->id . '/' . Yii::$app->controller->id;
+                $user_id = Yii::$app->user->identity->id;
+
+                foreach($this->routes as $route){
+
+                    if($route['route'] == $action) {
+                        if(!AccessControl::checkAccess($user_id, $route['access'])){
+                            throw new ForbiddenHttpException('You are not allowed to perform this action.');
+                        }
+                    }
                 }
             }
         }
-        return true;
+        return false;
     }
 
     public function beforeAction($action)
     {
-        if(!(Yii::$app->user->isGuest)){
 
-            $act = '/' . Yii::$app->controller->module->id . '/' . Yii::$app->controller->id;
-
-            foreach($this->excludedRules as $eRule){
-                if($eRule['route'] != $act){
-                    //Проверка доступа к целому модулю;
-                    $this->checkAccessModule();
-                    //Провера доступа к подразделу модуля;
-                    $this->checkAccessCategory();
-                }
-            }
+        /*
+         *  Проверка регистрации модуля в системе: в случае отсутствия регистрации - выбросить исключение;
+         */
+        if(!Modules::checkRegister(Yii::$app->controller->module->id))
+        {
+            throw new ForbiddenHttpException('Модуль не зарегистрирован! Пожалуйста, зарегистрируйте модуль в системе.');
         }
+        /*
+         * Если пользователь неГость - проверка прав доступа к модулю | категории | действию;
+         */
+        (!(Yii::$app->user->isGuest)) ? $this->verifyAccess() : false;
+
         return parent::beforeAction($action);
     }
 

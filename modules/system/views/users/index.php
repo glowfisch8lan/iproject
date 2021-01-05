@@ -36,7 +36,28 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'attribute' => 'name',
                 ],
-                ]
+                ],
+            'ActionColumnButtons' =>
+                [
+                'update' => function ($url,$model) {
+                    return Html::a('<i class="fa fa-pencil" aria-hidden="true"></i>', $url,
+                        ['class' => 'btn btn-outline-info',
+                            'data' => [
+                                'method' => 'post'
+                            ]]);
+                },
+
+                'delete' =>
+                    function($url, $model){
+                        return ($model['login'] == 'admin' && $model['id'] == 1) ? null : Html::a('<i class="fa fa-trash" aria-hidden="true"></i>', $url,
+                            ['class' => 'btn btn-outline-danger',
+                                'data' => [
+                                    'confirm' => 'Вы действительно хотите удалить данную позицию?',
+                                    'method' => 'post'
+                                ]]);
+                            },
+                    ]
+
         ]);?>
 
         </div>

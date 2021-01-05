@@ -9,19 +9,25 @@ use yii\helpers\Html;
 
 $this->title = $name;
 ?>
-<div class="site-error">
+<div class="page vertical-align text-center">
+    <div class="page-content vertical-align-middle">
+            <div class="site-error">
+                <header>
+                    <h1 class="animation-slide-top"><?= Html::encode($this->title) ?></h1>
 
-    <h1><?= Html::encode($this->title) ?></h1>
+                    <div class="alert alert-danger">
+                        <?= nl2br(Html::encode($message)) ?>
+                    </div>
+                </header>
+                <p class="error-advise">
+                    Вышеупомянутая ошибка произошла, когда веб-сервер обрабатывал ваш запрос.
+                </p>
+                <a class="btn btn-success btn-round mb-5" href="/my">Личный кабинет</a>
+                <a class="btn btn-primary btn-round mb-5" href="/">Главная страница</a>
 
-    <div class="alert alert-danger">
-        <?= nl2br(Html::encode($message)) ?>
+            <footer class="page-copyright">
+                <p>© 2019. All RIGHT RESERVED.</p>
+            </footer>
+        </div>
     </div>
-
-    <p>
-        The above error occurred while the Web server was processing your request.
-    </p>
-    <p>
-        Please contact us if you think this is a server error. Thank you.
-    </p>
-
 </div>

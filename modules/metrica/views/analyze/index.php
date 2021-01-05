@@ -1,6 +1,5 @@
 <?php
 
-use Yii;
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
 use yii\web\View;
@@ -41,7 +40,7 @@ $this->registerJs( $js, $position = yii\web\View::POS_END, $key = null );
             <div id="input-url-group">
                     <?= $form->field($model, 'url[]',
                         ['template'=>
-                            "<div class=\"input-group col-lg-8\"><div style='margin-right:10px;'><a href='#' class='btn btn-outline-primary btn-add disabled' 'data-pjax'='0' ><i class=\"fas fa-plus\" aria-hidden=\"true\"></i></a></div>{input}</div>"])
+                            "<div class=\"input-group col-lg-8\"><div style='margin-right:10px;'><a href='#' class='btn btn-outline-primary btn-add disabled' 'data-pjax'='0' ><i class=\"fa fa-plus\" aria-hidden=\"true\"></i></a></div>{input}</div>"])
                         ->textInput(['class' => 'form-control'])->label(false); ?>
 
 

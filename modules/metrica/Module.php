@@ -2,9 +2,8 @@
 
 namespace app\modules\metrica;
 use Yii;
-use yii\base\BootstrapInterface;
 
-class Module extends \yii\base\Module implements BootstrapInterface
+class Module extends \app\modules\system\Module
 {
     /**
      * {@inheritdoc}
@@ -16,15 +15,17 @@ class Module extends \yii\base\Module implements BootstrapInterface
     public $link = 'metrica';
     public $icon = 'fa fa-bar-chart';
     public $visible = 'viewMetrica';
+    public $description = 'Модуль поиска и анализа метрической информации';
 
     public $routes = [
-        [   'route' => '/metrica/state',
+        [   'route' => '/metrica/analyze',
             'name' => 'Анализ данных',
-            'access' => 'viewMetrica',
+            'access' => 'viewMetricaAnalyze',
             'description' => 'Доступ к подразделу Анализ данных',
             'visible' => true,
         ],
     ];
+
     public function behaviors(){
         return [
             'access' => [
@@ -45,9 +46,7 @@ class Module extends \yii\base\Module implements BootstrapInterface
      */
     public function init()
     {
-
         parent::init();
-
     }
 
     public function bootstrap($app)

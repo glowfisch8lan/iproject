@@ -5,7 +5,7 @@ namespace app\modules\system\models\users;
 use Yii;
 use yii\db\ActiveRecord;
 use app\modules\system\models\users\Users;
-use app\modules\system\models\interfaces\modules\Module;
+use app\modules\system\models\interfaces\modules\Modules;
 
 class Groups extends ActiveRecord
 {
@@ -47,7 +47,7 @@ class Groups extends ActiveRecord
      *  Получить "разрешения" группы
      *  Принимает id группы
      */
-    public function getPermissions($id){
+    public static function getPermissions($id){
 
         return (new \yii\db\Query())
             ->select('permissions')

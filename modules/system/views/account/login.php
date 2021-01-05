@@ -13,7 +13,6 @@ $this->title = 'Вход';
 $this->params['breadcrumbs'][] = $this->title;
 
 ?>
-<div class="wrapper">
     <div class="auth-content">
         <div class="card">
             <div class="card-body text-center">
@@ -26,7 +25,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?php $form = ActiveForm::begin([
                         'id' => 'login-form',
                         'fieldConfig' => [
-                            'template' => "<div class=\"form-group\">{input}</div>",
+                            'template' => "<div class=\"form-group\">{input}</div>\n<div class=\"col-lg-12\">{error}</div>",
                             'labelOptions' => ['class' => 'control-label'],
                         ],
                     ]); ?>
@@ -48,4 +47,3 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
         </div>
     </div>
-</div>

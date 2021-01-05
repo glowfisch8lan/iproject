@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 use yii\helpers\ArrayHelper;
 use yii\widgets\DetailView;
-use yii\grid\GridView;
+use app\modules\system\helpers\GridHelper;
 use yii\widgets\ActiveForm;
 
 
@@ -45,99 +45,75 @@ use yii\widgets\ActiveForm;
     </div>
 
 <div class="container-fluid">
-    <div class="row">
+    <div class="row" style="padding:10px">
         <div class="col-lg-6">
-            <div class="box box-primary">
-                <div class="page-title">
-                    <h3>
-                        <a href="#" class="btn btn-sm btn-outline-primary float-right" data-toggle="modal" data-target="#exampleModal"><i class="fas fa-user-plus"></i></a>
-                    </h3>
-                    </h3>
-                </div>
+            <div class="card">
+                <div class="card-header">Участники группы</div>
+                <div class="card-body">
+                    <?
+                    $headerCallback = function(){
+                        return Html::a('<i class="fa fa-user-plus" aria-hidden="true"></i>', '#',
+                            [
+                                    'class' => 'btn btn-outline-info',
+                                    'data' => [
+                                        'toggle' => 'modal',
+                                        'target' => '#exampleModal'
 
-                <div class="box-body">
-                    <?= GridView::widget([
+                                ]
+                            ]);
+                    };
+                    echo GridHelper::initWidget([
                         'dataProvider' => $dataProvider,
                         'columns' => [
                             [
-                                'class' => 'yii\grid\SerialColumn'
 
-                            ],
-
-                    /*        [
-                                'attribute' => 'id',
-                                'header' => 'Индекс',
-                                'headerOptions' => [
-                                    'width' => 50,
-                                ],
-                            ],*/
-                            [
-                                'label' => 'Ссылка',
                                 'format' => 'raw',
                                 'attribute' => 'login',
-                                'header' => 'Логин',
-                                'value' => function($data){
-
+                                'label' => 'Логин',
+                                'value' => function($model){
                                     return
-                                        Html::a($data['login'], ['/system/users/update', 'id' => $data['id']], ['class' => 'link']);
+                                        Html::a($model['login'], ['/system/users/update', 'id' => $model['id']], ['class' => 'link']);
                                 }
                             ],
                             [
                                 'attribute' => 'name',
-                                'header' => 'Фамилия, имя и отчество'
+                                'label' => 'Фамилия, имя и отчество'
                             ],
                             [
                                 'attribute' => 'group',
-                                'header' => 'Группа',
+                                'label' => 'Группа',
                                 'headerOptions' => [
                                     'width' => 100,
                                 ],
                             ],
 
+                        ],
+                        'ActionColumnHeader' => $headerCallback(),
+                        'buttonsOptions' => ['template' => '{delete}'],
+                        'ActionColumnButtons' => [
+                            'delete' => function ($url, $inModel) use ($model) {
+                                return ( ($inModel['login'] != 'admin') && ($model->id != 1) ) ? Html::a('<i class="fa fa-trash"></i>', '/system/groups/delete-group-members?user_id=' . $inModel['id'] .'&group_id='.$model->id,
+                                        ['class' => 'btn btn-outline-danger',
+                                            'data' => [
+                                                'confirm' => 'Вы действительно хотите удалить данного пользователя из группы?',
+                                                'method' => 'post',
+                                            ]]) : false;
 
-                            [
-                                'class' => 'yii\grid\ActionColumn',
-                                'template' => '{delete}',
-                                'headerOptions' => [
-                                    'width' => 150,
-                                ],
-                                'contentOptions'=> ['style'=>'text-align: center;'],
-                                'buttons' => [
-                                    'delete' => function ($url,$data) use ($model) {
-                                        if( $data['login'] == 'admin' && $model->id == 1) {
-                                            return false;
-                                        }
-                                        else {
-
-                                            return Html::a('<i class="fas fa-trash"></i>', '/system/groups/delete-group-members?user_id=' . $data['id'] .'&group_id='.$model->id,
-                                                ['class' => 'btn btn-outline-danger btn-rounded',
-                                                    'data' => [
-                                                        'confirm' => 'Вы действительно хотите удалить данного пользователя из группы?',
-                                                        'method' => 'post',
-                                                    ]]);
-                                        }
-                                    },
-                                ],
-                            ],
-
-
-
+                            },
                         ],
 
 
-                    ]); ?>
+                    ]);
+                    ?>
                 </div>
             </div>
         </div>
 
-
         <div class="col-lg-6">
-
             <div class="card">
                 <div class="card-header">Настройка Группы</div>
                 <div class="card-body">
                     <h5 class="card-title"><?= $model->name;?></h5>
-
                     <?
                     $options = ['class' => 'btn btn-danger'];
                     if ($model->id == 1) {
@@ -148,16 +124,11 @@ use yii\widgets\ActiveForm;
                     <?= Html::a('Удалить', ['delete', 'id' => $model->id], [
                         'class' => $options,
                         'data' => [
-                            'confirm' => 'Are you sure you want to delete this item?',
+                            'confirm' => 'Вы уверены, что хотите удалить группу?',
                             'method' => 'post',
                         ],
 
                     ]) ?>
-                    <?
-
-
-
-                    ?>
                     <?= DetailView::widget([
                         'model' => $model,
                         'attributes' => [

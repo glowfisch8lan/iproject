@@ -2,8 +2,9 @@
 
 namespace app\modules\system\controllers;
 use app\modules\system\helpers\ArrayHelper;
-use app\modules\system\models\interfaces\modules\Module;
+use app\modules\system\models\interfaces\modules\Modules;
 use yii\data\ArrayDataProvider;
+use yii\web\ForbiddenHttpException;
 
 class ModulesController extends \yii\web\Controller
 {
@@ -11,11 +12,11 @@ class ModulesController extends \yii\web\Controller
     {
 
 
-        $data = Module::createArrayDataProvider();
+        $data = Modules::createArrayDataProvider();
         $dataProvider = new ArrayDataProvider([
             'allModels' => $data,
             'sort' => [
-                'attributes' => ['id', 'name', 'status'],
+                'attributes' => ['id', 'name', 'status', 'description'],
             ],
         ]);
 
@@ -24,14 +25,18 @@ class ModulesController extends \yii\web\Controller
         ]);
     }
 
+
     public function actionRegister($id)
     {
-        Module::register($id);
+        Modules::register($id);
         return $this->redirect(['index']);
     }
     public function actionUnregister($id)
     {
-        Module::unregister($id);
-        return $this->redirect(['index']);
+        if($id != 'system') {
+            Modules::unregister($id);
+            return $this->redirect(['index']);
+        }
+        throw new ForbiddenHttpException('Выгрузка системного модуля невозможна!');
     }
 }

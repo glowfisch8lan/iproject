@@ -28,7 +28,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     [
                          'format' => 'raw',
                         'attribute' => 'name',
-                        'header' => 'Группа',
+                        'label' => 'Группа',
                         'value' => function($model){
                             return Html::a($model->name, ['/system/groups/view', 'id' => $model->id], ['class' => 'link']);
                             }
@@ -36,7 +36,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
                     [
                         'attribute' => 'description',
-                        'header' => 'Описание'
+                        'label' => 'Описание'
                     ],
 
             ],

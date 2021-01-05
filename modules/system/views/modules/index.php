@@ -16,16 +16,17 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= GridHelper::initWidget([
             'dataProvider' => $dataProvider,
             'columns' => [
-                ['class' => '\yii\grid\SerialColumn',
-                    'headerOptions' => [
-                        'width' => 50,
-                        'class' => 'text-center'
-                    ],
-                    'contentOptions' => [
-                        'class' => 'text-center'
-                    ],
-                ],
+//                ['class' => '\yii\grid\SerialColumn',
+//                    'headerOptions' => [
+//                        'width' => 50,
+//                        'class' => 'text-center'
+//                    ],
+//                    'contentOptions' => [
+//                        'class' => 'text-center'
+//                    ],
+//                ],
                 [   'attribute' => 'id',
+                    'label' => 'Идентификатор',
                     'headerOptions' => [
                         'width' => 50,
                         'class' => 'text-center'
@@ -35,17 +36,25 @@ $this->params['breadcrumbs'][] = $this->title;
 
                 [
                     'attribute' => 'name',
+                    'label' => 'Название модуля',
+                ],
+                [
+                    'attribute' => 'description',
+                    'label' => 'Описание модуля',
                 ],
                 [
                     'attribute' => 'status',
+                    'label' => 'Статус модуля',
+                    'value' => function ($model){return ($model['status']) ? 'Зарегистрирован' : 'Незарегистрирован';},
                 ],
             ],
             'ActionColumnButtons' => [
                 'toggle' => function ($url,$model){
-                    $icons = ($model['status']) ? function(){return ['fa fa-eye', 'btn btn-info','unregister'];} : function(){return ['fa fa-eye-slash', 'btn btn-outline-info','register'];} ;
 
-                    return Html::a('<i class="'.$icons()[0].'"></i>', 'modules/'.$icons()[2].'?id=' . $model['id'],
-                        ['class' => $icons()[1], 'data-method' => 'post']);
+                    $icons = (($model['status'])) ? function(){return ['fa fa-eye', 'btn btn-info','unregister'];} : function(){return ['fa fa-eye-slash', 'btn btn-outline-info','register'];} ;
+                    $classButton = ($model['id'] != 'system') ? $icons()[1] : 'btn btn-dark disabled';
+                    return Html::a('<i class="'.$icons()[0].'"></i>', '/system/modules/'.$icons()[2].'?id=' . $model['id'],
+                        ['class' => $classButton, 'data-method' => 'post']);
                 },
             ],
             'ActionColumnHeader' => '&nbsp;',

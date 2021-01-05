@@ -7,6 +7,7 @@ use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 use app\modules\system\models\users\LoginForm;
+use app\modules\system\models\users\Users;
 
 /**
  * Default controller for the `system` module
@@ -37,36 +38,35 @@ class DefaultController extends Controller
             ],
         ];
     }
+
     public function actions()
     {
         return [
             'error' => [
-                'class' => 'yii\web\ErrorAction',
+                'class' => 'yii\web\ErrorAction'
             ],
             'captcha' => [
                 'class' => 'yii\captcha\CaptchaAction',
                 'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
             ],
+
         ];
     }
-    /**
-     * Renders the index view for the module
-     * @return string
-     */
+
+    public function beforeAction($action)
+    {
+        return parent::beforeAction($action);
+    }
+
     public function actionIndex()
     {
         return $this->render('index');
     }
-
-    /**
-     * Профиль пользователя
-     */
     public function actionProfile()
     {
 
         return $this->render('profile');
     }
-
     public function actionLogin()
     {
         $this->layout = 'login';
@@ -89,10 +89,8 @@ class DefaultController extends Controller
     }
     public function actionLogout()
     {
-        $this->layout = '@app/views/layouts/main';
-
-        var_dump(Yii::$app->user->logout());
-
+        Yii::$app->user->logout();
         return $this->goHome();
     }
+
 }

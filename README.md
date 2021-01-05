@@ -57,7 +57,9 @@
    $data['buttonsOptions']['headerWidth'] - ширина header "ActionColumn", по-умолчанию: 150; 
 ```
 
-
+//TODO
+1. Модуль управления модулями:
+    
 
 
 

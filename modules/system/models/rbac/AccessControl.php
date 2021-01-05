@@ -16,14 +16,14 @@ class AccessControl
     public static function checkAccess( $id, $rule ): bool{
 
         $users = new Users();
-        $group = new Groups();
+
         $data = [];
 
         foreach($users->getUserGroups($id) as $val){
             $data[] = $val['id'];
         }
 
-        $groupPermissions = $group->getPermissions($data);
+        $groupPermissions = Groups::getPermissions($data);
         $arr = [];
         foreach( $groupPermissions as $val )
         {

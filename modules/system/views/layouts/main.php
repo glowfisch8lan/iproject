@@ -7,7 +7,7 @@ use yii\helpers\Html;
 use yii\widgets\Breadcrumbs;
 use app\modules\system\helpers\MenuHelper;
 use app\modules\system\SystemAsset;
-use app\modules\system\models\interfaces\modules\Module;
+use app\modules\system\models\interfaces\modules\Modules;
 
 $bundle = SystemAsset::register($this);
 
@@ -22,14 +22,40 @@ $this->registerCssFile($bundle->baseUrl . '/css/CRUD.css', $options);
 $this->registerCssFile($bundle->baseUrl . '/vendor/airdatepicker/dist/css/datepicker.min.css', $options);
 $this->registerCssFile($bundle->baseUrl . '/vendor/mdtimepicker/mdtimepicker.min.css', $options);
 
-
-
 $this->registerJsFile( $bundle->baseUrl . '/vendor/airdatepicker/dist/js/datepicker.min.js', $options, $key = null );
 $this->registerJsFile( $bundle->baseUrl . '/vendor/airdatepicker/dist/js/i18n/datepicker.en.js', $options, $key = null );
 $this->registerJsFile( $bundle->baseUrl . '/vendor/mdtimepicker/mdtimepicker.min.js', $options, $key = null );
 $this->registerJsFile( $bundle->baseUrl . '/js/is-hide-sidebar.js', $options, $key = null );
 $this->registerJsFile( $bundle->baseUrl . '/js/script.js', $options, $key = null );
 
+// регистрируем небольшой js-код в view-шаблоне
+$script = <<< JS
+
+$('ul.collapse').on('hide.bs.collapse', function () {
+            sessionStorage.setItem('#'+$(this).attr('id'), 0);
+        });
+        
+$('ul.collapse').on('show.bs.collapse', function () {
+            sessionStorage.setItem('#'+$(this).attr('id'), 1);
+        });
+
+$(document).ready(function(){
+    
+    $(this).find('a.menu-link-dropdown').each(function(){
+        
+        var id = $(this).attr('href');
+        var result = sessionStorage.getItem(id);
+        if(Number(result) === 1){
+            $(id).collapse();
+        };
+    });
+        
+    });
+JS;
+// значение $position может быть View::POS_READY (значение по умолчанию),
+// или View::POS_LOAD, View::POS_HEAD, View::POS_BEGIN, View::POS_END
+$position = $this::POS_END;
+$this->registerJs($script, $position);
 ?>
 <?php $this->beginPage() ?>
     <!DOCTYPE html>
@@ -56,7 +82,7 @@ $this->registerJsFile( $bundle->baseUrl . '/js/script.js', $options, $key = null
             <ul class="list-unstyled components">
                 <li> <a href="/my"><i class="fa fa-home"></i> Главная панель</a> </li>
                 <li> <span class="ml-3">Модули</span> </li>
-                <?= MenuHelper::widget(Module::getAllModules());?>
+                <?= MenuHelper::widget(Modules::getAllModules());?>
             </ul>
         </nav>
         <div id="body" class="active">

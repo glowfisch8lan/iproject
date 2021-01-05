@@ -14,15 +14,15 @@ class Module extends \yii\base\Module
     public $name = "Инструменты";
     public $defaultController = 'index';
     public $modelNamespace = 'app\modules\tools\models';
-    public $link = 'metrica';
+    public $link = 'tools';
     public $icon = 'fa fa-wrench';
     public $visible = 'viewTools';
 
     public $routes = [
-        [   'route' => '/tools/state',
-            'name' => 'Штат',
-            'access' => 'viewTools',
-            'description' => 'Доступ к подразделу Штаты',
+        [   'route' => '/tools/generator-login',
+            'name' => 'Генератор логинов',
+            'access' => 'viewToolsGeneratorLogin',
+            'description' => 'Доступ к инструменту "Генератор Логинов',
             'visible' => true,
         ],
     ];

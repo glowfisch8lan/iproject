@@ -2,7 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use \app\modules\system\models\interfaces\modules\Module;
+use \app\modules\system\models\interfaces\modules\Modules;
 
 $js = <<< JS
 
@@ -82,7 +82,7 @@ $this->registerJs( $js, $position = yii\web\View::POS_END, $key = null );
             <?
 
             $index = 0;
-            foreach( Module::getAllModules() as $module ){
+            foreach(Modules::getAllModules() as $module ){
                     $label = null;
                     $titleStatus = (!empty($model->usedPermissions) && (in_array($module->visible, $model->usedPermissions))) ? 'checked' : null;
 
