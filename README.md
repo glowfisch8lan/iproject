@@ -36,23 +36,24 @@
 
 <h5>GridHelper</h5>
 ```php
-   public static function initWidget($data = []){}
+public static function initWidget($data = []){}
    
-   $data['dataProvider'] - передается провайдер данных, по-умолчанию: null;
+
+$data['dataProvider'] - передается провайдер данных, по-умолчанию: null;
    
-   $data['searchModel']  - передается Модель Поиска, по-умолчанию: null;
+$data['searchModel']  - передается Модель Поиска, по-умолчанию: null;
    
-   $data['ActionColumn'] - кастомный класс "ActionColumn", 
+$data['ActionColumn'] - кастомный класс "ActionColumn", 
    по-умолчанию: app\modules\system\components\gridviewer\CustomActionColumns;
    => переопределена функция renderFilterCellContent() для вывода кнопки добавить в строку Фильтрации, для лучшего UI;
    
-   $data['ActionColumnHeader'] - кастомный заголовок "ActionColumn", соответствует полю "header", чтобы выключить заголовок, задайте невидимый символ &nbsp;
+$data['ActionColumnHeader'] - кастомный заголовок "ActionColumn", соответствует полю "header", чтобы выключить заголовок, задайте невидимый символ &nbsp;
    
-   $data['ActionColumnButtons'] = [] - кастомный кнопки "ActionColumn", соответствует полю "buttons";
+$data['ActionColumnButtons'] = [] - кастомный кнопки "ActionColumn", соответствует полю "buttons";
    
-   $data['buttonsOptions']['template'] - кастомный шаблон расположения кнопок "ActionColumn", соответствует полю "template";
+$data['buttonsOptions']['template'] - кастомный шаблон расположения кнопок "ActionColumn", соответствует полю "template";
    
-   $data['buttonsOptions']['headerWidth'] - ширина header "ActionColumn", по-умолчанию: 150; 
+$data['buttonsOptions']['headerWidth'] - ширина header "ActionColumn", по-умолчанию: 150; 
 ```
 
 <h5>Система : Модули</h5>
@@ -65,9 +66,6 @@ TODO
 TODO:
 1. Возможность выбора отправителя по-умолчанию;
 => настройки хранятся в таблице модуля _settings
-
-
-
 
 
 
