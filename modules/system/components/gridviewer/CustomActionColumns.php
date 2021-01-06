@@ -10,6 +10,9 @@ use yii\helpers\Html;
 
 class CustomActionColumns extends ActionColumn
 {
+    /*
+     * Переопределили функцию GridView для того, чтобы выводить кнопку "Create" чуть ниже в таблице;
+     */
     protected function renderFilterCellContent()
     {
         $url = '/'. Yii::$app->controller->module->id . '/' . Yii::$app->controller->id .  '/create';

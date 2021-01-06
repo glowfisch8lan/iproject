@@ -35,7 +35,7 @@
     padding: .8rem 1.5rem;
     font-size: 1rem;
     display: block;
-    color: #6c757d; /*#b6cdff*/
+    color: #f2f4f5; /*#6c757d; #b6cdff*/
 }
 
 #sidebar ul li a .svg-inline--fa {
@@ -51,8 +51,8 @@
 
 #sidebar ul li.active>a,
 a[aria-expanded="true"] {
-    color: #b6cdff !important;
-
+    /*color: #b6cdff !important;*/
+    color:inherit;
 }
 
 #sidebar ul ul a {

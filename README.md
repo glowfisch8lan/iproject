@@ -35,8 +35,6 @@
 ```
 
 <h5>GridHelper</h5>
-В Module.php определить переменные:
-
 ```php
    public static function initWidget($data = []){}
    
@@ -60,21 +58,45 @@
 <h5>Система : Модули</h5>
 1. При регистрации модуля обновляются права доступа у группы Администраторов.
 
-//TODO
+TODO
 1. Меню: добавить сортировку модулей;
  
+<h5>Обратная связь: Заявки</h5>
+TODO:
+1. Возможность выбора отправителя по-умолчанию;
+=> настройки хранятся в таблице модуля _settings
 
 
 
 
-    /*
-     * Перестройка индексного массива к  массиву вида [[ $key, $value ]];
-     */
-    public static function indexMap($array,$key){
 
-        $dataArray = [];var_dump($key);
-        foreach($array as $value) {
-            $dataArray[] = [(int) $key, (int) $value];
-        }
-        return $dataArray;
-    }
+
+<h5>Хелперы: ArrayHelper</h5>
+1. Перестройка индексного массива 
+```php
+public static function indexMap($array,$key){}
+
+$array - входной массив,
+$key - значение, которое будет использовано в качестве ключа.
+````
+```php
+[
+    0 => 'value',
+    1 => 'value',
+    ...
+    index => value,
+]
+````
+ 
+ к  массиву вида [[ key, value ]].
+ Например,[['user_id', 'group_id']] для группового SQL-запроса метода addMembers() класса Groups;
+ 
+ ```php
+[ 
+     ['user_id', 'group_id']
+     ...
+     ['key' => 'value1']
+    
+ ]
+ ````
+
