@@ -35,10 +35,10 @@
 ```
 
 <h5>GridHelper</h5>
+
 ```php
 public static function initWidget($data = []){}
    
-
 $data['dataProvider'] - передается провайдер данных, по-умолчанию: null;
    
 $data['searchModel']  - передается Модель Поиска, по-умолчанию: null;
@@ -54,7 +54,7 @@ $data['ActionColumnButtons'] = [] - кастомный кнопки "ActionColum
 $data['buttonsOptions']['template'] - кастомный шаблон расположения кнопок "ActionColumn", соответствует полю "template";
    
 $data['buttonsOptions']['headerWidth'] - ширина header "ActionColumn", по-умолчанию: 150; 
-```
+````
 
 <h5>Система : Модули</h5>
 1. При регистрации модуля обновляются права доступа у группы Администраторов.
