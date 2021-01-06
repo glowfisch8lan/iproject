@@ -8,8 +8,7 @@ $config = [
     'basePath' => dirname(__DIR__),
     'bootstrap' => [
         'log',
-        'queue',
-//        \insolita\opcache\Bootstrap::class
+        'queue'
     ],
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
@@ -39,18 +38,8 @@ $config = [
                 'class' => 'app\modules\tools\Module',
                 'layout' => '@app/modules/system/views/layouts/main'
             ],
-            'opcache'=>[
-                'class'=>'insolita\opcache\OpcacheModule',
-                'as access'=>[
-                   'class' => \yii\filters\AccessControl::class,
-                               'rules' => [
-                                   [
-                                       'allow' => true,
-                                       //Protect access
-                                       'roles' => ['@'],
-                                   ],
-                               ],
-                ],
+            'feedback' => [
+                'class' => 'app\modules\feedback\Module',
                 'layout' => '@app/modules/system/views/layouts/main'
             ],
 

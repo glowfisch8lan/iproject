@@ -26,9 +26,25 @@ $bundle = AppAsset::register($this);
 <body>
 <?php $this->beginBody() ?>
 <div class="wrapper">
-
+    <div class="container content">
+        <div class="header">
+            <ul class="nav">
+                <li class="nav-item">
+                    <a class="nav-link active" href="/">Главная</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">FAQ</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/feedback">Обратная связь</a>
+                </li>
+            </ul>
+            <a href="//dvuimvd.ru"><div class="logo" style="background-image: url('<?=$bundle->baseUrl?>/img/icon/logo.png')"></div></a><h3 class="text-muted">ДВЮИ МВД России</h3>
+        </div>
             <?= $content ?>
-
+        <div class="footer">
+            <p>&copy; ДВЮИ МВД РФ 2020</p>
+        </div>
     </div>
 </div>
 <?php $this->endBody() ?>
