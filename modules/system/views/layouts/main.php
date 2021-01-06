@@ -80,8 +80,8 @@ $this->registerJs($script, $position);
         <nav id="sidebar">
             <div class="sidebar-header"> <img src="<?=$bundle->baseUrl?>/img/logo.png" alt="logo" class="app-logo" width="210"> </div>
             <ul class="list-unstyled components">
-                <li> <a href="/my"><i class="fa fa-home"></i> Главная панель</a> </li>
-                <li> <span class="ml-3">Модули</span> </li>
+                <li> <a href="/my"><i class="fa fa-home"></i> Личный кабинет</a> </li>
+<!--                <li> <span class="ml-3"></span> </li>-->
                 <?= MenuHelper::widget(Modules::getAllModules());?>
             </ul>
         </nav>
@@ -119,7 +119,7 @@ $this->registerJs($script, $position);
                             <?= Breadcrumbs::widget([
                                 'homeLink' => [
                                     'label' => 'Главная',
-                                    'url' => '/my',
+                                    'url' => '/',
                                 ],
                                 'tag' => 'ol',
                                 'itemTemplate' => '<li class="breadcrumb-item">{link}</li>',

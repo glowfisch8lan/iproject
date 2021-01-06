@@ -21,7 +21,7 @@ class Module extends \yii\base\Module
     public $link = 'system';
     public $icon = 'fa fa-cog';
     public $visible = 'viewSystem';
-    public $description = "Модуль управления учетными записями и группами, контроля доступа и иным системным функционалом";
+    public $description = "Описание отсутствует";
 
 
     public $routes = [

@@ -4,7 +4,6 @@ use app\modules\system\SystemAsset;
 $bundle = SystemAsset::register($this);
 
 $this->title = 'iDapp - internal digital application';
-$this->params['breadcrumbs'][] = ['label' => Yii::$app->controller->module->name, 'url' => '/my'];
 ?>
 <div class="col-md-12">
     <div class="card mb-3">
@@ -12,7 +11,7 @@ $this->params['breadcrumbs'][] = ['label' => Yii::$app->controller->module->name
         <div class="card-body">
             <h5 class="card-title">Добро пожаловать в систему распределенного учета и обработки данных iDapp!</h5>
             <p class="card-text">Система находится в состоянии разработки.</p>
-            <p class="card-text"><small class="text-muted">Версия: v0.0.1</small></p>
+            <p class="card-text"><small class="text-muted">Версия: v0.0.2</small></p>
         </div>
         <img class="card-img-top" src="<?php echo $bundle->baseUrl ?>/img/image-wide.svg" alt="Card image cap">
     </div>
