@@ -94,15 +94,16 @@ class Modules extends \yii\base\Module
                 $permissions[] = $route['access'];
             }
         }
+
         $group = Groups::findOne(1);
         $group->permissions =  Json::encode($permissions);
+
         if(!$group->save()) {
             throw new ServerErrorHttpException('При регистриации модуля возникли проблемы: ошибка обновления прав Администратора.');
         }
+
         //Groups::removeAllGroupMember(1); //Удаляем все группы пользователя;
         //Groups::addMembers(ArrayHelper::indexMap($, 1)); //Добавляем список групп в system_users_groups заново;
-
-
 
         if (!$module) {
             throw new NotFoundHttpException('Модуль не установлен! Проверьте конфигурацию.');
@@ -111,6 +112,7 @@ class Modules extends \yii\base\Module
         if (self::checkRegister($module->id)) {
             return true;
         }
+
         $path = Yii::getAlias('@app') . '/modules/' . $module->id . '/';
         if (!file_put_contents($path . md5($module->id), '')) {
             return false;

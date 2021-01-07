@@ -19,10 +19,10 @@ class Module extends \yii\base\Module
     public $visible = 'viewTools';
 
     public $routes = [
-        [   'route' => '/tools/generator-login',
-            'name' => 'Генератор логинов',
+        [   'route' => '/tools/converter',
+            'name' => 'Конвертер',
             'access' => 'viewToolsGeneratorLogin',
-            'description' => 'Доступ к инструменту "Генератор Логинов',
+            'description' => 'Доступ к инструменту "Конвертер',
             'visible' => true,
         ],
     ];

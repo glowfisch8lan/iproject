@@ -1,7 +1,6 @@
 <?php
 
 namespace app\modules\metrica;
-use Yii;
 
 class Module extends \app\modules\system\Module
 {
@@ -20,6 +19,12 @@ class Module extends \app\modules\system\Module
     public $routes = [
         [   'route' => '/metrica/analyze',
             'name' => 'Анализ данных',
+            'access' => 'viewMetricaAnalyze',
+            'description' => 'Доступ к подразделу Анализ данных',
+            'visible' => true,
+        ],
+        [   'route' => '/metrica/settings',
+            'name' => 'Настройки',
             'access' => 'viewMetricaAnalyze',
             'description' => 'Доступ к подразделу Анализ данных',
             'visible' => true,

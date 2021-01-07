@@ -73,7 +73,7 @@ body {
   color: #fff;
 }
 .jumbotron h1 {
-  font-size:32px;
+  /*font-size:32px;*/
 }
 
 }
@@ -109,8 +109,8 @@ body {
   }
 }
 
-@media screen and (min-width: 12em) {
-  .jumbotron h1{
-    font-size:24px;
-  }
-}
+/*@media screen and (min-width: 12em) {*/
+/*  .jumbotron h1{*/
+/*    font-size:24px;*/
+/*  }*/
+/*}*/

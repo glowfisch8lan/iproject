@@ -23,7 +23,7 @@ $this->registerJs( $js, $position = yii\web\View::POS_END, $key = null );
 
     <div class="jumbotron">
         <h1>Дальневосточный юридический институт<br> МВД России</h1>
-        <p class="lead">Cras justo odio, dapibus ac facilisis in, egestas eget quam. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
+        <p class="lead">Высшее военно-учебное заведение, основанное 21 июля 1921 года, осуществляющее подготовку офицерских кадров для органов внутренних дел Министерства внутренних дел Российской Федерации.</p>
         <p><a class="btn btn-primary" href="/my" role="button">Личный кабинет</a></p>
 
         <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
