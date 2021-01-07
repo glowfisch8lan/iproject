@@ -5,6 +5,7 @@ namespace app\modules\tools\models;
 
 
 use app\modules\system\helpers\Inflector;
+use yii\web\ServerErrorHttpException;
 
 class ConvertCSV
 {
@@ -20,10 +21,9 @@ class ConvertCSV
         if($fp)
         {
             $line = fgetcsv($fp, 1000, ";");
-            $line[] = 'profile_field_group';
             $data = implode(';',$line)."\r\n";
             $mapKeys = array_flip($line);
-
+            if(empty($mapKeys['username'])){throw new ServerErrorHttpException('Проверьте CSV файл: поле username не считывается!');}
             $first_time = true;
             do {
                 if ($first_time == true) {
@@ -32,12 +32,13 @@ class ConvertCSV
                 }
 
                 $str = $line[$mapKeys['lastname']].' '.$line[$mapKeys['firstname']];
+
                 $line[$mapKeys['username']] = rand(0,100) . Inflector::translit(
                         Inflector::nameShort($str), '_', true
                     );
 
                 $line[$mapKeys['email']] = $line[$mapKeys['username']] . '@dvuimvd.ru';
-                $line[$mapKeys['profile_field_group']] = 0;
+                $line[$mapKeys['password']] = 'dvui'.rand(1000,9999).'%';
 
                 $array = implode(';',$line);
                 $data .= "$array \r\n";

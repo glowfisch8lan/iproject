@@ -20,10 +20,10 @@ class Module extends \app\modules\system\Module
     public $description = "Модуль управления учетными записями и группами, контроля доступа и иным системным функционалом";
 
     public $routes = [
-        [   'route' => '/staff/state',
-            'name' => 'Штат',
-            'access' => 'viewState',
-            'description' => 'Доступ к подразделу Штаты',
+        [   'route' => '/feedback/incoming',
+            'name' => 'Входящие',
+            'access' => 'viewFeedback',
+            'description' => 'Доступ к входящим заявкам',
             'visible' => true,
         ],
     ];

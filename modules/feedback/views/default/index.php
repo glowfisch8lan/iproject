@@ -20,14 +20,14 @@ $this->params['breadcrumbs'][] = $this->title;
             <?php if (Yii::$app->session->hasFlash('contactFormSubmitted')): ?>
 
                 <div class="alert alert-success">
-                   Ваша заявка #НОМЕР успешно принята! Специалист обработает ее в ближайшее время.
+                    Ваша заявка <strong>#<?=Yii::$app->session->getFlash('id')?></strong> успешно принята! Специалист обработает ее в ближайшее время.
                 </div>
 
             <?php else: ?>
 
                 <p>
                     Если у вас есть необходимость в решении технических проблем - пожалуйста, оставьте заявку!<br>
-                    В поле <strong>"Отправитель"</strong> укажите свои <i>данные</i> в формате - <strong>"Подразделение: ФИО (полностью)"</strong>
+                    В поле <strong>"Отправитель"</strong> и <strong>"Подразделение"</strong> укажите свои <i>данные</i>
                 </p>
 
                 <div class="row">
@@ -35,7 +35,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
                         <?php $form = ActiveForm::begin(['id' => 'feedback-form']); ?>
 
-                        <?= $form->field($model, 'sender')->textInput(['autofocus' => true]) ?>
+                        <?= $form->field($model, 'sender')->textInput() ?>
+
+                        <?= $form->field($model, 'unitSender')->textInput() ?>
 
                         <?= $form->field($model, 'subject') ?>
 

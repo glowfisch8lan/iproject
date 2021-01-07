@@ -54,6 +54,13 @@ $data['ActionColumnButtons'] = [] - кастомный кнопки "ActionColum
 $data['buttonsOptions']['template'] - кастомный шаблон расположения кнопок "ActionColumn", соответствует полю "template";
    
 $data['buttonsOptions']['headerWidth'] - ширина header "ActionColumn", по-умолчанию: 150; 
+
+$data['pagination'] = [
+    'forcePageParam' => false,
+    'pageSizeParam' => false,
+    'pageSize' => 10
+];
+
 ````
 
 <h5>Система : Модули</h5>

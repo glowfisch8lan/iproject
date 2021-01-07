@@ -19,6 +19,7 @@ use app\modules\staff\models\Units;
 class Messages extends \yii\db\ActiveRecord
 {
     public $verifyCode;
+    public $unitSender;
     /**
      * {@inheritdoc}
      */
@@ -34,7 +35,7 @@ class Messages extends \yii\db\ActiveRecord
     {
         return [
             [['sender', 'subject', 'text', 'subject'], 'required'],
-            [['sender', 'text', 'callback','subject'], 'string'],
+            [['sender', 'text', 'callback','subject', 'unitSender'], 'string'],
             [['unit_id'], 'integer'],
             [['unit_id'], 'exist', 'skipOnError' => true, 'targetClass' => Units::className(), 'targetAttribute' => ['unit_id' => 'id']],
             ['verifyCode', 'captcha', 'captchaAction' => '/feedback/default/captcha'],
@@ -51,6 +52,7 @@ class Messages extends \yii\db\ActiveRecord
             'sender' => 'Отправитель',
             'unit_id' => 'Подразделение-получатель',
             'subject' => 'Тема',
+            'unitSender' => 'Подразделение отправителя',
             'text' => 'Содержание',
             'callback' => 'Телефон обратной связи',
             'verifyCode' => 'Введите код:'
