@@ -5,6 +5,28 @@
     <h1 align="center">iDapp - Internal Data Application</h1>
     <br>
 </p>
+<h4>TODO:</h4>
+<p>
+<h5>Yii2:</h5>
+<ul style="unlysted">
+<li>
+Обновить версию до 2.0.38
+</li>
+<li>
+Автозагрузка модулей в config/web.php
+</li>
+<li>Настроить gii для создания шаблонов <strong>контроллера, моделей, CRUD</strong> из своего контекста</li>
+</ul>
+<h5>system:</h5>
+<ul style="unlysted">
+<li>
+update-manager: разработать;
+</li>
+<li>
+Поведение file-upload
+</li>
+</ul>
+</p>
 
 <h2>Добавление модулей</h2>
 В Module.php определить переменные:
