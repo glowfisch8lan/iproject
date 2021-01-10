@@ -22,6 +22,7 @@ class Module extends \yii\base\Module
     public $icon = 'fa fa-cog';
     public $visible = 'viewSystem';
     public $description = "Описание отсутствует";
+    public $layout = '@app/modules/system/views/layouts/main';
 
 
     public $routes = [

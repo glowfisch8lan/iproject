@@ -36,6 +36,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'attribute' => 'name',
                 ],
+                [
+                    'attribute' => 'name',
+                ],
                 ],
             'ActionColumnButtons' =>
                 [

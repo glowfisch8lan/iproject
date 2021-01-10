@@ -27,7 +27,6 @@ $this->params['breadcrumbs'][] = $this->title;
                         'class' => 'text-center',
                         'width' => '25'
                     ],
-
                 ],
                 [
                     'attribute' => 'position',
