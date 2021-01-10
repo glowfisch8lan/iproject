@@ -1,5 +1,7 @@
 <?php
 
+
+
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
 
@@ -17,33 +19,33 @@ $config = [
 
     ],
 
-    'modules' => [
-            'system' => [
-                'class' => 'app\modules\system\Module',
-                'layout' => 'main'
-            ],
-            'metrica' => [
-                'class' => 'app\modules\metrica\Module',
-                'layout' => '@app/modules/system/views/layouts/main'
-            ],
-            'staff' => [
-                'class' => 'app\modules\staff\Module',
-                'layout' => '@app/modules/system/views/layouts/main',
-            ],
-            'inventory' => [
-                'class' => 'app\modules\inventory\Module',
-                'layout' => '@app/modules/system/views/layouts/main'
-            ],
-            'tools' => [
-                'class' => 'app\modules\tools\Module',
-                'layout' => '@app/modules/system/views/layouts/main'
-            ],
-            'feedback' => [
-                'class' => 'app\modules\feedback\Module',
-                'layout' => '@app/modules/system/views/layouts/main'
-            ],
-
-    ],
+//    'modules' => [
+//            'system' => [
+//                'class' => 'app\modules\system\Module',
+//                'layout' => 'main'
+//            ],
+//            'metrica' => [
+//                'class' => 'app\modules\metrica\Module',
+//                'layout' => '@app/modules/system/views/layouts/main'
+//            ],
+//            'staff' => [
+//                'class' => 'app\modules\staff\Module',
+//                'layout' => '@app/modules/system/views/layouts/main',
+//            ],
+//            'inventory' => [
+//                'class' => 'app\modules\inventory\Module',
+//                'layout' => '@app/modules/system/views/layouts/main'
+//            ],
+//            'tools' => [
+//                'class' => 'app\modules\tools\Module',
+//                'layout' => '@app/modules/system/views/layouts/main'
+//            ],
+//            'feedback' => [
+//                'class' => 'app\modules\feedback\Module',
+//                'layout' => '@app/modules/system/views/layouts/main'
+//            ],
+//
+//    ],
     'language' => 'ru-RU',
     'components' => [
         'request' => [
@@ -130,7 +132,12 @@ $config = [
     ],
     'params' => $params,
 ];
+// загрузка модулей
 
+require __DIR__ . '/modules.php';
+$config['modules'] = $modules();
+
+//Debug модуль
 if (YII_ENV_DEV) {
     // configuration adjustments for 'dev' environment
     $config['bootstrap'][] = 'debug';
