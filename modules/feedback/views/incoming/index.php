@@ -19,17 +19,43 @@ $this->params['breadcrumbs'][] = $this->title;
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
             'columns' => [
-                'id',
+                [
+                    'attribute' => 'id',
+                    'headerOptions' => [
+                            'width' => 50,
+                            'class' => 'text-center'
+                        ],
+                    'contentOptions' => [
+                        'class' => 'text-center'
+                    ],
+                    'filter' => ''
+                ],
                 'sender',
                 'subject',
-                'text',
                 [
                     'attribute' => 'unit',
                     'value' => 'unit.name_short',
                     'filter'=> ArrayHelper::map(Units::find()->asArray()->all(), 'name_short', 'name'),
-                    'label' => 'Подразделение-получатель'
-            ]
-
+                    'label' => 'Подразделение-получатель',
+                    'contentOptions' => [
+                        'class' => 'text-center'
+                    ],
+                    'headerOptions' => [
+                        'width' => 350,
+                        'class' => 'text-center'
+                    ],
+            ],
+                [
+                    'format' => 'raw',
+                    'attribute' => 'status',
+                    'headerOptions' => [
+                        'class' => 'text-center'
+                    ],
+                    'contentOptions' => ['class' => 'text-center'],
+                    'value' => function($model){
+                        return ($model->status) ? '<span class="text-success"><strong>Выполнено</strong></span>' : '<span class="text-danger"><strong>Активна</strong></span>';
+                        },
+                ],
             ],
             'buttonsOptions' => [
                     'template' => '{view}{delete}'

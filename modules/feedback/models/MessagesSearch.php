@@ -48,6 +48,9 @@ class MessagesSearch extends Messages
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => [
+                'defaultOrder' => ['id' => SORT_DESC],
+            ],
         ]);
         $dataProvider->sort->attributes['unit'] = [
             // The tables are the ones our relation are configured to

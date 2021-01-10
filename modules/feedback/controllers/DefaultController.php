@@ -37,7 +37,7 @@ class DefaultController extends Controller
     public function actionIndex()
     {
         $model = new Messages();
-
+        $model->scenario = 'guest_feedback';
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
 
             $model->sender = $model->unitSender . ':' . $model->sender;

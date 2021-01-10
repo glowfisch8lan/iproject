@@ -8,6 +8,7 @@ use app\modules\feedback\models\MessagesSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\ServerErrorHttpException;
 
 /**
  * IncomingController implements the CRUD actions for Messages model.
@@ -110,6 +111,29 @@ class IncomingController extends Controller
     }
 
     /**
+     * Переключение статуса заявки в "отработано"
+     * @param integer $id
+     * @return Messages the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionComplete($id)
+    {
+        $model = $this->findModel($id);
+
+        $model->status = 1;
+        if($model->load(Yii::$app->request->post()))
+        {
+            if(!$model->save())
+            {
+                throw new ServerErrorHttpException('Ошибка при изменении статуса заявки!');
+            }
+        }
+        return $this->redirect(['index']);
+
+
+    }
+
+    /**
      * Finds the Messages model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
@@ -124,4 +148,5 @@ class IncomingController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+
 }

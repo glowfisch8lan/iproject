@@ -36,9 +36,9 @@ class Messages extends \yii\db\ActiveRecord
         return [
             [['sender', 'subject', 'text', 'subject'], 'required'],
             [['sender', 'text', 'callback','subject', 'unitSender'], 'string'],
-            [['unit_id'], 'integer'],
+            [['unit_id', 'status'], 'integer'],
             [['unit_id'], 'exist', 'skipOnError' => true, 'targetClass' => Units::className(), 'targetAttribute' => ['unit_id' => 'id']],
-            ['verifyCode', 'captcha', 'captchaAction' => '/feedback/default/captcha'],
+            ['verifyCode', 'captcha', 'captchaAction' => '/feedback/default/captcha', 'on' => 'guest_feedback'],
         ];
     }
 
@@ -55,6 +55,7 @@ class Messages extends \yii\db\ActiveRecord
             'unitSender' => 'Подразделение отправителя',
             'text' => 'Содержание',
             'callback' => 'Телефон обратной связи',
+            'status' => 'Статус',
             'verifyCode' => 'Введите код:'
         ];
     }
