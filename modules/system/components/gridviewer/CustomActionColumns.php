@@ -16,6 +16,7 @@ class CustomActionColumns extends ActionColumn
     protected function renderFilterCellContent()
     {
         $url = '/'. Yii::$app->controller->module->id . '/' . Yii::$app->controller->id .  '/create';
+        $urlDeleteAll = '/'. Yii::$app->controller->module->id . '/' . Yii::$app->controller->id .  '/deleteAll';
         return Html::a('<i class="fa fa-plus" aria-hidden="true"></i></i>', $url,
             ['class' => 'btn btn-outline-info']);
     }

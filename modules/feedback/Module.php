@@ -35,6 +35,11 @@ class Module extends \app\modules\system\Module
                 'rules' => [
                     [
                         'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                    [
+                        'controllers'=>['feedback/default'],
+                        'allow' => true,
                         'actions' => ['index'],
                         'roles' => ['?'],
                     ],
