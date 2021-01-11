@@ -70,7 +70,7 @@ class UsersController extends Controller
 
         $model = $this->findModel($id);
         $model->setAttribute('password', null);
-        
+
         if ( $model->load(Yii::$app->request->post()) && $model->validate() && $model->save()) {
 
                 Groups::removeAllGroupMember($id); //Удаляем все группы пользователя;

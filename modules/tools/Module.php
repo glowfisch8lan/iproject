@@ -5,7 +5,7 @@ namespace app\modules\tools;
 /**
  * tools module definition class
  */
-class Module extends \yii\base\Module
+class Module extends \app\modules\system\Module
 {
     /**
      * {@inheritdoc}
