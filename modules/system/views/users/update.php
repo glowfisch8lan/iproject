@@ -54,11 +54,16 @@ $this->params['breadcrumbs'][] = $this->title;
                         <div id="users-groups">
 
                     <?
-                        $disabled = ($model->id == 1) ? 'disabled' : null;
+
+
                         foreach( Groups::getAllGroupList() as $val ){
+                            //TODO: Сделать проверку аккаунта на уровне движка;
+
+                                $disabled = ($val['name'] == 'Администраторы') ? 'disabled' : null;
+                                $hidden = ($model->id == 1) ? '<input type="hidden" name="Users[groups][]" value="1" />': null;
                                 $boolean = ( array_search( $val['name'], array_column( Users::getUserGroups($model->id), 'group') ) === false ) ? null : 'checked';
-                                //TODO: Сделать проверку аккаунта на уровне движка;
-                                echo '<div class="custom-control custom-checkbox">'.'<input type="checkbox" class="custom-control-input" name="Users[groups][]" id="switch' . $val['id'] . '" value="' . $val['id'] . '"' .$boolean .' '.$disabled.'>'.'<label class="custom-control-label" for="switch' . $val['id'] . '">' . $val['name'] . '</label><br>'.'</div>';
+
+                                echo $hidden . '<div class="custom-control custom-checkbox">'.'<input type="checkbox" class="custom-control-input" name="Users[groups][]" id="switch' . $val['id'] . '" value="' . $val['id'] . '"' .$boolean .' '.$disabled.'>'.'<label class="custom-control-label" for="switch' . $val['id'] . '">' . $val['name'] . '</label><br>'.'</div>';
                             }
                     ?>
 
