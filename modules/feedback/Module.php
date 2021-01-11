@@ -40,7 +40,7 @@ class Module extends \app\modules\system\Module
                     [
                         'controllers'=>['feedback/default'],
                         'allow' => true,
-                        'actions' => ['index'],
+                        'actions' => ['index', 'captcha'],
                         'roles' => ['?'],
                     ],
                 ],
