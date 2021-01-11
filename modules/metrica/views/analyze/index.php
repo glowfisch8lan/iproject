@@ -16,17 +16,18 @@ $(document).on('click', '.btn-remove', function() {
      $(this).parents('.form-group').remove();
 });
 JS;
-
+$this->title = '&laquo;Метрика&raquo; - Система поиска и анализа метрической информации';
 $this->registerJs( $js, $position = yii\web\View::POS_END, $key = null );
 ?>
 
-
-<div class="container-fluid">
-    <div class="page-title">
-        <h3>&laquo;Метрика&raquo; - Система поиска и анализа метрической информации</h3>
-    </div>
-    <div class="box box-primary">
         <div class="box-body">
+                <div class="col-md-12">
+                    <div class="col-lg-12 user-form">
+                        <div class="card">
+                            <div class="card-header"><i class="fa fa-user-circle" aria-hidden="true"></i> Анализ данных</div>
+                            <div class="card-body">
+
+
             <a href="/metrica/history">История</a>
             <? $form = ActiveForm::begin([
             'id' => 'form-analyze',
@@ -35,7 +36,6 @@ $this->registerJs( $js, $position = yii\web\View::POS_END, $key = null );
                 'data-pjax' => true
             ],
             ]);?>
-
             <h8>Введите URL</h8>
             <div id="input-url-group">
                     <?= $form->field($model, 'url[]',
@@ -46,7 +46,6 @@ $this->registerJs( $js, $position = yii\web\View::POS_END, $key = null );
 
 
             </div>
-
             <div class="form-group">
                 <?
 
@@ -63,3 +62,5 @@ $this->registerJs( $js, $position = yii\web\View::POS_END, $key = null );
         </div>
     </div>
 </div>
+                </div>
+            </div>

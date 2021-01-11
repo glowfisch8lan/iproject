@@ -70,7 +70,7 @@ $this->registerJs( $js, $position = yii\web\View::POS_END, $key = null );
 
             <div class="link-icon" style="background-image: url('<?=$bundle->baseUrl?>/img/icon/6c72f5c2bcf135a03cf336014e8ad128.jpg');"></div>
             <h4><a href="//btrx.dvuimvd.ru" target="_blank">Корпоративный портал</a></h4>
-            <p>Maecenas sed diam eget risus varius blandit sit amet non magna.</p>
+            <p>Внутренний портал учебного заведения</p>
 
 
         </div>

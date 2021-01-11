@@ -121,13 +121,12 @@ class IncomingController extends Controller
         $model = $this->findModel($id);
 
         $model->status = 1;
-        if($model->load(Yii::$app->request->post()))
-        {
+
             if(!$model->save())
             {
                 throw new ServerErrorHttpException('Ошибка при изменении статуса заявки!');
             }
-        }
+
         return $this->redirect(['index']);
 
 
