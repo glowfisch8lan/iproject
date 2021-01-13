@@ -3,7 +3,7 @@
 namespace app\modules\typography\controllers;
 
 use Yii;
-use app\modules\feedback\models\Messages;
+use app\modules\typography\models\Orders;
 use yii\web\Controller;
 use yii\web\Response;
 
@@ -37,7 +37,7 @@ class DefaultController extends Controller
 
     public function actionIndex()
     {
-        $model = new Messages();
+        $model = new Orders();
         $model->scenario = 'guest_feedback';
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {

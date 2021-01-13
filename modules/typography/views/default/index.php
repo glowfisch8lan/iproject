@@ -9,8 +9,23 @@ use app\modules\system\helpers\ArrayHelper;
 /* @var $searchModel app\modules\staff\models\StateSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Обратная связь';
+$this->title = 'Книга по-требованию';
 $this->params['breadcrumbs'][] = $this->title;
+$js = <<< JS
+$(document).ready(function() {
+//$('.file-upload').file_upload();
+
+  $('.file-upload').change(function() {
+      alert(1);
+    if (this.files[0]) // если выбрали файл
+      $('.file-label span').text(this.files[0].name);
+  });
+});
+
+
+JS;
+$this->registerJs( $js, $position = yii\web\View::POS_END, $key = null );
+
 ?>
 <div class="box-body">
     <div class="col-md-12">
@@ -26,8 +41,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <?php else: ?>
 
                 <p>
-                    Если у вас есть необходимость в решении технических проблем - пожалуйста, оставьте заявку!<br>
-                    В поле <strong>"Отправитель"</strong> и <strong>"Подразделение"</strong> укажите свои <i>данные</i>
+                    Для печати книги по-требованию - пожалуйста, оставьте заявку!<br>
                 </p>
 
                 <div class="row">
@@ -37,16 +51,25 @@ $this->params['breadcrumbs'][] = $this->title;
 
                         <?= $form->field($model, 'sender')->textInput() ?>
 
-                        <?= $form->field($model, 'unitSender')->textInput() ?>
+                        <?= $form->field($model, 'comment')->textarea(['rows' => 6]) ?>
 
-                        <?= $form->field($model, 'subject') ?>
 
-                        <?= $form->field($model, 'text')->textarea(['rows' => 6]) ?>
+                        <?=
+                        $form->field($model, 'file',
+                            ['template' =>
+                                "<div class=\"custom-file\"><div class=\"file-upload-wrapper\">{input}{label}</div></div><small class=\"text-muted\">Размер файла не должен превышать 1MB</small>"
 
-                        <?= $form->field($model, 'unit_id')->dropDownList(ArrayHelper::map(Units::find()->asArray()->all(), 'id', 'name')) ?>
+                            ])
+                            ->fileInput(
+                                [
+
+                                    'class' => 'custom-file-input file-upload'
+                                ]
+                            )->label('Выберите файл',['class' => 'custom-file-label']);
+                        ?>
 
                         <?= $form->field($model, 'verifyCode')->widget(Captcha::className(), [
-                            'captchaAction' => '/feedback/default/captcha',
+                            'captchaAction' => '/typography/default/captcha',
                             'template' => '<div class="row"><div class="col-lg-3">{image}</div><div class="col-lg-9">{input}</div></div>',
                         ]) ?>
 

@@ -3,13 +3,13 @@
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model app\modules\feedback\models\Messages */
+/* @var $model app\modules\typography\models\Orders */
 
-$this->title = 'Create Messages';
-$this->params['breadcrumbs'][] = ['label' => 'Messages', 'url' => ['index']];
+$this->title = 'Create Typography Orders';
+$this->params['breadcrumbs'][] = ['label' => 'Typography Orders', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="messages-create">
+<div class="typography-orders-create">
 
     <h1><?= Html::encode($this->title) ?></h1>
 

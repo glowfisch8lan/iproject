@@ -3,15 +3,14 @@
 namespace app\modules\typography\controllers;
 
 use Yii;
-use app\modules\feedback\models\Messages;
-use app\modules\feedback\models\MessagesSearch;
+use app\modules\typography\models\Orders;
+use app\modules\typography\models\OrdersSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use yii\web\ServerErrorHttpException;
 
 /**
- * IncomingController implements the CRUD actions for Orders model.
+ * IncomingController implements the CRUD actions for TypographyOrders model.
  */
 class IncomingController extends Controller
 {
@@ -31,12 +30,12 @@ class IncomingController extends Controller
     }
 
     /**
-     * Lists all Messages models.
+     * Lists all TypographyOrders models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new MessagesSearch();
+        $searchModel = new OrdersSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -46,7 +45,7 @@ class IncomingController extends Controller
     }
 
     /**
-     * Displays a single Messages model.
+     * Displays a single TypographyOrders model.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -59,13 +58,13 @@ class IncomingController extends Controller
     }
 
     /**
-     * Creates a new Messages model.
+     * Creates a new TypographyOrders model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new Messages();
+        $model = new Orders();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -77,7 +76,7 @@ class IncomingController extends Controller
     }
 
     /**
-     * Updates an existing Messages model.
+     * Updates an existing TypographyOrders model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -97,7 +96,7 @@ class IncomingController extends Controller
     }
 
     /**
-     * Deletes an existing Messages model.
+     * Deletes an existing TypographyOrders model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -111,41 +110,18 @@ class IncomingController extends Controller
     }
 
     /**
-     * Переключение статуса заявки в "отработано"
-     * @param integer $id
-     * @return Messages the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionComplete($id)
-    {
-        $model = $this->findModel($id);
-
-        $model->status = 1;
-
-            if(!$model->save())
-            {
-                throw new ServerErrorHttpException('Ошибка при изменении статуса заявки!');
-            }
-
-        return $this->redirect(['index']);
-
-
-    }
-
-    /**
-     * Finds the Messages model based on its primary key value.
+     * Finds the TypographyOrders model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Messages the loaded model
+     * @return Orders the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Messages::findOne($id)) !== null) {
+        if (($model = Orders::findOne($id)) !== null) {
             return $model;
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
-
 }

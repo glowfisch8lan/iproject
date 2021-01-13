@@ -4,41 +4,39 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model app\modules\feedback\models\Messages */
+/* @var $model app\modules\typography\models\Orders */
 
-$this->title = 'Заявка #'.$model->id;
-$this->params['breadcrumbs'][] = ['label' => 'Входящие', 'url' => ['/feedback/incoming']];
+$this->title = $model->id;
+$this->params['breadcrumbs'][] = ['label' => 'Typography Orders', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
-<div class="box-body pt-3 pl-5">
-    <div class="row">
-        <div class="col-md-6">
-            <div class="card">
-                <h5 class="card-header"><?= Html::encode($this->title) ?></h5>
-                <div class="card-body">
-                    <h5 class="card-title"></h5>
-                    <p class="card-text">
-                        <?= Html::a('Выполнено', ['complete', 'id' => $model->id], ['class' => 'btn btn-success']) ?>
-                        <?= Html::a('Удалить', ['delete', 'id' => $model->id], [
-                            'class' => 'btn btn-danger',
-                            'data' => [
-                                'confirm' => 'Are you sure you want to delete this item?',
-                                'method' => 'post',
-                            ],
-                        ]) ?>
+<div class="typography-orders-view">
 
-                        <?= DetailView::widget([
-                            'model' => $model,
-                            'attributes' => [
-                            'sender',
-                            'unit_id',
-                            'subject',
-                            'text']
-                        ]) ?>
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
+    <h1><?= Html::encode($this->title) ?></h1>
+
+    <p>
+        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
+            'class' => 'btn btn-danger',
+            'data' => [
+                'confirm' => 'Are you sure you want to delete this item?',
+                'method' => 'post',
+            ],
+        ]) ?>
+    </p>
+
+    <?= DetailView::widget([
+        'model' => $model,
+        'attributes' => [
+            'id',
+            'sender',
+            'sender_unit_id',
+            'receiver',
+            'receiver_unit_id',
+            'comment',
+            'file_uuid:ntext',
+        ],
+    ]) ?>
+
 </div>
