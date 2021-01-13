@@ -59,7 +59,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         foreach( Groups::getAllGroupList() as $val ){
                             //TODO: Сделать проверку аккаунта на уровне движка;
 
-                                $disabled = ($val['name'] == 'Администраторы') ? 'disabled' : null;
+                                $disabled = ($val['name'] == 'Администраторы' && $model->id == 1) ? 'disabled' : null;
                                 $hidden = ($model->id == 1) ? '<input type="hidden" name="Users[groups][]" value="1" />': null;
                                 $boolean = ( array_search( $val['name'], array_column( Users::getUserGroups($model->id), 'group') ) === false ) ? null : 'checked';
 

@@ -38,6 +38,9 @@ $bundle = AppAsset::register($this);
                 <li class="nav-item">
                     <a class="nav-link" href="/feedback">Обратная связь</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/typography">Типография</a>
+                </li>
             </ul>
             <a href="//dvuimvd.ru"><div class="logo" style="background-image: url('<?=$bundle->baseUrl?>/img/icon/logo.png')"></div></a><h3 class="text-muted">ДВЮИ МВД России</h3>
         </div>

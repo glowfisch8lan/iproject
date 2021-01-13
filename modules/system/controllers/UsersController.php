@@ -52,7 +52,7 @@ class UsersController extends Controller
     {
             $model = new Users();
 
-            if ( $model->load(Yii::$app->request->post()) && $model->validate()) {
+            if ( $model->load(Yii::$app->request->post())) {
                 if($model->save()){
                     Groups::addMembers(ArrayHelper::indexMap($model->groups, $model->id)); //Добавляем список групп в system_users_groups заново;
                     return $this->redirect(['index']);
@@ -65,20 +65,20 @@ class UsersController extends Controller
 
     }
 
+    //TODO: сделать проверку и валидацию пароля;
     public function actionUpdate($id)
     {
 
         $model = $this->findModel($id);
+        $old_password = $model->password;
         $model->setAttribute('password', null);
 
-        if ( $model->load(Yii::$app->request->post()) && $model->validate() && $model->save()) {
+        if ( $model->load(Yii::$app->request->post()) && $model->save()) {
+               Groups::removeAllGroupMember($id); //Удаляем все группы пользователя;
+               Groups::addMembers(ArrayHelper::indexMap($model->groups, $model->id)); //Добавляем список групп в system_users_groups заново;
 
-                Groups::removeAllGroupMember($id); //Удаляем все группы пользователя;
-                Groups::addMembers(ArrayHelper::indexMap($model->groups, $model->id)); //Добавляем список групп в system_users_groups заново;
-
-                return $this->redirect(['index']);
-
-        }
+               return $this->redirect(['index']);
+            }
 
         return $this->render('update', [
             'model' => $model

@@ -1,6 +1,6 @@
 <?php
 
-namespace app\modules\feedback;
+namespace app\modules\typography;
 
 /**
  * feedback module definition class
@@ -10,20 +10,20 @@ class Module extends \app\modules\system\Module
     /**
      * {@inheritdoc}
      */
-    public $controllerNamespace = 'app\modules\feedback\controllers';
-    public $name = "Обратная связь";
+    public $controllerNamespace = 'app\modules\typography\controllers';
+    public $name = "Типография";
     public $defaultController = 'index';
-    public $modelNamespace = 'app\modules\feedback\models';
-    public $link = 'feedback';
-    public $icon = 'fa fa-comments-o';
-    public $visible = 'viewFeedback';
-    public $description = "Модуль управления учетными записями и группами, контроля доступа и иным системным функционалом";
+    public $modelNamespace = 'app\modules\typography\models';
+    public $link = 'typography';
+    public $icon = 'fa fa-book';
+    public $visible = 'viewTypography';
+    public $description = "Модуль обработки задач типографии";
 
     public $routes = [
-        [   'route' => '/feedback/incoming',
-            'name' => 'Обращения',
-            'access' => 'viewFeedback',
-            'description' => 'Доступ к обращениям',
+        [   'route' => '/typography/incoming',
+            'name' => 'Печать по-требованию',
+            'access' => 'viewTypographyPrintOnDemand',
+            'description' => 'Доступ к входящим заявкам на печать',
             'visible' => true,
         ],
     ];

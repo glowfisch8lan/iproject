@@ -27,7 +27,8 @@ class Users extends ActiveRecord implements IdentityInterface
                 'on' => 'create'
             ],
             ['login', 'unique'],
-            ['password', 'safe'],
+            ['password', 'default', 'value' => null],
+//            ['password', 'match', 'pattern' => '/[a-z0-9]*/', 'message' => 'Пароль не должен содержать пробелы'],
 
         ];
 
@@ -37,7 +38,8 @@ class Users extends ActiveRecord implements IdentityInterface
     {
 
         if(parent::beforeSave($insert)){
-          (empty($this->password) && Yii::$app->controller->action->id == 'update') ? $this->setPassword($this->oldAttributes['password']) : $this->setPassword($this->password);
+
+            (empty($this->password) && Yii::$app->controller->action->id == 'update') ? null : $this->setPassword($this->password);
           return true;
         }
         return false;
