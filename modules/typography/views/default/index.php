@@ -5,6 +5,7 @@ use yii\widgets\ActiveForm;
 use yii\captcha\Captcha;
 use app\modules\staff\models\Units;
 use app\modules\system\helpers\ArrayHelper;
+use app\modules\system\helpers\FileUpload;
 /* @var $this yii\web\View */
 /* @var $searchModel app\modules\staff\models\StateSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -54,19 +55,7 @@ $this->registerJs( $js, $position = yii\web\View::POS_END, $key = null );
                         <?= $form->field($model, 'comment')->textarea(['rows' => 6]) ?>
 
 
-                        <?=
-                        $form->field($model, 'file',
-                            ['template' =>
-                                "<div class=\"custom-file\"><div class=\"file-upload-wrapper\">{input}{label}</div></div><small class=\"text-muted\">Размер файла не должен превышать 1MB</small>"
-
-                            ])
-                            ->fileInput(
-                                [
-
-                                    'class' => 'custom-file-input file-upload'
-                                ]
-                            )->label('Выберите файл',['class' => 'custom-file-label']);
-                        ?>
+                        <?=FileUpload::init($form,$model)?>
 
                         <?= $form->field($model, 'verifyCode')->widget(Captcha::className(), [
                             'captchaAction' => '/typography/default/captcha',
