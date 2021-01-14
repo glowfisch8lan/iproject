@@ -55,4 +55,8 @@ class DefaultController extends Controller
             'model' => $model,
         ]);
     }
+
+    public function actionStatus(){
+        return $this->render('status');
+    }
 }

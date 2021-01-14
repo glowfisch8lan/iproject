@@ -15,15 +15,8 @@ class SettingsController extends Controller
 {
     public function actionIndex()
     {
-        $settings = new Settings();
-        $dataProvider = new ActiveDataProvider([
-            'query' => Pattern::find(),
-        ]);
-
-
         return $this->render('index', [
-            'settings' => $settings,
-            'dataProvider' => $dataProvider
+            'SettingsMenuItems' => $module = \Yii::$app->controller->module->SettingsMenuItems
         ]);
     }
 

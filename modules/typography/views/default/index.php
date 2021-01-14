@@ -40,6 +40,9 @@ $this->registerJs( $js, $position = yii\web\View::POS_END, $key = null );
                 </div>
 
             <?php else: ?>
+            <p>
+                Статус заявки можете узнать <a href="/typography/status">здесь!</a><br>
+            </p>
 
                 <p>
                     Для печати книги по-требованию - пожалуйста, оставьте заявку!<br>

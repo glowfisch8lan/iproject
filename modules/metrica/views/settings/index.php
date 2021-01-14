@@ -4,6 +4,7 @@
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
 use yii\web\View;
+use app\modules\system\helpers\Settings;
 
 
 ?>
@@ -14,22 +15,13 @@ use yii\web\View;
     <div class="box box-primary">
         <div class="box-body">
             <ul class="nav nav-tabs" id="myTab" role="tablist">
-                <li class="nav-item">
-                    <a class="nav-link active" id="general-tab" data-toggle="tab" href="#general" role="tab" aria-controls="general" aria-selected="true">General</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="template-tab" data-toggle="tab" href="#template" role="tab" aria-controls="template" aria-selected="false">Шаблоны</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="patterns-tab" data-toggle="tab" href="#patterns" role="tab" aria-controls="patterns" aria-selected="false">Паттерны</a>
-                </li>
+                <?= Settings::menu($SettingsMenuItems);?>
             </ul>
 
             <div class="tab-content" id="myTabContent">
-
                 <div class="tab-pane fade active show" id="general" role="tabpanel" aria-labelledby="general-tab">
                     <div class="col-md-6">
-                        <p class="text-muted">General settings such as, site title, site description, address and so on.</p>
+                        <p class="text-muted">Основные настройки модуля</p>
                         <div class="form-group">
                             <label for="site-title" class="form-control-label">Site Title</label>
                             <input type="text" name="site_title" class="form-control">
@@ -61,39 +53,6 @@ use yii\web\View;
                         <div class="form-group text-right">
                             <button class="btn btn-success" type="submit"><i class="fas fa-check"></i> Save</button>
                         </div>
-                    </div>
-                </div>
-
-                <div class="tab-pane fade" id="template" role="tabpanel" aria-labelledby="template-tab">
-                    <div class="col-md-6">
-                        <p class="text-muted">Настройки шаблонов отчетов модуля "Метрика"</p>
-
-                        <?php $form = ActiveForm::begin([
-
-                                'action' => '/metrica/settings/upload',
-                                'options' => []
-
-                        ]) ?>
-
-                        <div class="custom-file">
-
-                            <?=
-                            $form->field($settings, 'template',
-                                ['template'=>
-                                    "{input}{label}<small class=\"text-muted\">The file must have a maximum size of 1MB</small>"
-
-                                ])
-                                ->fileInput(
-                                    [
-                                        'class' => 'custom-file-input'
-                                    ]
-                                )->label('Выберите файл',['class' => 'custom-file-label']);
-                            ?>
-                        </div>
-
-                        <? echo Html::submitButton('<i class="fas fa-check"></i> Сохранить', ['class' => 'btn btn-success']);?>
-                        <?php ActiveForm::end() ?>
-
                     </div>
                 </div>
 
