@@ -5,7 +5,7 @@ use yii\widgets\ActiveForm;
 use yii\captcha\Captcha;
 use app\modules\staff\models\Units;
 use app\modules\system\helpers\ArrayHelper;
-use app\modules\system\helpers\FileUpload;
+use app\modules\system\helpers\Files;
 /* @var $this yii\web\View */
 /* @var $searchModel app\modules\staff\models\StateSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -17,8 +17,9 @@ $(document).ready(function() {
 //$('.file-upload').file_upload();
 
   $('.file-upload').change(function() {
-      alert(1);
-    if (this.files[0]) // если выбрали файл
+      console.log(this.files[0]);
+    if(typeof this.files[0] != undefined) // если выбрали файл
+        alert(1);
       $('.file-label span').text(this.files[0].name);
   });
 });
@@ -45,7 +46,7 @@ $this->registerJs( $js, $position = yii\web\View::POS_END, $key = null );
             </p>
 
                 <p>
-                    Для печати книги по-требованию - пожалуйста, оставьте заявку!<br>
+                 Для печати книги по-требованию - пожалуйста, оставьте заявку!<br>
                 </p>
 
                 <div class="row">
@@ -58,7 +59,7 @@ $this->registerJs( $js, $position = yii\web\View::POS_END, $key = null );
                         <?= $form->field($model, 'comment')->textarea(['rows' => 6]) ?>
 
 
-                        <?=FileUpload::init($form,$model)?>
+                        <?=Files::init($form,$model)?>
 
                         <?= $form->field($model, 'verifyCode')->widget(Captcha::className(), [
                             'captchaAction' => '/typography/default/captcha',

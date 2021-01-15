@@ -40,16 +40,18 @@ class DefaultController extends Controller
         $model = new Orders();
         $model->scenario = 'guest_feedback';
 
-        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-
-            $model->sender = $model->unitSender . ':' . $model->sender;
-            if($model->save()){
-                Yii::$app->session->setFlash('id', $model->id);
-            Yii::$app->session->setFlash('contactFormSubmitted');
-
-            return $this->refresh();
-            }
-        }
+        var_dump(Yii::$app->request->post());
+        /* Действия при загрузке */
+//        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+//
+//            $model->sender = $model->unitSender . ':' . $model->sender;
+//            if($model->save()){
+//                Yii::$app->session->setFlash('id', $model->id);
+//            Yii::$app->session->setFlash('contactFormSubmitted');
+//
+//            return $this->refresh();
+//            }
+//        }
 
         return $this->render('index', [
             'model' => $model,
