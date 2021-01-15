@@ -189,7 +189,6 @@ class Modules extends \yii\base\Module
      */
     public static function createArrayDataProvider(): array
     {
-
         $modules = self::getAllModules($includeDisabledModules = true);
         $data = [];
 

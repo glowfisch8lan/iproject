@@ -11,7 +11,6 @@ class ModulesController extends \yii\web\Controller
     public function actionIndex()
     {
 
-
         $data = Modules::createArrayDataProvider();
         $dataProvider = new ArrayDataProvider([
             'allModels' => $data,
