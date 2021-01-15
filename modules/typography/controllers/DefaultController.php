@@ -5,8 +5,9 @@ namespace app\modules\typography\controllers;
 use Yii;
 use app\modules\typography\models\Orders;
 use yii\web\Controller;
+use yii\web\NotFoundHttpException;
 use yii\web\Response;
-
+use yii\base\DynamicModel;
 /**
  * Default controller for the `typography` module
  */
@@ -57,6 +58,30 @@ class DefaultController extends Controller
     }
 
     public function actionStatus(){
-        return $this->render('status');
+        $model = new DynamicModel(['id', 'verifyCode', ]);
+        $model
+            ->addRule('id', 'required', ['message' => 'Пожалуйста, заполните номер заявки'])
+            ->addRule('verifyCode', 'required', ['message' => 'Введите проверочный код']);
+
+        if( $model->load(Yii::$app->request->post()) && $model->validate() ){
+            $order = $this->findModel($model->id);
+            if(!$order){
+                throw new NotFoundHttpException('Извините, данной заявки нет в базе!');
+            }
+            Yii::$app->session->setFlash('statusFormSubmitted');
+            Yii::$app->session->setFlash('status', $order->status);
+            return $this->refresh();
+        }
+        return $this->render('status', [
+            'model' => $model,
+        ]);
+    }
+
+    protected function findModel($id)
+    {
+        if (($model = Orders::findOne($id)) !== null) {
+            return $model;
+        }
+        return false;
     }
 }

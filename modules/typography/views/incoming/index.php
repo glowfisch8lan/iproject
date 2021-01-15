@@ -54,7 +54,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                     'contentOptions' => ['class' => 'text-center'],
                     'value' => function($model){
-                        return ($model->status) ? '<span class="text-success"><strong>Выполнено</strong></span>' : '<span class="text-danger"><strong>Активна</strong></span>';
+                        return ($model->status) ? '<span class="text-success"><strong>Выполнено</strong></span>' : '<span class="text-warning"><strong>В обработке</strong></span>';
                     },
                 ],
             ],
