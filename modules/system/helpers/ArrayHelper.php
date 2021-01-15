@@ -12,7 +12,6 @@ class ArrayHelper extends \yii\helpers\ArrayHelper
      */
     public static function indexMap($array,$key){
 
-
         $dataArray = [];var_dump($key);
         foreach($array as $value) {
             $dataArray[] = [(int) $key, (int) $value];
@@ -25,6 +24,7 @@ class ArrayHelper extends \yii\helpers\ArrayHelper
      * Перестройка массива к  массиву вида [[ $key => $value1 . $value2 . $valueN ]];
      */
     public static function mapMerge($array, $mainKey, $mergeKeys, $separator = null){
+
         $rows = [];
         foreach($array as $value){
 

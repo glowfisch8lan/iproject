@@ -42,7 +42,7 @@ $this->registerJs( $js, $position = yii\web\View::POS_END, $key = null );
 
             <?php else: ?>
             <p>
-                Статус заявки можете узнать <a href="/typography/status">здесь!</a><br>
+                Статус заявки можете узнать <a href="/typography/default/status">здесь!</a><br>
             </p>
 
                 <p>
