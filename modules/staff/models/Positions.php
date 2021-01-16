@@ -22,7 +22,6 @@ class Positions extends ActiveRecord
     }
 
     public static function getListPositions($row){
-
       if(count($row) === 1){
         $data = self::find()->asArray()->all();
         foreach($data as $key => $value){

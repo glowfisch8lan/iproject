@@ -4,6 +4,7 @@ namespace app\modules\typography\controllers;
 
 use Yii;
 use app\modules\typography\models\Orders;
+use yii\helpers\Json;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
@@ -45,9 +46,13 @@ class DefaultController extends Controller
         /* Действия при загрузке */
        if ($model->load(Yii::$app->request->post())) {
 
+           $model->sender = $model->position . ' ' . $model->sender;
+           $model->receiver_unit_id = null; //унести в параметр;
+
            $uploadManager = new UploadManager();
            $uploadManager->file = UploadManager::getInstance($model, 'file');
-           $uploadManager->upload();
+           $model->file_uuid = Json::encode($uploadManager->upload());
+           var_dump($model->save());
 
        //    $files->upload
 

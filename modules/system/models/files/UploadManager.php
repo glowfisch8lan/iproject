@@ -12,6 +12,7 @@ class UploadManager extends UploadedFile
 
     public static $uploadPath = '/data/';
     public $file;
+    private $uuid;
 
     /**
      * Генерация нового UUID.
@@ -39,8 +40,17 @@ class UploadManager extends UploadedFile
     //TODO: Настроить валидацию
     public function upload()
     {
-        $path = Yii::getAlias('@app') . self::$uploadPath . $this->getModule() .'/'. $this->generateUUID();
+        $uuid = $this->generateUUID();
+        $path = Yii::getAlias('@app') . self::$uploadPath . $this->getModule() .'/'. $uuid;
+        $extension = $this->file->extension;
+        $filename = md5(date('ymdhms') . '_' . $this->file->baseName);
+
         if(!file_exists($path)){mkdir($path, 0775, true);}
-        return $this->file->saveAs($path . '/' . md5(date('ymdhms') . '_' . $this->file->baseName) . '.' . $this->file->extension);
+        if($this->file->saveAs($path . '/' . $filename . '.' . $extension))
+        {
+            return [$uuid, $filename, base64_encode($extension)];
+        }
+
+
     }
 }

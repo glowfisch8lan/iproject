@@ -14,6 +14,7 @@ use app\modules\staff\models\Units;
  * @property int|null $receiver_unit_id Подразделение получателя
  * @property int $comment Комментарий
  * @property string $file_uuid UUID каталога
+ * @property string $edition  Тираж, кол-во экземпляров
  *
  * @property Units $receiverUnit
  * @property Units $senderUnit
@@ -22,6 +23,7 @@ class Orders extends \yii\db\ActiveRecord
 {
     public $verifyCode;
     public $file;
+    public $position;
 
     /**
      * {@inheritdoc}
@@ -37,14 +39,13 @@ class Orders extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['sender', 'comment', 'file_uuid'], 'required'],
+            [['sender', 'comment', 'file_uuid', 'position', 'edition'], 'required'],
             [['sender', 'file_uuid'], 'string'],
-            [['sender_unit_id', 'receiver', 'receiver_unit_id', 'status'], 'integer'],
+            [['sender_unit_id', 'receiver', 'receiver_unit_id', 'status', 'edition'], 'integer'],
             [['receiver_unit_id'], 'exist', 'skipOnError' => true, 'targetClass' => Units::className(), 'targetAttribute' => ['receiver_unit_id' => 'id']],
             [['sender_unit_id'], 'exist', 'skipOnError' => true, 'targetClass' => Units::className(), 'targetAttribute' => ['sender_unit_id' => 'id']],
             ['verifyCode', 'captcha', 'captchaAction' => '/feedback/default/captcha', 'on' => 'guest'],
-            ['file', 'safe']
-//            [['file'], 'file', 'extensions' => ['png', 'jpg', 'gif'], 'maxSize' => 1024 * 1024 * 0.5],
+            [['file'], 'file', 'extensions' => ['pdf'], 'maxSize' => 1024 * 1024 * 0.5],
         ];
     }
 
@@ -62,6 +63,7 @@ class Orders extends \yii\db\ActiveRecord
             'comment' => 'Комментарий',
             'file_uuid' => 'UUID каталога',
             'status' => 'Статус',
+            'edition' => 'Тираж (кол-во экз.)'
         ];
     }
 

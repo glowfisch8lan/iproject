@@ -49,6 +49,13 @@ class Units extends \yii\db\ActiveRecord
         ];
     }
 
+//    public static function getUnitByID($id){
+//        return static::findOne($id);
+//    }
+//
+//    public static function getUnitByName($name){
+//        return static::findOne()->where('name = :name', [':name' => $name]);
+//    }
     /**
      * Gets query for [[StaffVacancies]].
      *

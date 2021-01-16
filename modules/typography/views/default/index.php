@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\captcha\Captcha;
+use app\modules\staff\models\Positions;
 use app\modules\staff\models\Units;
 use app\modules\system\helpers\ArrayHelper;
 use app\modules\system\helpers\FileUpload;
@@ -52,12 +53,18 @@ $this->registerJs( $js, $position = yii\web\View::POS_END, $key = null );
                 <div class="row">
                     <div class="col-lg-8">
 
-                        <?php $form = ActiveForm::begin(['id' => 'feedback-form']); ?>
+                        <?php $form = ActiveForm::begin([
+                                'id' => 'feedback-form',
+                                'fieldConfig' => [
+                                    'template' => "{label}{input}{hint}{error}",
+                                ],
+                            ]); ?>
 
-                        <?= $form->field($model, 'sender')->textInput() ?>
-
+                        <?= $form->field($model, 'sender')->textInput()->label('ФИО') ?>
+                        <?= $form->field($model, 'sender_unit_id')->dropDownList(ArrayHelper::map(Units::find()->asArray()->all(), 'id', 'name'))->label('Подразделение') ?>
+                        <?= $form->field($model, 'position')->dropDownList(ArrayHelper::map(Positions::find()->asArray()->all(), 'name', 'name'))->label('Должность') ?>
+                        <?= $form->field($model, 'edition')->textInput()?>
                         <?= $form->field($model, 'comment')->textarea(['rows' => 6]) ?>
-
 
                         <?=FileUpload::widget($form,$model)?>
 
