@@ -56,6 +56,23 @@ update-manager: разработать;
     ];
 ```
 
+<h2>Files</h2>
+В модели необходимо:
+1. Определить $file для ActiveForm.
+2. Задать правила валидации $file.
+```php
+/*
+ * Отображение в View поля загрузки файла. 
+ * @param static $form Созданный ActiveForm статическая сущность.
+ * $param $model Модель формы.
+ * $param string $var Переменная модели, отвечающая за хранение данных о файлах. По-умолчанию: 'file'.
+ */
+public static function widget($form, $model,$var){}
+
+   
+
+````
+
 <h2>GridHelper</h2>
 
 ```php

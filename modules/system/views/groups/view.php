@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 use yii\helpers\ArrayHelper;
 use yii\widgets\DetailView;
-use app\modules\system\helpers\GridHelper;
+use app\modules\system\helpers\Grid;
 use yii\widgets\ActiveForm;
 
 
@@ -62,7 +62,7 @@ use yii\widgets\ActiveForm;
                                 ]
                             ]);
                     };
-                    echo GridHelper::initWidget([
+                    echo Grid::initWidget([
                         'dataProvider' => $dataProvider,
                         'columns' => [
                             [

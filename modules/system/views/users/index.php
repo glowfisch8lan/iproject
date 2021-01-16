@@ -1,7 +1,7 @@
 <?php
 
 use yii\helpers\Html;
-use app\modules\system\helpers\GridHelper;
+use app\modules\system\helpers\Grid;
 
 
 /* @var $this yii\web\View */
@@ -13,7 +13,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="box-body">
     <div class="col-md-12">
-        <?= GridHelper::initWidget([
+        <?= Grid::initWidget([
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
             'columns' => [

@@ -6,7 +6,7 @@ namespace app\modules\system\helpers;
 use Yii;
 use app\modules\system\models\rbac\AccessControl;
 
-class MenuHelper
+class Menu
 {
 
     private static function buildMenu($data){

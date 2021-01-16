@@ -6,7 +6,7 @@
 use yii\web\View;
 use yii\helpers\Html;
 use yii\widgets\Breadcrumbs;
-use app\modules\system\helpers\MenuHelper;
+use app\modules\system\helpers\Menu;
 use app\modules\system\SystemAsset;
 use app\modules\system\models\interfaces\modules\Modules;
 
@@ -83,7 +83,7 @@ $this->registerJs($script, $position);
             <ul class="list-unstyled components">
                 <li> <a href="/my"><i class="fa fa-home"></i> Личный кабинет</a> </li>
 <!--                <li> <span class="ml-3"></span> </li>-->
-                <?= MenuHelper::widget(Modules::getAllModules());?>
+                <?= Menu::widget(Modules::getAllModules());?>
             </ul>
         </nav>
         <div id="body" class="active">

@@ -8,6 +8,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\base\DynamicModel;
+use app\modules\system\models\files\UploadManager;
 /**
  * Default controller for the `typography` module
  */
@@ -39,11 +40,18 @@ class DefaultController extends Controller
     public function actionIndex()
     {
         $model = new Orders();
-        $model->scenario = 'guest_feedback';
+        $model->scenario = 'guest';
 
-        var_dump(Yii::$app->request->post());
         /* Действия при загрузке */
-//        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+       if ($model->load(Yii::$app->request->post())) {
+
+           $uploadManager = new UploadManager();
+           $uploadManager->file = UploadManager::getInstance($model, 'file');
+           $uploadManager->upload();
+
+       //    $files->upload
+
+
 //
 //            $model->sender = $model->unitSender . ':' . $model->sender;
 //            if($model->save()){
@@ -52,7 +60,7 @@ class DefaultController extends Controller
 //
 //            return $this->refresh();
 //            }
-//        }
+        }
 
         return $this->render('index', [
             'model' => $model,

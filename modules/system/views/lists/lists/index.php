@@ -1,7 +1,7 @@
 <?php
 
 use yii\helpers\Html;
-use app\modules\system\helpers\GridHelper;
+use app\modules\system\helpers\Grid;
 use yii\helpers\Url;
 use yii\widgets\Breadcrumbs;
 
@@ -15,7 +15,7 @@ $this->title = 'Справочник';
 
         <div class="box-body">
             <div class="col-md-12">
-                <?=GridHelper::initWidget([
+                <?=Grid::initWidget([
                     'dataProvider' => $dataProvider,
                     'columns' => [
                         [    'format' => 'raw',

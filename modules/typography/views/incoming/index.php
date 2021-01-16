@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
-use app\modules\system\helpers\GridHelper;
+use app\modules\system\helpers\Grid;
 use app\modules\system\helpers\ArrayHelper;
 use app\modules\staff\models\Units;
 /* @var $this yii\web\View */
@@ -19,7 +19,7 @@ $this->params['breadcrumbs'][] = $this->title;
 'receiver_unit_id',
 <div class="box-body">
     <div class="col-md-12">
-        <?= GridHelper::initWidget([
+        <?= Grid::initWidget([
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
             'columns' => [

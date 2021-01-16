@@ -1,7 +1,7 @@
 <?php
 
 use yii\helpers\Html;
-use \app\modules\system\helpers\GridHelper;
+use \app\modules\system\helpers\Grid;
 
 
 /* @var $this yii\web\View */
@@ -19,7 +19,7 @@ $this->title = 'Справочник';
         <div class="box-body">
             <div class="col-md-12">
 
-                <?= GridHelper::table($dataProvider,
+                <?= Grid::table($dataProvider,
 
                     [
                         [   'attribute' => 'id',

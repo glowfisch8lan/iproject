@@ -22,6 +22,7 @@ class Orders extends \yii\db\ActiveRecord
 {
     public $verifyCode;
     public $file;
+
     /**
      * {@inheritdoc}
      */
@@ -38,9 +39,12 @@ class Orders extends \yii\db\ActiveRecord
         return [
             [['sender', 'comment', 'file_uuid'], 'required'],
             [['sender', 'file_uuid'], 'string'],
-            [['sender_unit_id', 'receiver', 'receiver_unit_id', 'comment', 'status'], 'integer'],
+            [['sender_unit_id', 'receiver', 'receiver_unit_id', 'status'], 'integer'],
             [['receiver_unit_id'], 'exist', 'skipOnError' => true, 'targetClass' => Units::className(), 'targetAttribute' => ['receiver_unit_id' => 'id']],
             [['sender_unit_id'], 'exist', 'skipOnError' => true, 'targetClass' => Units::className(), 'targetAttribute' => ['sender_unit_id' => 'id']],
+            ['verifyCode', 'captcha', 'captchaAction' => '/feedback/default/captcha', 'on' => 'guest'],
+            ['file', 'safe']
+//            [['file'], 'file', 'extensions' => ['png', 'jpg', 'gif'], 'maxSize' => 1024 * 1024 * 0.5],
         ];
     }
 

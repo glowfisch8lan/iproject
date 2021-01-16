@@ -2,7 +2,7 @@
 
 use yii\helpers\Html;
 use yii\helpers\Url;
-use app\modules\system\helpers\GridHelper;
+use app\modules\system\helpers\Grid;
 
 
 /* @var $this yii\web\View */
@@ -26,7 +26,7 @@ $this->title = 'Справочник';
                         ['class' => 'btn btn-outline-info', 'data' => ['method' => 'post', 'params' => ['parent_id' => $model->parent->id]]]);
                 };
                 $urlCreate = '/'. Yii::$app->controller->module->id . '/' . Yii::$app->controller->id .  '/create';
-                echo GridHelper::initWidget([
+                echo Grid::initWidget([
                     'dataProvider' => $dataProvider,
                     'columns' => [[
                         'format' => 'raw',

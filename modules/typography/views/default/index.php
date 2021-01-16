@@ -5,7 +5,7 @@ use yii\widgets\ActiveForm;
 use yii\captcha\Captcha;
 use app\modules\staff\models\Units;
 use app\modules\system\helpers\ArrayHelper;
-use app\modules\system\helpers\Files;
+use app\modules\system\helpers\FileUpload;
 /* @var $this yii\web\View */
 /* @var $searchModel app\modules\staff\models\StateSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -20,7 +20,7 @@ $(document).ready(function() {
       console.log(this.files[0]);
     if(typeof this.files[0] != undefined) // если выбрали файл
         alert(1);
-      $('.file-label span').text(this.files[0].name);
+      $('.custom-file-label').text(this.files[0].name);
   });
 });
 
@@ -59,7 +59,7 @@ $this->registerJs( $js, $position = yii\web\View::POS_END, $key = null );
                         <?= $form->field($model, 'comment')->textarea(['rows' => 6]) ?>
 
 
-                        <?=Files::init($form,$model)?>
+                        <?=FileUpload::widget($form,$model)?>
 
                         <?= $form->field($model, 'verifyCode')->widget(Captcha::className(), [
                             'captchaAction' => '/typography/default/captcha',
@@ -68,7 +68,7 @@ $this->registerJs( $js, $position = yii\web\View::POS_END, $key = null );
 
                         <div class="d-flex flex-row justify-content-end"">
                             <div class="form-group justify-content-end" style="border:1px solid black">
-                                <?= Html::submitButton('Отправить', ['class' => 'btn btn-primary', 'name' => 'contact-button']) ?>
+                                <?= Html::submitButton('Отправить', ['class' => 'btn btn-primary']) ?>
                             </div>
                         </div>
 
