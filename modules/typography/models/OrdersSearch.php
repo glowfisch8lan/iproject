@@ -41,6 +41,7 @@ class OrdersSearch extends Orders
     public function search($params)
     {
         $query = Orders::find();
+        $query->joinWith(['senderUnit']);
 
         // add conditions that should always apply here
 

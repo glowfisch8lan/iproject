@@ -52,19 +52,11 @@ class DefaultController extends Controller
            $uploadManager = new UploadManager();
            $uploadManager->file = UploadManager::getInstance($model, 'file');
            $model->file_uuid = Json::encode($uploadManager->upload());
-           var_dump($model->save());
-
-       //    $files->upload
-
-
-//
-//            $model->sender = $model->unitSender . ':' . $model->sender;
-//            if($model->save()){
-//                Yii::$app->session->setFlash('id', $model->id);
-//            Yii::$app->session->setFlash('contactFormSubmitted');
-//
-//            return $this->refresh();
-//            }
+           if($model->save()){
+               Yii::$app->session->setFlash('orderFormSubmitted');
+               Yii::$app->session->setFlash('id', $model->id);
+               return $this->refresh();
+           }
         }
 
         return $this->render('index', [

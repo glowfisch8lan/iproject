@@ -36,11 +36,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 'sender',
                 [
-                    'attribute' => 'sender_unit_id',
+                    'attribute' => 'senderUnit.name',
                     'filter'=> ArrayHelper::map(Units::find()->asArray()->all(), 'name_short', 'name'),
                     'contentOptions' => [
                         'class' => 'text-center'
                     ],
+                    'label' => 'Подразделение отправителя',
                     'headerOptions' => [
                         'width' => 350,
                         'class' => 'text-center'
@@ -69,37 +70,4 @@ $this->params['breadcrumbs'][] = $this->title;
 
         ]);?>
     </div>
-</div>
-
-<div class="typography-orders-index">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <p>
-        <?= Html::a('Create Typography Orders', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
-
-    <?php Pjax::begin(); ?>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
-            'id',
-            'sender',
-            'sender_unit_id',
-            'receiver',
-            'receiver_unit_id',
-            //'comment',
-            //'file_uuid:ntext',
-
-            ['class' => 'yii\grid\ActionColumn'],
-        ],
-    ]); ?>
-
-    <?php Pjax::end(); ?>
-
 </div>

@@ -35,7 +35,7 @@ $this->registerJs( $js, $position = yii\web\View::POS_END, $key = null );
         <div class="site-contact">
             <h1><?= Html::encode($this->title) ?></h1>
 
-            <?php if (Yii::$app->session->hasFlash('contactFormSubmitted')): ?>
+            <?php if (Yii::$app->session->hasFlash('orderFormSubmitted')): ?>
 
                 <div class="alert alert-success">
                     Ваша заявка <strong>#<?=Yii::$app->session->getFlash('id')?></strong> успешно принята! Специалист обработает ее в ближайшее время.
