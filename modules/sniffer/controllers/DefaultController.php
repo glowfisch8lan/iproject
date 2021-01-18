@@ -4,10 +4,10 @@ namespace app\modules\sniffer\controllers;
 
 use Yii;
 use yii\web\Controller;
-use yii\helpers\Html;
+use app\modules\sniffer\models\Logger;
 
 /**
- * Default controller for the `tools` module
+ * Default controller for the 'sniffer' module
  */
 class DefaultController extends Controller
 {
@@ -17,8 +17,20 @@ class DefaultController extends Controller
      */
     public function actionIndex()
     {
-        var_dump(Yii::$app->request->userIP);
+
+        $logger = new Logger();
+        $logger->write([
+            ['ip' => Yii::$app->request->userIP,
+            'date' => date('H:i:s d-m-Y')],
+        ]);
+        $logger->getAll();
         return $this->renderPartial('index');
+    }
+    public function actionJournal()
+    {
+        $data = Logger::getAll();
+        var_dump($data);
+        return $this->renderPartial('status');
     }
 
 }

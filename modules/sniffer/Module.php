@@ -17,7 +17,7 @@ class Module extends \app\modules\system\Module
     public $link = 'sniffer';
     public $icon = 'fa fa-angle-double-right';
     public $visible = 'viewSniffer';
-
+    public $layout = '/main';
     public $routes = [
         [   'route' => '/tools/converter',
             'name' => 'Конвертер',
