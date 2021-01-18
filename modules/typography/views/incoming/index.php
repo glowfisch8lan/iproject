@@ -13,10 +13,6 @@ use app\modules\staff\models\Units;
 $this->title = 'Заявки печати по-требованию';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-'sender',
-'sender_unit_id',
-'receiver',
-'receiver_unit_id',
 <div class="box-body">
     <div class="col-md-12">
         <?= Grid::initWidget([
@@ -55,7 +51,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ],
                     'contentOptions' => ['class' => 'text-center'],
                     'value' => function($model){
-                        return ($model->status) ? '<span class="text-success"><strong>Выполнено</strong></span>' : '<span class="text-warning"><strong>В обработке</strong></span>';
+                        return ($model->status) ? '<span class="text-success"><i class="fa fa-check" aria-hidden="true"></i> <strong>Выполнено</strong></span>' : '<span class="text-warning"><i class="fa fa-thumb-tack" aria-hidden="true"></i> <strong>В обработке</strong></span>';
                     },
                 ],
             ],

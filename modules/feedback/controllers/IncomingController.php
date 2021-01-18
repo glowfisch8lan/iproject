@@ -128,8 +128,6 @@ class IncomingController extends Controller
             }
 
         return $this->redirect(['index']);
-
-
     }
 
     /**

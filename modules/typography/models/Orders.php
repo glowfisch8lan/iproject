@@ -39,7 +39,8 @@ class Orders extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['sender', 'comment', 'file_uuid', 'position', 'edition'], 'required'],
+            [['sender', 'comment', 'file_uuid', 'edition'], 'required'],
+            [['position'], 'default'],
             [['sender', 'file_uuid'], 'string'],
             [['sender_unit_id', 'receiver', 'receiver_unit_id', 'status', 'edition'], 'integer'],
             [['receiver_unit_id'], 'exist', 'skipOnError' => true, 'targetClass' => Units::className(), 'targetAttribute' => ['receiver_unit_id' => 'id']],
@@ -63,7 +64,8 @@ class Orders extends \yii\db\ActiveRecord
             'comment' => 'Комментарий',
             'file_uuid' => 'UUID каталога',
             'status' => 'Статус',
-            'edition' => 'Тираж (кол-во экз.)'
+            'edition' => 'Тираж (кол-во экз.)',
+            'verifyCode' => 'Проверочный код',
         ];
     }
 

@@ -19,8 +19,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="card-header"><i class="fa fa-user-circle" aria-hidden="true"></i> Заявка #<?=$model->id?></div>
                 <div class="card-body">
                     <p>
-                        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-                        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
+                        <?echo ($model->status) ?  Html::a('<i class="fa fa-thumb-tack" aria-hidden="true"></i> В обработку', ['working', 'id' => $model->id], ['class' => 'btn btn-warning']) : Html::a('<i class="fa fa-check" aria-hidden="true"></i> Выполнено', ['complete', 'id' => $model->id], ['class' => 'btn btn-success']); ?>
+                        <?= Html::a('<i class="fa fa-trash-o" aria-hidden="true"></i> Удалить', ['delete', 'id' => $model->id], [
                             'class' => 'btn btn-danger',
                             'data' => [
                                 'confirm' => 'Are you sure you want to delete this item?',
@@ -35,6 +35,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             'sender',
                             'sender_unit_id',
                             'receiver',
+                            'status',
                             'receiver_unit_id',
                             'comment',
                             'file_uuid:ntext',

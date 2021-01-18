@@ -8,6 +8,7 @@ use app\modules\typography\models\OrdersSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\ServerErrorHttpException;
 
 /**
  * IncomingController implements the CRUD actions for TypographyOrders model.
@@ -123,5 +124,58 @@ class IncomingController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+
+    /**
+     * Переключение статуса заявки
+     * @param integer $id
+     * @return Messages the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function switchStatus($id, $status)
+    {
+        $model = $this->findModel($id);
+        switch($status){
+            case 'complete':
+                $model->status = 1;
+                break;
+            case 'working':
+                $model->status = 0;
+                break;
+            default:
+                $model->status = null;
+        }
+
+        $model->position = null;
+
+        if(!$model->save())
+        {
+            throw new ServerErrorHttpException('Ошибка при изменении статуса заявки!');
+        }
+        return true;
+    }
+    /**
+     * Переключение статуса заявки в "отработано"
+     * @param integer $id
+     * @return Messages the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionComplete($id)
+    {
+        $this->switchStatus($id, 'complete');
+        return $this->redirect(['index']);
+    }
+
+    /**
+     * Переключение статуса заявки в "отработано"
+     * @param integer $id
+     * @return Orders the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionWorking($id)
+    {
+        $this->switchStatus($id, 'working');
+        return $this->redirect(['index']);
     }
 }
