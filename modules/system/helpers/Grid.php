@@ -19,19 +19,41 @@ class Grid extends GridView
 
     public static $gridData;
 
+    /*
+     * Параметры GridView
+     */
+
+    public static $gridParams = [
+        'enableActionColumn' => true,
+        'enableAction' => false
+    ];
+
+    protected static function config($key,$value){
+        self::$gridParams[$key] = $value;
+    }
+
     public static function collectColumns(){
 
         $data = self::$gridData;
 
+
+        /*
+         * ActionColumn
+         */
+
+        /*
+         * 1. Формируем кнопки-действия
+         */
+
+        /* Вспомогательные функции */
         $headerCallback = function($url){
             return Html::a('<i class="fa fa-plus" aria-hidden="true"></i></i>', $url,
                 ['class' => 'btn btn-outline-info']);
         };
         $urlCreate = '/'. Yii::$app->controller->module->id . '/' . Yii::$app->controller->id .  '/create';
 
-        $headerActionColumn = empty($data['searchModel']) ? $headerCallback($urlCreate) : null;
-        $headerActionColumn = !empty($data['ActionColumnHeader']) ? $data['ActionColumnHeader'] : $headerActionColumn;
 
+        /* Скелет Buttons */
         $ActionColumnButtonsDefault = [
             'view' => function ($url,$model) {
                 return Html::a('<i class="fa fa-eye"></i>', $url,
@@ -54,10 +76,20 @@ class Grid extends GridView
                         ]]);
             },
         ];
-        $ActionColumnButtons = !empty($data['ActionColumnButtons']) ? $data['ActionColumnButtons'] : $ActionColumnButtonsDefault;
-        $buttonsTemplate = !empty($data['buttonsOptions']['template']) ? $data['buttonsOptions']['template'] : '{update} {delete}';
-        $ActionColumnHeaderWidth = !empty($data['buttonsOptions']['headerWidth']) ? $data['buttonsOptions']['headerWidth'] : 150;
 
+        /* Условия для основного скелета */
+
+        /* Параметры Header */
+        $headerActionColumn = empty($data['searchModel']) ? $headerCallback($urlCreate) : null; //Наличие или отсутствие searchModel;
+        $headerActionColumn = !empty($data['ActionColumnHeader']) ? $data['ActionColumnHeader'] : $headerActionColumn; //Выбираем header: по-умолчанию или пользовательский;
+        $ActionColumnHeaderWidth = !empty($data['buttonsOptions']['headerWidth']) ? $data['buttonsOptions']['headerWidth'] : 150; //Выбираем ширину колонки: по-умолчанию или пользовательский;
+        /* END */
+
+        $ActionColumnButtons = !empty($data['ActionColumnButtons']) ? $data['ActionColumnButtons'] : $ActionColumnButtonsDefault; //Выбираем конфигурацию кнопок-действий: по-умолчанию или пользовательские;
+        $buttonsTemplate = !empty($data['buttonsOptions']['template']) ? $data['buttonsOptions']['template'] : '{update} {delete}'; //Выбираем какие кнопки отобразить: шаблон;
+
+
+        /* Скелет Action Column Default */
         $ActionColumnDefault =   [
             'class' => 'app\modules\system\components\gridviewer\CustomActionColumns',
             'header' => $headerActionColumn,
@@ -71,29 +103,49 @@ class Grid extends GridView
             'buttons' => $ActionColumnButtons
         ];
 
+
+        /* Условия формирования скелета */
+        $ActionColumn = (!empty($data['ActionColumn'])) ? $data['ActionColumn'] : $ActionColumnDefault; //Если $data['ActionColumn'] не пустой, то присвоить Action Column из данной переменной, иначе по-умолчанию.
+
+        /*
+         * 2. Параметры пагинации для Провайдера;
+         */
         $pagerDefault =  [
             'forcePageParam' => false,
             'pageSizeParam' => false,
             'pageSize' => 10
         ];
 
+        /* Условие выбора пагинации */
+        $data['dataProvider']->pagination = !empty($data['pagination']) ? $data['pagination'] : $pagerDefault; //Выбираем пагинацию по-умолчанию, либо переопределенную пользователем;
 
-        $ActionColumn = !empty($data['ActionColumn']) ? $data['ActionColumn'] : $ActionColumnDefault;
-        $data['dataProvider']->pagination = !empty($data['pagination']) ? $data['pagination'] : $pagerDefault;
-
+        /*
+         * 3. Сборка Columns
+         */
         $columns = $data['columns'];
-        $columns[] = $ActionColumn;
+
+
+        $enableActionColumn = function() use(&$columns,$ActionColumn){
+            $columns[] = $ActionColumn;
+        };
+
+        (self::$gridParams['enableActionColumn']) ? $enableActionColumn() : false;
 
         return $columns;
     }
 
-    public static function initWidget($input = []){
+    public static function initWidget($input = [], $params = []){
 
         self::$gridData = $input;
         $data = self::$gridData;
 
         $dataProvider = $data['dataProvider'];
         $searchModel = !empty($data['searchModel']) ? $data['searchModel'] : null;
+
+
+        foreach($params as $key => $value){
+            self::config($key, $value);
+        }
 
         $columns = self::collectColumns();
 

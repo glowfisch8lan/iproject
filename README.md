@@ -76,7 +76,7 @@ public static function widget($form, $model,$var){}
 <h2>GridHelper</h2>
 
 ```php
-public static function initWidget($data = []){}
+public static function initWidget($data = [], $params = []){}
    
 $data['dataProvider'] - передается провайдер данных, по-умолчанию: null;
    
@@ -100,6 +100,7 @@ $data['pagination'] = [
     'pageSize' => 10
 ];
 
+$params['enableActionColumn']: boolean //Параметр отвечающий за отображение ActionColumn;
 ````
 
 <h5>Система : Модули</h5>

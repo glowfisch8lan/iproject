@@ -12,12 +12,13 @@ use app\modules\system\helpers\Grid;
             'attribute' => 'date',
             'label' => 'Время'
         ],
+        [
+            'attribute' => 'userAgent',
+            'label' => 'User Agent'
+        ],
+    ]],
+    [
+        'enableActionColumn' => false
+    ]
 
-    ],
-    'buttonsOptions' => [
-        'template' => ' '
-    ],
-    'ActionColumn' => ' '
-
-
-]);?>
+);?>

@@ -15,7 +15,13 @@ class JournalController extends Controller
         $dataProvider = new ArrayDataProvider([
             'allModels' => Logger::getAll(),
             'sort' => [
-                'attributes' => ['id', 'data'],
+                'defaultOrder' => ['date' => SORT_DESC],
+                'attributes' => [
+                    'ip',
+                    'date',
+                    'userAgent'
+                ],
+
             ],
             'pagination' => [
                 'pageSize' => 10,

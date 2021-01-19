@@ -21,9 +21,9 @@ class Module extends \app\modules\system\Module
     public $routes = [
         [   'route' => '/tools/converter',
             'name' => 'Конвертер',
-            'access' => 'viewToolsGeneratorLogin',
+            'access' => '',
             'description' => 'Доступ к инструменту "Конвертер',
-            'visible' => true,
+            'visible' => false,
         ],
     ];
 

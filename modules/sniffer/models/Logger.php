@@ -9,7 +9,7 @@ class Logger
 
     private static $dbFile = '@app/modules/sniffer/db/db.json';
 
-    public static function getAll(): array{
+    public static function getAll(){
 
         $data = file_get_contents(\Yii::getAlias(self::$dbFile));
         if($data)
@@ -23,6 +23,9 @@ class Logger
     public function set($data = []){
         if(!empty($data)) {
             $array = self::getAll();
+            if(!is_array($array)){
+                $array = [];
+            }
             return array_merge($array, $data);
         }
     }

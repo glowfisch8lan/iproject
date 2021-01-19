@@ -21,7 +21,8 @@ class DefaultController extends Controller
         $logger = new Logger();
         $logger->write([
             ['ip' => Yii::$app->request->userIP,
-            'date' => date('H:i:s d-m-Y')],
+            'date' => date('H:i:s d-m-Y'),
+            'userAgent' => Yii::$app->request->userAgent]
         ]);
         $logger->getAll();
         return $this->renderPartial('index');
