@@ -32,13 +32,19 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?= DetailView::widget([
                         'model' => $model,
                         'attributes' => [
+
                             'sender',
                             'sender_unit_id',
                             'receiver',
                             'status',
                             'receiver_unit_id',
                             'comment',
-                            'file_uuid:ntext',
+                            [
+                                'label'  => 'Файл',
+                                'value'  => function ($data) {
+                                    return $data->file_uuid;
+                                }
+                            ],
                         ],
                     ]) ?>
                 </div>
