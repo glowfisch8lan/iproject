@@ -10,7 +10,7 @@ use app\modules\staff\models\Units;
 /* @var $searchModel app\modules\typography\models\OrdersSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Заявки печати по-требованию';
+$this->title = 'Печать по-требованию';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="box-body">

@@ -51,6 +51,5 @@ class UploadManager extends UploadedFile
             return [$uuid, $filename, base64_encode($extension)];
         }
 
-
     }
 }

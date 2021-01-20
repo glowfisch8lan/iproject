@@ -9,6 +9,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\ServerErrorHttpException;
+use app\modules\system\models\files\UploadManager;
 
 /**
  * IncomingController implements the CRUD actions for TypographyOrders model.
@@ -177,5 +178,21 @@ class IncomingController extends Controller
     {
         $this->switchStatus($id, 'working');
         return $this->redirect(['index']);
+    }
+
+    /**
+     * Загрузка файла
+     * @param integer $id
+     * @return Orders the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionGetFile($uuid,$file)
+    {
+        $f = \Yii::getAlias('@app') . '/data/'. $this->module->id . '/' . $uuid .'/'. $file;
+        if (file_exists($f)) {
+            return \Yii::$app->response->sendFile($f);
+        }
+        throw new \Exception('File not found');
+
     }
 }

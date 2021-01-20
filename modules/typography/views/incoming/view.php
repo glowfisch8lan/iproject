@@ -2,12 +2,12 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
-
+use yii\helpers\Json;
 /* @var $this yii\web\View */
 /* @var $model app\modules\typography\models\Orders */
 
-$this->title = $model->id;
-$this->params['breadcrumbs'][] = ['label' => 'Typography Orders', 'url' => ['index']];
+$this->title = 'Заявка №' . $model->id;
+$this->params['breadcrumbs'][] = ['label' => 'Типография', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
@@ -42,8 +42,18 @@ $this->params['breadcrumbs'][] = $this->title;
                             [
                                 'label'  => 'Файл',
                                 'value'  => function ($data) {
-                                    return $data->file_uuid;
-                                }
+                                    $file = Json::decode($data->file_uuid);
+                                    $filename = $file[1] . '.' . base64_decode($file[2]);
+                                    return Html::a($file[1].'.'.base64_decode($file[2]).'</i>',
+                                        ['get-file', 'uuid' => $file[0],'file'=> $filename],
+                                        [
+//                                            'class' => '',
+//                                            'data' => [
+//                                                'method' => 'post',
+//                                            ],
+                                        ]);
+                                },
+                                'format' => 'html',
                             ],
                         ],
                     ]) ?>
