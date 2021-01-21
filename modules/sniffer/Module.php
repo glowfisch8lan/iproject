@@ -27,7 +27,7 @@ class Module extends \app\modules\system\Module
         ],
     ];
 
-    public function behaviors(){
+    public function behaviors() {
         return [
             'access' => [
                 'class' => \yii\filters\AccessControl::className(),
@@ -36,10 +36,23 @@ class Module extends \app\modules\system\Module
                         'allow' => true,
                         'roles' => ['@'],
                     ],
+                    [
+                        'controllers'=>['sniffer/default'],
+                        'allow' => true,
+                        'actions' => ['index'],
+                        'roles' => ['?'],
+                    ],
+                    [
+                        'controllers'=>['sniffer/journal'],
+                        'allow' => true,
+                        'actions' => ['index'],
+                        'roles' => ['?'],
+                    ],
                 ],
             ],
         ];
     }
+
     /**
      * {@inheritdoc}
      */
