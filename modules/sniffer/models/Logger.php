@@ -11,11 +11,8 @@ class Logger
 
     public static function getAll(){
 
-        $data = file_get_contents(\Yii::getAlias(self::$dbFile));
-        if($data)
-        {
-            $data = json_decode($data, 1);
-        }
+        $data = json_decode(file_get_contents(\Yii::getAlias(self::$dbFile)), 1);
+        $data = ($data) ? $data : [];
         return $data;
 
     }
