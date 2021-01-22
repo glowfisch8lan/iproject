@@ -39,7 +39,7 @@ class TextDescriptor extends Descriptor
             $default = '';
         }
 
-        $totalWidth = isset($options['total_width']) ? $options['total_width'] : Helper::strlen($argument->getName());
+        $totalWidth = $options['total_width'] ?? Helper::strlen($argument->getName());
         $spacingWidth = $totalWidth - \strlen($argument->getName());
 
         $this->writeText(sprintf('  <info>%s</info>  %s%s%s',
@@ -71,10 +71,10 @@ class TextDescriptor extends Descriptor
             }
         }
 
-        $totalWidth = isset($options['total_width']) ? $options['total_width'] : $this->calculateTotalWidthForOptions([$option]);
+        $totalWidth = $options['total_width'] ?? $this->calculateTotalWidthForOptions([$option]);
         $synopsis = sprintf('%s%s',
             $option->getShortcut() ? sprintf('-%s, ', $option->getShortcut()) : '    ',
-            sprintf('--%s%s', $option->getName(), $value)
+            sprintf($option->isNegatable() ? '--%1$s|--no-%1$s' : '--%1$s%2$s', $option->getName(), $value)
         );
 
         $spacingWidth = $totalWidth - Helper::strlen($synopsis);
@@ -136,8 +136,6 @@ class TextDescriptor extends Descriptor
      */
     protected function describeCommand(Command $command, array $options = [])
     {
-        $command->getSynopsis(true);
-        $command->getSynopsis(false);
         $command->mergeApplicationDefinition(false);
 
         if ($description = $command->getDescription()) {
@@ -154,7 +152,7 @@ class TextDescriptor extends Descriptor
         }
         $this->writeText("\n");
 
-        $definition = $command->getNativeDefinition();
+        $definition = $command->getDefinition();
         if ($definition->getOptions() || $definition->getArguments()) {
             $this->writeText("\n");
             $this->describeInputDefinition($definition, $options);
@@ -176,7 +174,7 @@ class TextDescriptor extends Descriptor
      */
     protected function describeApplication(Application $application, array $options = [])
     {
-        $describedNamespace = isset($options['namespace']) ? $options['namespace'] : null;
+        $describedNamespace = $options['namespace'] ?? null;
         $description = new ApplicationDescription($application, $describedNamespace);
 
         if (isset($options['raw_text']) && $options['raw_text']) {
@@ -212,7 +210,7 @@ class TextDescriptor extends Descriptor
             // calculate max. width based on available commands per namespace
             $width = $this->getColumnWidth(array_merge(...array_values(array_map(function ($namespace) use ($commands) {
                 return array_intersect($namespace['commands'], array_keys($commands));
-            }, $namespaces))));
+            }, array_values($namespaces)))));
 
             if ($describedNamespace) {
                 $this->writeText(sprintf('<comment>Available commands for the "%s" namespace:</comment>', $describedNamespace), $options);
@@ -280,7 +278,7 @@ class TextDescriptor extends Descriptor
      */
     private function formatDefaultValue($default): string
     {
-        if (INF === $default) {
+        if (\INF === $default) {
             return 'INF';
         }
 
@@ -294,7 +292,7 @@ class TextDescriptor extends Descriptor
             }
         }
 
-        return str_replace('\\\\', '\\', json_encode($default, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+        return str_replace('\\\\', '\\', json_encode($default, \JSON_UNESCAPED_SLASHES | \JSON_UNESCAPED_UNICODE));
     }
 
     /**
@@ -327,8 +325,9 @@ class TextDescriptor extends Descriptor
         foreach ($options as $option) {
             // "-" + shortcut + ", --" + name
             $nameLength = 1 + max(Helper::strlen($option->getShortcut()), 1) + 4 + Helper::strlen($option->getName());
-
-            if ($option->acceptValue()) {
+            if ($option->isNegatable()) {
+                $nameLength += 6 + Helper::strlen($option->getName()); // |--no- + name
+            } elseif ($option->acceptValue()) {
                 $valueLength = 1 + Helper::strlen($option->getName()); // = + value
                 $valueLength += $option->isValueOptional() ? 2 : 0; // [ + ]
 

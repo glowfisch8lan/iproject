@@ -8,6 +8,7 @@ use Yii;
 use yii\grid\GridView;
 use yii\helpers\Html;
 
+
 class Grid extends GridView
 {
 
@@ -181,7 +182,7 @@ class Grid extends GridView
            ],
            'columns' => $columns,
        ]);
-
+        Pjax::end();
     }
 
 }

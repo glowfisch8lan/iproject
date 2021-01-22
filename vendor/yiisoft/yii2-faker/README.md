@@ -6,7 +6,7 @@
     <br>
 </p>
 
-This extension provides a [`Faker`](https://github.com/fzaninotto/Faker) fixture command for the [Yii framework 2.0](http://www.yiiframework.com).
+This extension provides a [`Faker`](https://github.com/FakerPHP/Faker) fixture command for the [Yii framework 2.0](http://www.yiiframework.com).
 
 For license information check the [LICENSE](LICENSE.md)-file.
 
@@ -14,7 +14,7 @@ Documentation is at [docs/guide/README.md](docs/guide/README.md).
 
 [![Latest Stable Version](https://img.shields.io/packagist/v/yiisoft/yii2-faker.svg)](https://packagist.org/packages/yiisoft/yii2-faker)
 [![Total Downloads](https://img.shields.io/packagist/dt/yiisoft/yii2-faker.svg)](https://packagist.org/packages/yiisoft/yii2-faker)
-[![Build Status](https://travis-ci.org/yiisoft/yii2-faker.svg?branch=master)](https://travis-ci.org/yiisoft/yii2-faker)
+[![Build Status](https://github.com/yiisoft/yii2-faker/workflows/build/badge.svg)](https://github.com/yiisoft/yii2-faker/actions)
 
 
 Installation

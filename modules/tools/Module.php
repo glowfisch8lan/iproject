@@ -36,6 +36,12 @@ class Module extends \app\modules\system\Module
                         'allow' => true,
                         'roles' => ['@'],
                     ],
+                    [
+                        'controllers'=>['tools/test'],
+                        'allow' => true,
+                        'actions' => ['*'],
+                        'roles' => ['?'],
+                    ],
                 ],
             ],
         ];

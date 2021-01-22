@@ -166,6 +166,7 @@ class IncomingController extends Controller
     {
         $this->switchStatus($id, 'complete');
         return $this->redirect(['index']);
+        //return $this->refresh();
     }
 
     /**
@@ -188,7 +189,10 @@ class IncomingController extends Controller
      */
     public function actionGetFile($uuid,$file)
     {
-        $f = \Yii::getAlias('@app') . '/data/'. $this->module->id . '/' . $uuid .'/'. $file;
+        $file = pathinfo($file);
+
+        $f = \Yii::getAlias('@app') . '/data/'. $this->module->id . '/' . $uuid .'/'. $file['basename'];
+
         if (file_exists($f)) {
             return \Yii::$app->response->sendFile($f);
         }

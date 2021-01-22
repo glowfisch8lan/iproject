@@ -33,6 +33,13 @@ class Module extends \yii\base\Module
             'visible' => true
 
         ],
+        [   'route' => '/system/updates',
+            'name' => 'Обновления',
+            'access' => 'viewSystemUpdates',
+            'description' => 'Доступ к системе Обновлений',
+            'visible' => true
+
+        ],
         [   'route' => '/system/users',
             'name' => 'Пользователи',
             'access' => 'viewUsers',
@@ -47,21 +54,21 @@ class Module extends \yii\base\Module
         ],
     ];
 
-    public $SettingsMenuItems = [
-            [
-            'id' => 'general',
-            'name' => 'Основные',
-            'isActive' => 'active'
-            ],
-            [
-            'id' => 'template',
-            'name' => 'Шаблоны документов',
-            ],
-            [
-            'id' => 'pattern',
-            'name' => 'Паттерны',
-            ]
-     ];
+//    public $SettingsMenuItems = [
+//            [
+//            'id' => 'general',
+//            'name' => 'Основные',
+//            'isActive' => 'active'
+//            ],
+//            [
+//            'id' => 'template',
+//            'name' => 'Шаблоны документов',
+//            ],
+//            [
+//            'id' => 'pattern',
+//            'name' => 'Паттерны',
+//            ]
+//     ];
     private $excludedRules = [
         ['route' => '/system/default', 'name' => 'Главная страница', 'module' => 'system'] //альтернатива /my;
     ];

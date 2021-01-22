@@ -11,14 +11,17 @@ use app\modules\typography\models\Orders;
  */
 class OrdersSearch extends Orders
 {
+
+    public $senderUnit;
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['id', 'sender_unit_id', 'receiver', 'receiver_unit_id', 'comment'], 'integer'],
+            [['id', 'sender_unit_id','receiver', 'receiver_unit_id', 'comment', 'status'], 'integer'],
             [['sender', 'file_uuid'], 'safe'],
+            [['senderUnit'], 'safe'],
         ];
     }
 
@@ -47,7 +50,19 @@ class OrdersSearch extends Orders
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => [
+                'defaultOrder' => [
+                    'id' => SORT_DESC
+                ]
+            ]
         ]);
+
+        $dataProvider->sort->attributes['senderUnit'] = [
+            // The tables are the ones our relation are configured to
+            // in my case they are prefixed with "tbl_"
+            'asc' => ['staff_units.name' => SORT_ASC],
+            'desc' => ['staff_units.name' => SORT_DESC],
+        ];
 
         $this->load($params);
 
@@ -64,9 +79,12 @@ class OrdersSearch extends Orders
             'receiver' => $this->receiver,
             'receiver_unit_id' => $this->receiver_unit_id,
             'comment' => $this->comment,
+            'status' => $this->status,
+            'sender_unit_id' => $this->senderUnit
         ]);
 
-        $query->andFilterWhere(['like', 'sender', $this->sender])
+        $query
+            //->andFilterWhere(['like', 'sender_unit_id', $this->senderUnit])
             ->andFilterWhere(['like', 'file_uuid', $this->file_uuid]);
 
         return $dataProvider;

@@ -9,7 +9,7 @@ use yii\widgets\Breadcrumbs;
 use app\modules\system\helpers\Menu;
 use app\modules\system\SystemAsset;
 use app\modules\system\models\interfaces\modules\Modules;
-
+use yii\widgets\Pjax;
 $bundle = SystemAsset::register($this);
 
 $options = [
@@ -35,6 +35,13 @@ $this->registerJsFile( $bundle->baseUrl . '/js/script.js', $options, $key = null
 // регистрируем небольшой js-код в view-шаблоне
 $script = <<< JS
 
+                window.onload = function () {
+                document.body.classList.add('loaded_hiding');
+                window.setTimeout(function () {
+                  document.body.classList.add('loaded');
+                  document.body.classList.remove('loaded_hiding');
+                }, 500);
+              }
 $('ul.collapse').on('hide.bs.collapse', function () {
             sessionStorage.setItem('#'+$(this).attr('id'), 0);
         });
@@ -76,10 +83,87 @@ $this->registerJs($script, $position);
             <?=Html::encode($this->title) ?>
         </title>
         <? $this->head() ?>
+        <style>
+            .preloader {
+                /*фиксированное позиционирование*/
+                position: fixed;
+                /* координаты положения */
+                left: 0;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                /* фоновый цвет элемента */
+                background: rgba(28, 28, 28, 0.65);
+                /* размещаем блок над всеми элементами на странице (это значение должно быть больше, чем у любого другого позиционированного элемента на странице) */
+                z-index: 1001;
+            }
+
+            .preloader__row {
+                position: relative;
+                top: 50%;
+                left: 50%;
+                width: 70px;
+                height: 70px;
+                margin-top: -35px;
+                margin-left: -35px;
+                text-align: center;
+                animation: preloader-rotate 2s infinite linear;
+            }
+
+            .preloader__item {
+                position: absolute;
+                display: inline-block;
+                top: 0;
+                background-color: #337ab7;
+                border-radius: 100%;
+                width: 35px;
+                height: 35px;
+                animation: preloader-bounce 2s infinite ease-in-out;
+            }
+
+            .preloader__item:last-child {
+                top: auto;
+                bottom: 0;
+                animation-delay: -1s;
+            }
+
+            @keyframes preloader-rotate {
+                100% {
+                    transform: rotate(360deg);
+                }
+            }
+
+            @keyframes preloader-bounce {
+
+                0%,
+                100% {
+                    transform: scale(0);
+                }
+
+                50% {
+                    transform: scale(1);
+                }
+            }
+
+            .loaded_hiding .preloader {
+                transition: 0.3s opacity;
+                opacity: 0;
+            }
+
+            .loaded .preloader {
+                display: none;
+            }
+        </style>
     </head>
 
     <body class="d-flex flex-column min-vh-100">
     <? $this->beginBody() ?>
+    <div class="preloader">
+        <div class="preloader__row">
+            <div class="preloader__item"></div>
+            <div class="preloader__item"></div>
+        </div>
+    </div>
     <div class="wrapper">
         <nav id="sidebar">
             <div class="sidebar-header"> <img src="<?=$bundle->baseUrl?>/img/logo.png" alt="logo" class="app-logo" width="210"> </div>
@@ -89,6 +173,7 @@ $this->registerJs($script, $position);
                 <?= Menu::widget(Modules::getAllModules());?>
             </ul>
         </nav>
+
         <div id="body" class="active">
 
             <nav class="navbar navbar-expand-lg navbar-primary bg-primary">
@@ -132,13 +217,14 @@ $this->registerJs($script, $position);
 
                             ]) ?>
                         </div>
+
                         <?=$content?>
+
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
     <?php $this->endBody(); ?>
     </body>
 
