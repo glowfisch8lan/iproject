@@ -52,9 +52,6 @@ class PatchManager
         if(!file_exists(Yii::getAlias(self::$installDirectory) . 'temp'))
             mkdir(Yii::getAlias(PatchManager::$installDirectory) . 'temp', 0777, true );
 
-
-        //var_dump($archive->extractTo(Yii::getAlias(self::$installDirectory).'temp'));
-
         $files = [];
         for ($i = 0; $i < $archive->count(); $i++) {
             $file = $archive->statIndex($i)[ 'name' ];
