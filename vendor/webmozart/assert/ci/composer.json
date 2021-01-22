@@ -1,5 +1,0 @@
-{
-    "require": {
-        "vimeo/psalm": "dev-master#61f5a06"
-    }
-}

@@ -1,5 +1,5 @@
 /updates
 /web/assets
-.idea/*
 .idea
+/vendor
 !.gitignore
