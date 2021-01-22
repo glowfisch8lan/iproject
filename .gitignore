@@ -1,2 +1,4 @@
-updates
+/updates
+/web/assets
+.idea
 !.gitignore
