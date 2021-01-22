@@ -50,6 +50,7 @@ class UpdatesController extends Controller
         $patch->file->saveAs(Yii::getAlias(PatchManager::$installDirectory) . 'updates.zip');
 
         $pathManager = PatchManager::getInstance();
+
         
 
 
