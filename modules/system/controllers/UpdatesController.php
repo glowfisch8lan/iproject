@@ -44,14 +44,16 @@ class UpdatesController extends Controller
         if (pathinfo($patch->file, PATHINFO_EXTENSION) != 'zip')
             throw new \Exception('Файл патча должен иметь расширение ZIP.');
 
-        if (!file_exists(PatchManager::$installDirectory))
+        if (!file_exists(Yii::getAlias(PatchManager::$installDirectory)))
             mkdir(Yii::getAlias(PatchManager::$installDirectory), 0777, true );
 
-        $patch->file->saveAs(Yii::getAlias(PatchManager::$installDirectory) . 'updates.zip');
+        //$patch->file->saveAs(Yii::getAlias(PatchManager::$installDirectory) . PatchManager::$patchFile);
 
-        $pathManager = PatchManager::getInstance();
+        $pathManager = PatchManager::getInstance()->installPatch();
 
-        
+
+
+
 
 
 //
