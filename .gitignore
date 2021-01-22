@@ -5,5 +5,3 @@ Thumbs.db
 
 # composer itself is not needed
 composer.phar
-
-create_updates.cmd
