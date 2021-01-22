@@ -38,7 +38,7 @@ class Module extends \app\modules\system\Module
                         'roles' => ['@'],
                     ],
                     [
-                        'controllers'=>['feedback/default'],
+                        'controllers'=>['typography/default'],
                         'allow' => true,
                         'actions' => ['index', 'captcha'],
                         'roles' => ['?'],
