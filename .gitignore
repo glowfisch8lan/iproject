@@ -1,7 +1,7 @@
 /updates
-!/web/assets
+/web/assets
 .idea
-!/vendor
+/vendor
 
 # windows thumbnail cache
 Thumbs.db
