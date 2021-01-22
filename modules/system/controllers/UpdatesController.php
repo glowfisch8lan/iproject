@@ -48,6 +48,7 @@ class UpdatesController extends Controller
             mkdir(Yii::getAlias(PatchManager::$installDirectory), 0777, true );
 
         $patch->file->saveAs(Yii::getAlias(PatchManager::$installDirectory) . PatchManager::$patchFile);
+        
         if(PatchManager::getInstance()->installPatch())
             return $this->redirect('index');
 

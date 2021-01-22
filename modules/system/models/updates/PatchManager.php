@@ -79,7 +79,7 @@ class PatchManager
             $count++;
         }
 
-
+        unlink(ii::getAlias(self::$installDirectory) . self::$patchFile);
         return 0;
     }
 
