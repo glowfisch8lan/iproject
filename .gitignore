@@ -1,16 +1,7 @@
-/updates
-/web/assets
 .idea
-/vendor
 
 # windows thumbnail cache
 Thumbs.db
 
 # composer itself is not needed
 composer.phar
-
-# vagrant runtime
-/.vagrant
-
-# db file
-/config/db.php
