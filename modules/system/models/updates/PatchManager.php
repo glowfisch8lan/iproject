@@ -80,8 +80,10 @@ class PatchManager
         }
 
 
-
+        return 0;
     }
+
+
 
 
 }
