@@ -81,7 +81,8 @@ class PatchManager
 
         $archive->close();
         unlink(Yii::getAlias(self::$installDirectory) . self::$patchFile);
-        return 0;
+        
+        return true;
     }
 
 
