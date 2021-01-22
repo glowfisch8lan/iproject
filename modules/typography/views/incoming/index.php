@@ -11,13 +11,13 @@ use app\modules\typography\models\Orders;
 /* @var $searchModel app\modules\typography\models\OrdersSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Печать по-требованию';
+$this->title = 'Книга по-требованию';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="box-body">
     <div class="col-md-12">
         <? Pjax::begin([
-                'timeout' => 10000 
+                'timeout' => 5000
                 ]); ?>
         <?= Grid::initWidget([
             'dataProvider' => $dataProvider,
@@ -36,7 +36,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 'sender',
                 [
-                    //'attribute' => 'senderUnit.name',
                     'attribute' => 'senderUnit',
                     'value' => 'senderUnit.name',
                     'filter'=> ArrayHelper::map(Units::find()->asArray()->all(), 'id', 'name'),
