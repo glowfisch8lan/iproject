@@ -16,7 +16,9 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="box-body">
     <div class="col-md-12">
-        <? Pjax::begin(); ?>
+        <? Pjax::begin([
+                'timeout' => 10000
+                ]); ?>
         <?= Grid::initWidget([
             'dataProvider' => $dataProvider,
             'searchModel' => $searchModel,
