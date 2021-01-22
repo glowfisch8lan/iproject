@@ -1,0 +1,1 @@
+git archive -o "./updates/$(git log -1 --pretty=%B).zip" HEAD $(git diff --name-only HEAD^)
