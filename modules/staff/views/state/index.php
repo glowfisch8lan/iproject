@@ -9,6 +9,8 @@ use app\modules\staff\models\Units;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Штат';
+$this->title = 'Модули';
+$this->params['breadcrumbs'][] = ['label' => Yii::$app->controller->module->name, 'url' => '/staff/state'];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="box-body">

@@ -3,7 +3,7 @@
 namespace app\modules\metrica\models\patterns;
 
 use Yii;
-
+use app\modules\system\models\users\Users;
 /**
  * This is the model class for table "metrica_patterns".
  *
@@ -34,7 +34,7 @@ class Patterns extends \yii\db\ActiveRecord
             [['name', 'pattern'], 'required'],
             [['name', 'pattern', 'value'], 'string'],
             [['user_id'], 'integer'],
-            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => SystemUsers::className(), 'targetAttribute' => ['user_id' => 'id']],
+            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => Users::className(), 'targetAttribute' => ['user_id' => 'id']],
         ];
     }
 
@@ -45,8 +45,8 @@ class Patterns extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'name' => 'Name',
-            'pattern' => 'Pattern',
+            'name' => 'Название',
+            'pattern' => 'Паттерн',
             'user_id' => 'User ID',
             'value' => 'Value',
         ];
@@ -59,6 +59,6 @@ class Patterns extends \yii\db\ActiveRecord
      */
     public function getUser()
     {
-        return $this->hasOne(SystemUsers::className(), ['id' => 'user_id']);
+        return $this->hasOne(Users::className(), ['id' => 'user_id']);
     }
 }

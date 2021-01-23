@@ -34,7 +34,7 @@ class Module extends \yii\base\Module
 
         ],
         [   'route' => '/system/updates',
-            'name' => 'Обновления',
+            'name' => 'Обновление',
             'access' => 'viewSystemUpdates',
             'description' => 'Доступ к системе Обновлений',
             'visible' => true

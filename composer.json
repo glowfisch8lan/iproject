@@ -19,7 +19,9 @@
         "yiisoft/yii2-bootstrap": "~2.0.0",
         "yiisoft/yii2-swiftmailer": "~2.0.0 || ~2.1.0",
         "yiisoft/yii2-queue": "2.x-dev",
-        "yiisoft/yii2-httpclient": "2.0.x-dev"
+        "yiisoft/yii2-httpclient": "2.0.x-dev",
+		"phpoffice/phpword": "v0.17.*"
+}
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",
