@@ -14,6 +14,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="box-body pt-3 pl-5">
     <div class="row">
         <div class="col-md-6">
+
             <div class="card">
                 <h5 class="card-header">Менеджер патчей и обновлений</h5>
                 <div class="card-body">
@@ -36,7 +37,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?php ActiveForm::end(); ?>
                     </p>
                 </div>
-            </div>
+
+
+        </div>
+
         </div>
     </div>
 </div>

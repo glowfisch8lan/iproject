@@ -1,6 +1,6 @@
 <?php
 
-namespace app\modules\staff\controllers;
+namespace app\modules\metrica\controllers;
 
 use Yii;
 
@@ -8,9 +8,9 @@ use app\modules\staff\models\Lists;
 use app\modules\staff\models\ListItems;
 
 /**
- * Default controller for the `staff` module
+ * Default controller for the `metrica` module
  */
-class ListItemsController extends \app\modules\system\models\interfaces\lists\controllers\ListItemsController
+class ListsController extends \app\modules\system\models\interfaces\lists\controllers\ListsController
 {
 
   public function newModel($class){

@@ -5,11 +5,8 @@ namespace app\modules\metrica\controllers;
 use Yii;
 
 use app\modules\metrica\models\Pattern;
-use app\modules\system\models\users\Users;
-
 use app\modules\system\models\settings\Settings;
 
-use yii\data\ActiveDataProvider;
 use yii\web\UploadedFile;
 use yii\web\Controller;
 
@@ -19,10 +16,10 @@ class SettingsController extends Controller
     {
 
         Settings::setValue('metrica.template.path','file');
-        //Settings::setValue('metrica.template.file','file');
-//        return $this->render('index', [
-//            'SettingsMenuItems' => $module = \Yii::$app->controller->module->SettingsMenuItems
-//        ]);
+        Settings::setValue('metrica.template.file','file');
+        return $this->render('index', [
+            'SettingsMenuItems' => \Yii::$app->controller->module->SettingsMenuItems
+        ]);
     }
 
     /*

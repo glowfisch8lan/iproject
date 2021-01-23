@@ -23,14 +23,26 @@ class Module extends \app\modules\system\Module
             'description' => 'Доступ к подразделу Анализ данных',
             'visible' => true,
         ],
-        [   'route' => '/metrica/settings',
-            'name' => 'Настройки',
-            'access' => 'viewMetricaAnalyze',
-            'description' => 'Доступ к подразделу Анализ данных',
+        [   'route' => '/metrica/patterns',
+            'name' => 'Паттерны',
+            'access' => 'viewMetricaPatterns',
+            'description' => 'Доступ к подразделу Паттерны',
             'visible' => true,
         ],
+//        [   'route' => '/metrica/settings',
+//            'name' => 'Настройки',
+//            'access' => 'viewMetricaAnalyze',
+//            'description' => 'Доступ к подразделу Анализ данных',
+//            'visible' => true,
+//        ],
     ];
-
+    public $SettingsMenuItems = [
+            [
+            'id' => 'general',
+            'name' => 'Основные',
+            'isActive' => 'active'
+            ],
+     ];
     public function behaviors(){
         return [
             'access' => [

@@ -54,21 +54,6 @@ class Module extends \yii\base\Module
         ],
     ];
 
-//    public $SettingsMenuItems = [
-//            [
-//            'id' => 'general',
-//            'name' => 'Основные',
-//            'isActive' => 'active'
-//            ],
-//            [
-//            'id' => 'template',
-//            'name' => 'Шаблоны документов',
-//            ],
-//            [
-//            'id' => 'pattern',
-//            'name' => 'Паттерны',
-//            ]
-//     ];
     private $excludedRules = [
         ['route' => '/system/default', 'name' => 'Главная страница', 'module' => 'system'] //альтернатива /my;
     ];

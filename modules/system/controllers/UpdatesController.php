@@ -32,6 +32,7 @@ class UpdatesController extends Controller
      */
     public function actionPatch()
     {
+        //TODO: перейти на AJAX
         $model = new DynamicModel(['file', ]);
         $model
             ->addRule( 'file', 'file', ['extensions' => ['zip'], 'maxSize' => 1024 * 1024 * 0.5]);
@@ -48,9 +49,10 @@ class UpdatesController extends Controller
             mkdir(Yii::getAlias(PatchManager::$installDirectory), 0777, true );
 
         $patch->file->saveAs(Yii::getAlias(PatchManager::$installDirectory) . PatchManager::$patchFile);
-        
-        if(PatchManager::getInstance()->installPatch())
+
+        if(PatchManager::getInstance()->installPatch()) {
             return $this->redirect('index');
+        }
 
     }
 }
