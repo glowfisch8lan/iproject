@@ -3,80 +3,125 @@
 namespace app\modules\metrica\controllers;
 
 use Yii;
+use app\modules\metrica\models\analyze\Analyze;
+use app\modules\metrica\models\analyze\AnalyzeSearch;
+use yii\web\Controller;
+use yii\web\NotFoundHttpException;
+use yii\filters\VerbFilter;
 
-
-use app\modules\metrica\models\Parser;
-use app\modules\metrica\models\Pattern;
-use app\modules\metrica\models\job\ParserJob;
-use app\modules\metrica\models\report\Report;
-
-use app\modules\system\models\users\Users;
-
-use yii\data\ArrayDataProvider;
-use yii\helpers\Json;
-
-class AnalyzeController extends \yii\web\Controller
+/**
+ * AnalyzeController implements the CRUD actions for Analyze model.
+ */
+class AnalyzeController extends Controller
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function behaviors()
+    {
+        return [
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'delete' => ['POST'],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * Lists all Analyze models.
+     * @return mixed
+     */
     public function actionIndex()
     {
-
-
-        $model =  new Parser();
-        $pattern = new Pattern();
-        $patterns = $pattern->getAllPatterns();
-
-        $user = new Users();
-        $report = new Report();
-
-        /*
-         * Обработка данных с формы;
-         */
-        if($model->load(Yii::$app->request->post())){
-
-            $model->user = $user->getId();
-            $model->date = date("Y-m-d");
-
-            foreach($model->url as $url){$arr[] = [ 'date' => $model->date, 'url' => $url, 'user' => $model->user, 'patterns' => $model->patterns];}
-
-            $result = $model->analyze($arr);
-            $dataProvider = new ArrayDataProvider([
-                'allModels' => $result
-            ]);
-
-            return $this->render('result', [
-                'dataProvider' => $dataProvider
-            ]);
-
-        }
+        $searchModel = new AnalyzeSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
-            'model' => $model,
-            'patterns' => $patterns,
-            'report' => $report
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
         ]);
     }
 
-
-    public function actionUploadTemplate(){
-
-        $template = new Report();
-        $report->uploadTemplate();
-
+    /**
+     * Displays a single Analyze model.
+     * @param integer $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionView($id)
+    {
+        return $this->render('view', [
+            'model' => $this->findModel($id),
+        ]);
     }
 
-    public function actionTest(){
+    /**
+     * Creates a new Analyze model.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     * @return mixed
+     */
+    public function actionCreate()
+    {
+        $model = new Analyze();
 
-      //Отправка задания в очередь
-      $queue = Yii::$app->queue;
-      $id = $queue->push(new ParserJob([
-        'text' => 'test',
-        'file' => Yii::$app->basePath . '/web/file.txt'
-      ]));
-      print_r($id);
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => $model->id]);
+        }
+
+        return $this->render('create', [
+            'model' => $model,
+        ]);
     }
 
-    public function actionJobStatus($id){
+    /**
+     * Updates an existing Analyze model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param integer $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionUpdate($id)
+    {
+        $model = $this->findModel($id);
 
-      return Json::encode(['status' => $status]);
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => $model->id]);
+        }
+
+        return $this->render('update', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
+     * Deletes an existing Analyze model.
+     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * @param integer $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionDelete($id)
+    {
+        $this->findModel($id)->delete();
+
+        return $this->redirect(['index']);
+    }
+
+    /**
+     * Finds the Analyze model based on its primary key value.
+     * If the model is not found, a 404 HTTP exception will be thrown.
+     * @param integer $id
+     * @return Analyze the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findModel($id)
+    {
+        if (($model = Analyze::findOne($id)) !== null) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException('The requested page does not exist.');
     }
 }
