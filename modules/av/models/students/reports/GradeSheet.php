@@ -1,79 +1,23 @@
 <?php
-namespace app\custom\modules\student\models\reports\journal_dvui;
+namespace app\modules\av\models\students\reports;
 
 use Yii;
-use yii\db\Query;
-use yii\helpers\ArrayHelper;
-
-use app\modules\load\models\groups\Groups;
-use app\modules\student\models\students\Students;
-use app\modules\student\models\lists\MarkValues;
-
-use app\modules\plan\models\helpers\Calendar;
-
+use yii\httpclient\Client;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
 /**
  * Class Report
  *
  * @package app\custom\modules\student\models\reports\journal_dvui
  */
-class Report extends \app\models\interfaces\Report
+class GradeSheet
 {
-    public $name = "Ведомость успеваемости ДВЮИ (Разработчик: Кафедра ИиТО ОВД)";
-    public $description = "Печать ведомости успеваемости для группы обучающихся ДВЮИ";
-    public $sort = 80;
-
-    public function getParams()
-    {
-        $groups = (new Query())->select(['p.id', 'p.name', 'p.start_date', 'p.education_plan_id'])
-            ->from('load_groups p')
-            ->leftJoin('plan_education_plans s', 'p.education_plan_id = s.id')
-            ->where(['s.data_type' => ['plan', 'category']])
-            ->andWhere(['education_level_id' => 5])
-            ->andWhere(['or', ['not like', 'p.name', '%ФЗО', false], ['like', 'p.name', 'ФЗО%', false]])
-            ->all();
-
-        $planStartYears = ArrayHelper::map((new Query())->select(['p.id', 'p.custom_start_year', 's.start_date'])
-            ->from('plan_education_plans p')
-            ->leftJoin('(SELECT * FROM plan_semesters WHERE course = 1 AND semester = 1) s', 's.education_plan_id = p.id')
-            ->where(['data_type' => ['plan', 'category', ], ])
-            ->all() , 'id', function ($item)
-        {
-            return isset($item['custom_start_year']) ? $item['custom_start_year'] : Calendar::getEducationYear($item['start_date']);
-        });
-
-        usort($groups, function ($a, $b) use ($planStartYears)
-        {
-            if ($planStartYears[$a['education_plan_id']] != $planStartYears[$b['education_plan_id']]) return $planStartYears[$b['education_plan_id']] - $planStartYears[$a['education_plan_id']];
-
-            return strcmp($a['name'], $b['name']);
-        });
-
-        usort($groups, function ($a, $b) use ($planStartYears)
-        {
-
-            if ($planStartYears[$a['education_plan_id']] != $planStartYears[$b['education_plan_id']])
-            {
-                return $planStartYears[$b['education_plan_id']] - $planStartYears[$a['education_plan_id']];
-            }
-
-            return strcmp($a['name'], $b['name']);
-        });
-
-        return ['groupId' => ['name' => 'Группа', 'type' => 'list', 'required' => true, 'items' => ArrayHelper::map($groups, 'id', function ($item) use ($planStartYears)
-        {
-            return ($planStartYears[$item['education_plan_id']] > 0 ? '[Набор ' . $planStartYears[$item['education_plan_id']] . '] ' : '') . $item['name'];
-        }) , ],
-
-        'startDate' => ['name' => 'Дата начала', 'type' => 'date', 'required' => true, 'default' => '01.09.' . Calendar::getEducationYear() , ],
-
-        'endDate' => ['name' => 'Дата окончания', 'type' => 'date', 'required' => true, 'default' => date('d.m.Y') ]];
-
-    }
+    protected static $token = '7c70f687-c3c5-4d9e-8739-25a54339661d';
+    protected static $token_custom = '1bceddd3-4c37-44a4-bcfd-9810f4a259bb';
 
     public $group;
     public $students;
@@ -84,44 +28,54 @@ class Report extends \app\models\interfaces\Report
     public $markValues;
     private $sheet;
 
-    private function fetchData()
+    private function getGroup($id)
     {
 
-        /*
-         * загружаем информацию об учебной группе, получаем список только активных студентов
-        */
+        $client = new Client();
+        $response = $client->createRequest()
+            ->setMethod('POST')
+            ->setUrl('https://av.dvuimvd.ru/api/call/system-database/get?token='.self::$token)
+            ->setData(['table' => 'load_groups', 'filter' => ['id' => $id]])
+            ->send();
+        return $response->data['data'][0];
 
-        $this->group = Groups::findOne($this->getParam('groupId'));
+    }
 
-        $this->students = Students::find()
-            ->where(['group_id' => $this
-            ->group
-            ->id])
-            ->andWhere(['active' => 1])
-            ->all();
+    private function getStudents($group_id)
+    {
+        $client = new Client();
+        $response = $client->createRequest()
+            ->setMethod('POST')
+            ->setUrl('https://av.dvuimvd.ru/api/call/system-database/get?token='.self::$token)
+            ->setData(['table' => 'student_students', 'filter' => ['group_id' => $group_id, 'active' => 1]])
+            ->send();
+        return $response->data['data'];
+    }
 
-        $this->curriculumDisciplines = (new Query())
-            ->select(['p.id', 'p.code', 'p.discipline_id', 'p.level', 's.name', 's.name_short'])
-            ->from('plan_curriculum_disciplines p')
-            ->leftJoin('plan_disciplines s', 'p.discipline_id = s.id')
-            ->where(['p.education_plan_id' => $this
-            ->group->education_plan_id, 'p.type' => null, 'p.level' => 3, ])
-            ->andWhere(['not', ['s.name' => null]])
-            ->orderBy(['left_node' => SORT_ASC])
-            ->all();
+    private function getCurriculumDisciplines($education_plan_id)
+    {
+        $client = new Client();
+        $response = $client->createRequest()
+            ->setMethod('POST')
+            ->setUrl('https://av.dvuimvd.ru/api/call/system-custom/union-data?education_plan_id='.$education_plan_id.'&token='.self::$token_custom)
+            ->setData([
+                'table' => 'plan_curriculum_disciplines',
+                'filter' => [
+                    'education_plan_id' => $education_plan_id
+                ]])
+            ->send();
+        return $response->data;
+    }
 
-        $this->marks = (new Query())
-            ->select(['s.id', 's.journal_lesson_id', 's.student_id', 's.mark_type_id', 's.mark_value_id', 's.datetime', 's.parent_id', 'p.curriculum_discipline_id'])
-            ->from('student_marks s')
-            ->leftJoin('student_journal_lessons p', 's.journal_lesson_id = p.id')
-            ->where(['in', 'student_id', array_column($this->students, 'id') ])
-            ->andWhere(['not', ['mark_value_id' => null]])
-            ->all();
-
-        $this->markValues = MarkValues::find()
-            ->asArray()
-            ->all();
-
+    private function getMarks($group_id)
+    {
+        $client = new Client();
+        $response = $client->createRequest()
+            ->setMethod('POST')
+            ->setUrl('https://av.dvuimvd.ru/api/call/system-database/get?token='.self::$token)
+            ->setData(['table' => 'student_students'])
+            ->send();
+        return $response->data['data'];
     }
 
     private function recursiveArraySearch($needle, $haystack)
@@ -475,6 +429,32 @@ class Report extends \app\models\interfaces\Report
         return $sum;
     }
 
+    private function fetchData()
+    {
+
+
+        /*
+         * загружаем информацию об учебной группе, получаем список только активных студентов
+        */
+
+        /*
+         * загружаем информацию об учебной группе, получаем список только активных студентов
+        */
+
+        $this->group = 24;
+        $this->students = $this->getStudents($this->group);
+
+        $this->curriculumDisciplines = $this->getCurriculumDisciplines($this->group->education_plan_id);
+
+
+        $this->marks = $this->getMarks();
+
+        $this->markValues = MarkValues::find()
+            ->asArray()
+            ->all();
+
+    }
+
     public function generate()
     {
         $this->fetchData();
@@ -484,18 +464,20 @@ class Report extends \app\models\interfaces\Report
         */
 
         $spreadsheet = new Spreadsheet();
-        $spreadsheet->getProperties()
-            ->setCreator(Yii::$app
-            ->user
-            ->identity
-            ->login)
-            ->setTitle($this->name)
-            ->setDescription($this->description);
+
+//        $spreadsheet->getProperties()
+//            ->setCreator(Yii::$app
+//                ->user
+//                ->identity
+//                ->login)
+//            ->setTitle($this->name)
+//            ->setDescription($this->description);
 
         $spreadsheet->getDefaultStyle()
             ->getFont()
             ->setName('Times New Roman')
             ->setSize(12);
+
         $this->sheet = $spreadsheet->getActiveSheet();
 
         $this
@@ -512,8 +494,7 @@ class Report extends \app\models\interfaces\Report
             ->getColumnDimension('B')
             ->setWidth(30);
 
-        $arr1 = ['A' => 'right', 'B' => 'left', 'C:Z' => 'center'];
-        foreach ($arr1 as $key => $value)
+        foreach (['A' => 'right', 'B' => 'left', 'C:Z' => 'center'] as $key => $value)
         {
             $this
                 ->sheet
@@ -533,13 +514,14 @@ class Report extends \app\models\interfaces\Report
             ->getStyle("C1:Y1")
             ->getAlignment()
             ->setWrapText(true); //включить перенос текста в колонках;
-        $this->mapLetters = $this->createColumnsArray('ZZ');
+
+        $this->mapLetters = $this->createColumnsArray('ZZ'); //Создаем индексную карту документа;
 
         /* Наполняем документ данными */
 
         $this->fillHeaderDisciplines($this->sheet); //Заполняем заголовок дисциплин;
         $this->fillListStudents($this->sheet); //Заполняем список студентов;
-        
+
 
         /* Выставляем оценки студентам */
         $index = 1;
@@ -600,7 +582,7 @@ class Report extends \app\models\interfaces\Report
         */
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="Ведомость успеваемости ' . $this
-            ->group->name . '.xlsx"');
+                ->group->name . '.xlsx"');
         header('Cache-Control: max-age=0');
         header('Cache-Control: max-age=1');
 
@@ -612,4 +594,3 @@ class Report extends \app\models\interfaces\Report
         $writer->save('php://output');
     }
 }
-
