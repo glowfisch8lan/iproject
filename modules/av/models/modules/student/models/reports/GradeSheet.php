@@ -16,9 +16,8 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
  */
 class GradeSheet
 {
-    protected static $token = '7c70f687-c3c5-4d9e-8739-25a54339661d';
-    protected static $token_custom = '1bceddd3-4c37-44a4-bcfd-9810f4a259bb';
-
+    protected static $token_custom = 'c5f0dde7-cb0c-401d-8b11-81d4317da0f3';
+    public $name = 'Ведомость успеваемости';
     public $group;
     public $students;
     public $marks; //все оценки по студентам группы;
@@ -28,26 +27,33 @@ class GradeSheet
     public $markValues;
     private $sheet;
 
+    private $startDate = '01.09.2020';
+    private $endDate = '26.01.2021';
+    
+    /*МЕТОДЫ API */
+
     private function getGroup($id)
     {
 
         $client = new Client();
         $response = $client->createRequest()
             ->setMethod('POST')
-            ->setUrl('https://av.dvuimvd.ru/api/call/system-database/get?token='.self::$token)
-            ->setData(['table' => 'load_groups', 'filter' => ['id' => $id]])
+            ->setUrl('https://av.dvuimvd.ru/api/call/system-custom/get-group?token='.self::$token_custom)
+            ->setData(['id' => $id])
             ->send();
-        return $response->data['data'][0];
+        return $response->data['data'];
 
     }
 
-    private function getStudents($group_id)
+    private function getStudentsByGroup($group_id)
     {
+
+        https://av.dvuimvd.ru/api/call/system-custom/get-students-by-group?group_id=24&token=c5f0dde7-cb0c-401d-8b11-81d4317da0f3
         $client = new Client();
         $response = $client->createRequest()
             ->setMethod('POST')
-            ->setUrl('https://av.dvuimvd.ru/api/call/system-database/get?token='.self::$token)
-            ->setData(['table' => 'student_students', 'filter' => ['group_id' => $group_id, 'active' => 1]])
+            ->setUrl('https://av.dvuimvd.ru/api/call/system-custom/get-students-by-group?token='.self::$token_custom)
+            ->setData(['group_id' => $group_id])
             ->send();
         return $response->data['data'];
     }
@@ -57,43 +63,39 @@ class GradeSheet
         $client = new Client();
         $response = $client->createRequest()
             ->setMethod('POST')
-            ->setUrl('https://av.dvuimvd.ru/api/call/system-custom/union-data?education_plan_id='.$education_plan_id.'&token='.self::$token_custom)
+            ->setUrl('https://av.dvuimvd.ru/api/call/system-custom/get-curriculum-disciplines?&token='.self::$token_custom)
             ->setData([
-                'table' => 'plan_curriculum_disciplines',
-                'filter' => [
-                    'education_plan_id' => $education_plan_id
-                ]])
+                'education_plan_id' => $education_plan_id
+            ])
             ->send();
-        return $response->data;
+
+        return $response->data['data'];
     }
 
-    private function getMarks($group_id)
+    private function getMarksByGroup($group_id)
     {
         $client = new Client();
         $response = $client->createRequest()
             ->setMethod('POST')
-            ->setUrl('https://av.dvuimvd.ru/api/call/system-database/get?token='.self::$token)
-            ->setData(['table' => 'student_students'])
+            ->setUrl('https://av.dvuimvd.ru/api/call/system-custom/get-marks-by-group?token='.self::$token_custom)
+            ->setData(['group_id' => $group_id])
             ->send();
         return $response->data['data'];
+
     }
 
-    private function recursiveArraySearch($needle, $haystack)
+    private function getMarksValues()
     {
-
-        foreach ($haystack as $key => $value)
-        {
-            $current_key = $key;
-
-            if (array_search($needle, $value))
-            {
-                $arr[] = $current_key;
-            }
-        }
-
-        return $arr;
+        $client = new Client();
+        $response = $client->createRequest()
+            ->setMethod('POST')
+            ->setUrl('https://av.dvuimvd.ru/api/call/system-custom/get-mark-values?token='.self::$token_custom)
+            ->send();
+        return $response->data['data'];
 
     }
+
+    /*МЕТОДЫ API */
 
     private function createColumnsArray($end_column, $first_letters = '')
     {
@@ -130,6 +132,51 @@ class GradeSheet
         return $columns;
     }
 
+    private function fetchData()
+    {
+
+        /*
+         * загружаем информацию об учебной группе, получаем список только активных студентов
+        */
+
+        $this->group = $this->getGroup(24);
+
+        $this->students = $this->getStudentsByGroup($this->group['id']);
+
+        $this->curriculumDisciplines = $this->getCurriculumDisciplines($this->group['education_plan_id']);
+
+        $this->marks = $this->getMarksByGroup($this->group['id']);
+
+        $this->markValues = $this->getMarksValues();
+
+
+    }
+
+    private function collectDisciplines()
+    {
+
+        $index = 0;
+
+        foreach ($this->students as $student)
+        {
+            //фильтруем оценки, составляем таблицу оценок. Делаем выборку тех дисциплин, у которых есть оценки за выбранный период времени
+            $marksArray = $this->filterMarks($this->getMarks($student['id']) , [$this->startDate , $this->endDate]);
+
+
+            foreach ($marksArray as $marks)
+            {
+                $collection[$marks['curriculum_discipline_id']] = $index;
+                $index++;
+            }
+
+
+        }
+
+        ksort($collection);
+        return array_keys($collection);
+
+    }
+
     private function getMarks($id)
     {
 
@@ -162,40 +209,143 @@ class GradeSheet
 
     }
 
-    private function collectDisciplines()
-    {
-
-        $index = 0;
-        foreach ($this->students as $student)
-        {
-
-            $marksArray = $this->filterMarks($this->getMarks($student->id) , [$this->getParam('startDate') , $this->getParam('endDate') ]);
-
-            foreach ($marksArray as $marks)
-            {
-                $collection[$marks['curriculum_discipline_id']] = $index;
-                $index++;
-            }
-
-        }
-        ksort($collection);
-
-        return array_keys($collection);
-    }
-
     private function getDisciplineName($id)
     {
 
+
         $index = $this->recursiveArraySearch($id, $this->curriculumDisciplines);
+
+
         if (!empty($this->curriculumDisciplines[$index[0]]['name']))
         {
-            $discipline->name = $this->curriculumDisciplines[$index[0]]['name'];
-            $discipline->name_short = $this->curriculumDisciplines[$index[0]]['name_short'];
+
+            $discipline['name'] = $this->curriculumDisciplines[$index[0]]['name'];
+            $discipline['name_short'] = $this->curriculumDisciplines[$index[0]]['name_short'];
 
             return $discipline;
         }
         else return 0;
 
+    }
+
+    private function recursiveArraySearch($needle, $haystack)
+    {
+
+        $arr = null;
+        foreach ($haystack as $key => $value)
+        {
+            $current_key = $key;
+
+            if (array_search($needle, $value))
+            {
+                $arr[] = $current_key;
+            }
+        }
+
+        return $arr;
+
+    }
+
+    private function fillHeaderDisciplines()
+    {
+
+        $list_disciplines = $this->collectDisciplines(); //собираем список дисциплин
+
+        $index = 0;
+
+        foreach ($list_disciplines as $id)
+        {
+
+            $discipline = $this->getDisciplineName($id);
+
+            if($discipline)
+            {
+                $index++;
+                $this
+                    ->sheet
+                    ->setCellValue($this->mapLetters[$index + 1] . 1, $discipline['name_short']);
+                $this
+                    ->sheet
+                    ->getColumnDimension($this->mapLetters[$index + 1])->setWidth(25);
+                $this->mapDisciplines[$id] = $this->mapLetters[$index + 1];
+            }
+
+        }
+
+        $this
+            ->sheet
+            ->setCellValue($this->mapLetters[$index + 2] . 1, 'Ср. балл');
+
+        return 0;
+
+    }
+
+    /**
+     * Сокращенные ФИО обучающегося.
+     *
+     * @return string
+     */
+    public function getShortName($student)
+    {
+        return $student->family_name . ' ' . mb_substr($student->name, 0, 1) . '.' . ($student->surname != '' ? mb_substr($student->surname, 0, 1) . '.' : '');
+    }
+
+    private function fillListStudents()
+    {
+
+        $index = 1;
+        foreach ($this->students as $student)
+        {
+            $index++;
+            $this
+                ->sheet
+                ->setCellValue('A' . $index, $index - 1);
+            $this
+                ->sheet
+                ->setCellValue('B' . $index, $this->getShortName((object)$student));
+
+        }
+        return 0;
+    }
+
+    private function filterReMarks($studentMarks)
+    {
+        foreach ($studentMarks as $key => $value)
+        {
+            if ($value['mark_value_id'] < 5)
+            {
+                $marksArrByDiscipline[$value['curriculum_discipline_id']]['marks'][$value['id']] = $this->getMarkValue($value['mark_value_id']) ['name_short'];
+                if (!empty($value['parent_id']))
+                {
+                    $marksArrByDiscipline[$value['curriculum_discipline_id']]['parent_id'][$value['id']] = $value['parent_id'];
+                }
+
+            }
+        }
+
+        foreach ($marksArrByDiscipline as $key => $value)
+        {
+
+            $id = $key;
+            $marks = $value['marks'];
+            //$parent_id = ;
+            if(!empty($value['parent_id'])){
+                $parent_id = $value['parent_id'];
+                /* Обрабатываем отработки */
+                foreach ($parent_id as $last => $parent)
+                {
+                    if (array_key_exists($parent, $marks))
+                    {
+                        $marksArrByDiscipline[$key]['marks'][$last] = '(' . $marksArrByDiscipline[$key]['marks'][$parent] . '/' . $marksArrByDiscipline[$key]['marks'][$last] . ')';
+                        unset($marksArrByDiscipline[$key]['marks'][$parent]);
+
+                    }
+                }
+            }
+
+        }
+
+        return $marksArrByDiscipline;
     }
 
     private function getMarkValue($id)
@@ -218,122 +368,6 @@ class GradeSheet
         return $result;
     }
 
-    private function fillHeaderDisciplines()
-    {
-
-        $list_disciplines = $this->collectDisciplines();
-
-        $index = 0;
-
-        foreach ($list_disciplines as $id)
-        {
-            $discipline = $this->getDisciplineName($id);
-
-            if ($discipline)
-            {
-                $index++;
-                $this
-                    ->sheet
-                    ->setCellValue($this->mapLetters[$index + 1] . 1, $discipline->name_short);
-                $this
-                    ->sheet
-                    ->getColumnDimension($this->mapLetters[$index + 1])->setWidth(25);
-                $this->mapDisciplines[$id] = $this->mapLetters[$index + 1];
-            }
-
-        }
-
-        $this
-            ->sheet
-            ->setCellValue($this->mapLetters[$index + 2] . 1, 'Ср. балл');
-
-        return 0;
-
-    }
-
-    private function fillListStudents()
-    {
-
-        $index = 1;
-        foreach ($this->students as $student)
-        {
-            $index++;
-            $this
-                ->sheet
-                ->setCellValue('A' . $index, $index - 1);
-            $this
-                ->sheet
-                ->setCellValue('B' . $index, $student->shortName);
-
-        }
-        return 0;
-    }
-
-    private function filterReMarks($studentMarks)
-    {
-        foreach ($studentMarks as $key => $value)
-        {
-            if ($value['mark_value_id'] < 5)
-            {
-                $marksArrByDiscipline[$value['curriculum_discipline_id']]['marks'][$value['id']] = $this->getMarkValue($value['mark_value_id']) ['name_short'];
-                if (!empty($value['parent_id']))
-                {
-                    $marksArrByDiscipline[$value['curriculum_discipline_id']]['parent_id'][$value['id']] = $value['parent_id'];
-                }
-
-            }
-        }
-        foreach ($marksArrByDiscipline as $key => $value)
-        {
-            $id = $key;
-            $marks = & $value['marks'];
-            $parent_id = & $value['parent_id'];
-
-            /* Обрабатываем отработки */
-            foreach ($parent_id as $last => $parent)
-            {
-                if (array_key_exists($parent, $marks))
-                {
-                    $marksArrByDiscipline[$key]['marks'][$last] = '(' . $marksArrByDiscipline[$key]['marks'][$parent] . '/' . $marksArrByDiscipline[$key]['marks'][$last] . ')';
-                    unset($marksArrByDiscipline[$key]['marks'][$parent]);
-
-                }
-
-            }
-        }
-
-        return $marksArrByDiscipline;
-    }
-
-    private function fillCountMarks($countMarkArr)
-    {
-        $additionFieldName = ['Кол-во 5', 'Кол-во 4', 'Кол-во 3', 'Кол-во 2/', 'Кол-во 2'];
-        $additionFieldValue = ['5', '4', '3', '2/', '2'];
-
-        $index = 4; //смещение вниз листа;
-        foreach ($additionFieldName as $key => $value)
-        {
-            $this
-                ->sheet
-                ->setCellValue('B' . (count($this->students) + $index) , $value);
-            $index++;
-        }
-
-        $index = 4;
-        foreach ($additionFieldValue as $key => $value)
-        {
-            $this
-                ->sheet
-                ->setCellValue('C' . (count($this->students) + $index) , $countMarkArr['count'][$value]);
-            $index++;
-        }
-        return 0;
-    }
-
-    /*
-     *	Считаем средний балл студента слева-направо в таблице Excel;
-     * 	$marksArrByDiscipline
-    */
     private function getAverageMarksStudent($marksArrByDiscipline)
     {
 
@@ -365,94 +399,131 @@ class GradeSheet
         else return 0;
     }
 
-    private function countMarks($marksArrByDiscipline)
-    {
-
-        foreach ($marksArrByDiscipline as $key => $value)
-        {
-
-            foreach ($value['marks'] as $mark => $markValue)
-            {
-
-                if (preg_match_all("/\(([0-9]+)\/([0-9]+)\)/", $markValue, $var))
-                {
-
-                    $countMarkArr['count'][$var[2][0]]++;
-                    $countMarkArr['count'][$var[1][0] . '/']++;
-                }
-                else
-                {
-                    $countMarkArr['count'][$markValue]++;
-                }
-            }
-        }
-        return $countMarkArr;
-    }
-
     private function getAverageMarksDiscipline($marksArr)
     {
-
-        foreach ($marksArr as $id => $value)
+        $sum = [];
+        foreach ($marksArr as $id => $value) //Дисциплина
         {
-
             $index = 0;
 
-            foreach ($value as $type => $arr)
+            foreach ($value as $type => $arr)  //Оценки, в том числе и отработанные
             {
                 if ($type == 'marks')
                 {
+                    $sum[$id]['sum'] = (empty($sum[$id]['average'])) ? null : $sum[$id]['average'];
 
+                    /*
+                     * @key - id оценки;
+                     * @mark - величина оценки;
+                     *
+                     * @sum array
+                     * ['Идентификатор Дисциплины] => [ 'sum' => 'Общая сумма оценок Дисциплины', 'average' => 'Средний балл Дисциплины', 'Количество оценок в дисциплине']
+                     *
+                     */
                     foreach ($arr as $key => $mark)
                     {
 
+
+                        /*
+                         * Обрабатываем ситуацию, в которой оценка исправлена - (2/3)
+                         */
                         if (preg_match_all("/\(([0-9]+)\/([0-9]+)\)/", $mark, $var))
                         {
 
-                            $sum[$id]['average'] += $var[1][0];
-                            $sum[$id]['average'] += $var[2][0];
+                            //Прибавляем две оценки в общую сумма оценок и счетчик увеличиваем на два;
+                            $sum[$id]['sum'] += $var[1][0]; // раз оценка;
+                            $sum[$id]['sum'] += $var[2][0]; // два оценка;
+
                             $index++;
+
                         }
                         else
                         {
 
                             $sum[$id]['sum'] += $mark;
-                            $index++;
+
+
                         }
+                        $index++;
                     }
                 }
             }
             $sum[$id]['count'] = $index;
-
             $sum[$id]['average'] = round($sum[$id]['sum'] / $sum[$id]['count'], 2);
 
         }
         return $sum;
     }
 
-    private function fetchData()
+    private function countMarks($marksArrByDiscipline)
     {
+        $countMarkArr['count'] = [];
 
-
+        //$key - id Дисциплины
+        //$value - оценки дисциплины.
         /*
-         * загружаем информацию об учебной группе, получаем список только активных студентов
-        */
+         * Считаем все оценки перебирая каждую дисциплину;
+         */
 
-        /*
-         * загружаем информацию об учебной группе, получаем список только активных студентов
-        */
+        foreach ($marksArrByDiscipline as $key => $value)
+        {
 
-        $this->group = 24;
-        $this->students = $this->getStudents($this->group);
+            /*
+             * Если нет оценок в дисциплине - вернуть 0;
+             */
+            if(empty($value['marks']))
+                return 0;
 
-        $this->curriculumDisciplines = $this->getCurriculumDisciplines($this->group->education_plan_id);
+                foreach ($value['marks'] as $mark => $markValue) {
 
 
-        $this->marks = $this->getMarks();
+                    if (preg_match_all("/\(([0-9]+)\/([0-9]+)\)/", $markValue, $var)) {
 
-        $this->markValues = MarkValues::find()
-            ->asArray()
-            ->all();
+                        /*
+                         * Проверка на существование переменной;
+                         */
+                        if(empty($countMarkArr['count'][$var[2][0]])){$countMarkArr['count']['count'][$var[2][0]] = 0;}
+                        if(empty($countMarkArr['count'][$var[1][0] . '/'])){$countMarkArr['count'][$var[1][0] . '/'] = 0;}
 
+                        $countMarkArr['count'][$var[2][0]]++;
+                        $countMarkArr['count'][$var[1][0] . '/']++;
+                    } else {
+
+                        /*
+                        * Проверка на существование переменной;
+                        */
+                        if(empty($countMarkArr['count'][$markValue])){$countMarkArr['count'][$markValue] = 0;}
+
+                        $countMarkArr['count'][$markValue]++;
+                    }
+                }
+            }
+        return $countMarkArr;
+    }
+
+    private function fillCountMarks($countMarkArr)
+    {
+        $additionFieldName = ['Кол-во 5', 'Кол-во 4', 'Кол-во 3', 'Кол-во 2/', 'Кол-во 2'];
+        $additionFieldValue = ['5', '4', '3', '2/', '2'];
+
+        $index = 4; //смещение вниз листа;
+        foreach ($additionFieldName as $key => $value)
+        {
+            $this
+                ->sheet
+                ->setCellValue('B' . (count($this->students) + $index) , $value);
+            $index++;
+        }
+
+        $index = 4;
+        foreach ($additionFieldValue as $key => $value)
+        {
+            $this
+                ->sheet
+                ->setCellValue('C' . (count($this->students) + $index) , $countMarkArr['count'][$value]);
+            $index++;
+        }
+        return 0;
     }
 
     public function generate()
@@ -464,14 +535,6 @@ class GradeSheet
         */
 
         $spreadsheet = new Spreadsheet();
-
-//        $spreadsheet->getProperties()
-//            ->setCreator(Yii::$app
-//                ->user
-//                ->identity
-//                ->login)
-//            ->setTitle($this->name)
-//            ->setDescription($this->description);
 
         $spreadsheet->getDefaultStyle()
             ->getFont()
@@ -493,6 +556,7 @@ class GradeSheet
             ->sheet
             ->getColumnDimension('B')
             ->setWidth(30);
+
 
         foreach (['A' => 'right', 'B' => 'left', 'C:Z' => 'center'] as $key => $value)
         {
@@ -517,23 +581,25 @@ class GradeSheet
 
         $this->mapLetters = $this->createColumnsArray('ZZ'); //Создаем индексную карту документа;
 
-        /* Наполняем документ данными */
+        /*
+         * Наполняем документ
+         *
+         */
 
         $this->fillHeaderDisciplines($this->sheet); //Заполняем заголовок дисциплин;
         $this->fillListStudents($this->sheet); //Заполняем список студентов;
-
 
         /* Выставляем оценки студентам */
         $index = 1;
 
         foreach ($this->students as $student)
         {
-
+            $student = (object) $student;
             $index++;
-
             if (!empty($index))
             {
-                $studentMarks = $this->filterMarks($this->getMarks($student->id) , [$this->getParam('startDate') , $this->getParam('endDate') ]);
+                $studentMarks = $this->filterMarks($this->getMarks($student->id) , [$this->startDate , $this->endDate]);
+
                 $marksArrByDiscipline = $this->filterReMarks($studentMarks);
 
                 /* Заполняем оценки по ячейкам */
@@ -555,9 +621,10 @@ class GradeSheet
             }
         }
         /* Считаем средний балл каждой дисциплины */
-        $marksArr = $this->filterReMarks($this->filterMarks($this->marks, [$this->getParam('startDate') , $this->getParam('endDate') ]));
+        $marksArr = $this->filterReMarks($this->filterMarks($this->marks, [$this->startDate , $this->endDate]));
 
         $sum = $this->getAverageMarksDiscipline($marksArr);
+
 
         foreach ($sum as $id => $value)
         {
@@ -582,7 +649,7 @@ class GradeSheet
         */
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="Ведомость успеваемости ' . $this
-                ->group->name . '.xlsx"');
+                ->group['name'] . '.xlsx"');
         header('Cache-Control: max-age=0');
         header('Cache-Control: max-age=1');
 
@@ -592,5 +659,6 @@ class GradeSheet
         header('Pragma: public'); // HTTP/1.0
         $writer = new Xlsx($spreadsheet);
         $writer->save('php://output');
+        die();
     }
 }

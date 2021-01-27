@@ -2,16 +2,13 @@
 
 namespace app\modules\av\controllers;
 
-use app\modules\sniffer\models\Logger;
 use yii\web\Controller;
-use app\modules\av\models\students\reports\GradeSheet;
 use yii\data\ArrayDataProvider;
-use app\modules\av\models\Reports;
 
 /**
  * Reports controller for the `av` module
  */
-class ReportsController extends Controller
+class PluginsController extends Controller
 {
     /**
      * Renders the index view for the module
@@ -24,7 +21,7 @@ class ReportsController extends Controller
         $reports = [
             [
                 'id' => 1,
-                'name' => 'Ведомость успеваемости',
+                'name' => 'Успеваемость',
                 'module' => 'Студент',
             ]
         ];
@@ -46,5 +43,6 @@ class ReportsController extends Controller
             'dataProvider' => $dataProvider,
         ]);
     }
+
 
 }

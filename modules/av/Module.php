@@ -5,7 +5,7 @@ namespace app\modules\av;
 /**
  * av module definition class
  */
-class Module extends \yii\base\Module
+class Module extends \app\modules\system\Module
 {
     /**
      * {@inheritdoc}
@@ -17,12 +17,18 @@ class Module extends \yii\base\Module
     public $link = 'av';
     public $icon = 'fa fa-angle-double-right';
     public $visible = 'viewAvtorVuz';
-    public $layout = '/main';
+//    public $layout = '/main';
     public $routes = [
-        [   'route' => '/av/student/reports',
-            'name' => 'Студент - Отчеты',
-            'access' => '',
-            'description' => 'Отчеты модуля "Студент"',
+        [   'route' => '/av/reports',
+            'name' => 'Отчеты',
+            'access' => 'viewAvtorVuz',
+            'description' => 'Отчеты',
+            'visible' => true,
+        ],
+        [   'route' => '/av/plugins',
+            'name' => 'Плагины',
+            'access' => 'viewAvtorVuz',
+            'description' => 'Плагины',
             'visible' => true,
         ],
     ];
