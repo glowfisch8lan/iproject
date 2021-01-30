@@ -100,15 +100,15 @@ class AcademicPerformance extends Model
         $index = ArrayHelper::recursiveArraySearch($id, $this->curriculumDisciplines);
 
 
-        if (!empty($this->curriculumDisciplines[$index[0]]['name']))
+        if (empty($this->curriculumDisciplines[$index[0]]['name']))
         {
-
-            $discipline['name'] = $this->curriculumDisciplines[$index[0]]['name'];
-            $discipline['name_short'] = $this->curriculumDisciplines[$index[0]]['name_short'];
-
-            return $discipline;
+            return 0;
         }
-        else return 0;
+
+        $discipline['name'] = $this->curriculumDisciplines[$index[0]]['name'];
+        $discipline['name_short'] = $this->curriculumDisciplines[$index[0]]['name_short'];
+
+        return $discipline;
 
     }
 
