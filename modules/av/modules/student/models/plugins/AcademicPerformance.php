@@ -78,13 +78,18 @@ class AcademicPerformance extends Model
 
     public function filterMarks($marks, $datetime)
     {
-
         foreach ($marks as $key => $value)
         {
 
             $date = strtotime($value['datetime']);
 
-            if ($date >= strtotime($datetime[0]) && $date <= strtotime($datetime[1]))
+            if (
+                $date >= strtotime($datetime[0]) &&
+                $date <= strtotime($datetime[1]) &&
+                $value['mark_value_id'] >= 1 &&
+                $value['mark_value_id'] <= 5 &&
+                $value['class_type_id'] != null
+            )
             {
                 $arr[] = $value;
             }
@@ -122,8 +127,6 @@ class AcademicPerformance extends Model
         {
             //фильтруем оценки, составляем таблицу оценок. Делаем выборку тех дисциплин, у которых есть оценки за выбранный период времени
             $marksArray = $this->filterMarks($this->getMarks($student['id']) , [$this->startDate , $this->endDate]);
-
-
             foreach ($marksArray as $marks)
             {
                 $collection[$marks['curriculum_discipline_id']] = $index;
