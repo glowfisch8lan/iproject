@@ -1,8 +1,8 @@
 <?php
-namespace app\modules\av\models\students\reports;
+namespace app\modules\av\models\students\reports\grade_sheet;
 
 use Yii;
-use yii\httpclient\Client;
+use app\modules\av\modules\student\models\StudentsApi;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
@@ -14,9 +14,9 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
  *
  * @package app\custom\modules\student\models\reports\journal_dvui
  */
-class GradeSheet
+class Report
 {
-    protected static $token_custom = 'c5f0dde7-cb0c-401d-8b11-81d4317da0f3';
+
     public $name = 'Ведомость успеваемости';
     public $group;
     public $students;
@@ -29,73 +29,27 @@ class GradeSheet
 
     private $startDate = '01.09.2020';
     private $endDate = '26.01.2021';
-    
-    /*МЕТОДЫ API */
 
-    private function getGroup($id)
+
+    private function fetchData()
     {
 
-        $client = new Client();
-        $response = $client->createRequest()
-            ->setMethod('POST')
-            ->setUrl('https://av.dvuimvd.ru/api/call/system-custom/get-group?token='.self::$token_custom)
-            ->setData(['id' => $id])
-            ->send();
-        return $response->data['data'];
+        /*
+         * загружаем информацию об учебной группе, получаем список только активных студентов
+        */
+
+        $this->group = StudentsApi::getGroup(24);
+
+        $this->students = StudentsApi::getStudentsByGroup($this->group['id']);
+
+        $this->curriculumDisciplines = StudentsApi::getCurriculumDisciplines($this->group['education_plan_id']);
+
+        $this->marks = StudentsApi::getMarksByGroup($this->group['id']);
+
+        $this->markValues = StudentsApi::getMarksValues();
+
 
     }
-
-    private function getStudentsByGroup($group_id)
-    {
-
-        https://av.dvuimvd.ru/api/call/system-custom/get-students-by-group?group_id=24&token=c5f0dde7-cb0c-401d-8b11-81d4317da0f3
-        $client = new Client();
-        $response = $client->createRequest()
-            ->setMethod('POST')
-            ->setUrl('https://av.dvuimvd.ru/api/call/system-custom/get-students-by-group?token='.self::$token_custom)
-            ->setData(['group_id' => $group_id])
-            ->send();
-        return $response->data['data'];
-    }
-
-    private function getCurriculumDisciplines($education_plan_id)
-    {
-        $client = new Client();
-        $response = $client->createRequest()
-            ->setMethod('POST')
-            ->setUrl('https://av.dvuimvd.ru/api/call/system-custom/get-curriculum-disciplines?&token='.self::$token_custom)
-            ->setData([
-                'education_plan_id' => $education_plan_id
-            ])
-            ->send();
-
-        return $response->data['data'];
-    }
-
-    private function getMarksByGroup($group_id)
-    {
-        $client = new Client();
-        $response = $client->createRequest()
-            ->setMethod('POST')
-            ->setUrl('https://av.dvuimvd.ru/api/call/system-custom/get-marks-by-group?token='.self::$token_custom)
-            ->setData(['group_id' => $group_id])
-            ->send();
-        return $response->data['data'];
-
-    }
-
-    private function getMarksValues()
-    {
-        $client = new Client();
-        $response = $client->createRequest()
-            ->setMethod('POST')
-            ->setUrl('https://av.dvuimvd.ru/api/call/system-custom/get-mark-values?token='.self::$token_custom)
-            ->send();
-        return $response->data['data'];
-
-    }
-
-    /*МЕТОДЫ API */
 
     private function createColumnsArray($end_column, $first_letters = '')
     {
@@ -130,26 +84,6 @@ class GradeSheet
         }
 
         return $columns;
-    }
-
-    private function fetchData()
-    {
-
-        /*
-         * загружаем информацию об учебной группе, получаем список только активных студентов
-        */
-
-        $this->group = $this->getGroup(24);
-
-        $this->students = $this->getStudentsByGroup($this->group['id']);
-
-        $this->curriculumDisciplines = $this->getCurriculumDisciplines($this->group['education_plan_id']);
-
-        $this->marks = $this->getMarksByGroup($this->group['id']);
-
-        $this->markValues = $this->getMarksValues();
-
-
     }
 
     private function collectDisciplines()

@@ -155,7 +155,7 @@ class Grid extends GridView
            'filterModel' => $searchModel,
 
            'tableOptions' => [
-               'class' => 'table table-bordered table-hover'
+               'class' => 'table table-bordered table-hover table-responsive'
            ],
            'pager' => [
                'class' => '\yii\widgets\LinkPager',

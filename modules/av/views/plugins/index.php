@@ -8,7 +8,7 @@ use app\modules\system\helpers\Grid;
 /* @var $searchModel app\modules\typography\models\OrdersSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Отчеты';
+$this->title = 'Плагины';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="box-body">
@@ -22,8 +22,21 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'id',
                     'module.name',
-                    'name',
-                    ],
+                    'name' => [
+                        'format' => 'raw',
+                        'attribute' => 'name',
+                        'value' => function($data){
+                            return
+                                Html::a($data['name'], ['/av/plugins/load',
+                                    'module' => $data['module']['id'],
+                                    'id' => $data['id'],
+                                    'category' => $data['category'],
+                                    'controller' => $data['controller']
+                                ],
+                                    ['class' => 'link']);
+                        }
+                    ]
+                ],
             'buttonsOptions' => [
                 'template' => '{view}'
             ],

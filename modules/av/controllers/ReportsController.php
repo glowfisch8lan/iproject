@@ -2,9 +2,7 @@
 
 namespace app\modules\av\controllers;
 
-use app\modules\sniffer\models\Logger;
 use yii\web\Controller;
-use app\modules\av\models\students\reports\GradeSheet;
 use yii\data\ArrayDataProvider;
 use app\modules\av\models\Reports;
 

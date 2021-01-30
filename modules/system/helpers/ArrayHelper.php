@@ -37,4 +37,27 @@ class ArrayHelper extends \yii\helpers\ArrayHelper
 
         return $rows;
     }
+
+    /**
+     * Рекурсивный поиск в массиве
+     *
+     * @return array | keys
+     */
+    public static function recursiveArraySearch($needle, $haystack)
+    {
+
+        $arr = null;
+        foreach ($haystack as $key => $value)
+        {
+            $current_key = $key;
+
+            if (array_search($needle, $value))
+            {
+                $arr[] = $current_key;
+            }
+        }
+
+        return $arr;
+
+    }
 }
