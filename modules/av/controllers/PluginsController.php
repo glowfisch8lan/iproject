@@ -14,6 +14,15 @@ use yii\web\ServerErrorHttpException;
  */
 class PluginsController extends Controller
 {
+
+    public function beforeAction($action)
+    {
+        if (in_array($action->id, ['lti'])) {
+            $this->enableCsrfValidation = false;
+        }
+        return parent::beforeAction($action);
+    }
+
     /**
      * Renders the index view for the module
      * @return string
