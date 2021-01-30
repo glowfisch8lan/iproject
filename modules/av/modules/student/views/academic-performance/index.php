@@ -12,7 +12,7 @@ $this->params['breadcrumbs'][] = ['label' => Yii::$app->controller->module->name
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="box-body">
-    <div class="col-md-6">
+    <div class="col-md-12">
 
         <div class="card">
             <h5 class="card-header">Текущая успеваемость</h5>
