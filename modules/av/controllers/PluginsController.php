@@ -54,7 +54,7 @@ class PluginsController extends Controller
         ]);
     }
 
-    public function actionLoad($module, $id, $action = 'index', $controller, $category = null)
+    public function actionLoad($module, $id, $action = 'index', $controller, $category = null, $ajax = false)
     {
 
         $class = 'app\modules\av\modules\\'.$module.'\controllers\\'.$id.'Controller';
@@ -71,8 +71,14 @@ class PluginsController extends Controller
         if(!file_exists(realpath(Yii::getAlias($path).'.php')))
             throw new NotFoundHttpException('Файл не найден');
 
+        if($ajax) {
+            return $this->renderPartial($path, [
+                'model' => $array['model']
+            ]);
+        }
         return $this->render($path, [
             'model' => $array['model']
         ]);
     }
+
 }

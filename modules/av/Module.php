@@ -32,6 +32,27 @@ class Module extends \app\modules\system\Module
             'visible' => true,
         ],
     ];
+
+    public function behaviors() {
+        return [
+            'access' => [
+                'class' => \yii\filters\AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                    [
+                        'controllers'=>['av/plugins'],
+                        'allow' => true,
+                        'actions' => ['load'],
+                        'roles' => ['?'],
+                    ],
+                ],
+            ],
+        ];
+    }
+
     /**
      * {@inheritdoc}
      */

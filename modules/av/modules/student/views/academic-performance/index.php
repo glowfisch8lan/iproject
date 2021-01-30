@@ -16,7 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?
 
         $form = ActiveForm::begin([
-                'action' => '/av/plugins/load?module=student&id=AcademicPerformance&controller=AcademicPerformance&action=GetGradeSheet'
+                'action' => '/av/plugins/load?module=student&id=AcademicPerformance&controller=AcademicPerformance&action=GetGradeSheet&ajax=true'
         ]);
         echo $form->field($model, 'group')->dropDownList(
             ArrayHelper::map(StudentsApi::getGroups(), 'id', 'name')

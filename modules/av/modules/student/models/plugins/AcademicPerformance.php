@@ -93,6 +93,7 @@ class AcademicPerformance extends Model
         return $arr;
 
     }
+
     public function getDisciplineName($id)
     {
 
