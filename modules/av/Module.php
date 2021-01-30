@@ -45,7 +45,7 @@ class Module extends \app\modules\system\Module
                     [
                         'controllers'=>['av/plugins'],
                         'allow' => true,
-                        'actions' => ['load'],
+                        'actions' => ['ajax'],
                         'roles' => ['?'],
                     ],
                 ],

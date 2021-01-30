@@ -55,7 +55,7 @@ class PluginsController extends Controller
     }
 
 
-    public function actionLoad($module, $id, $action = 'index', $controller, $category = null)
+    public function actionLoad($module, $id, $action = 'index', $controller)
     {
 
         $class = 'app\modules\av\modules\\'.$module.'\controllers\\'.$id.'Controller';
@@ -79,8 +79,9 @@ class PluginsController extends Controller
         ]);
     }
 
-    public function actionAjax($module, $id, $action = 'index', $controller, $category = null)
+    public function actionAjax($module, $id, $action = 'index', $controller)
     {
+        $this->enableCsrfValidation = false;
 
         $class = 'app\modules\av\modules\\'.$module.'\controllers\\'.$id.'Controller';
 
