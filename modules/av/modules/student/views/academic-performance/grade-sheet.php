@@ -20,6 +20,7 @@ foreach( $model->students as $student )
 
 <div class="box-body">
     <div class="col-md-12">
+        <a href="#" onclick="history.back();return false;">Назад</a>
         <table class="table table-responsive" style="font-size:14px">
             <thead>
             <tr>
