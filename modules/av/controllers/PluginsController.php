@@ -111,6 +111,7 @@ class PluginsController extends Controller
         //$module, $id, $action = 'index', $controller
 
         if(Yii::$app->request->isPost){
+            echo '1';
             var_dump(Yii::$app->request->post());
         }
         die();
