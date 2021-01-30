@@ -54,7 +54,32 @@ class PluginsController extends Controller
         ]);
     }
 
-    public function actionLoad($module, $id, $action = 'index', $controller, $category = null, $ajax = false)
+
+    public function actionLoad($module, $id, $action = 'index', $controller, $category = null)
+    {
+
+        $class = 'app\modules\av\modules\\'.$module.'\controllers\\'.$id.'Controller';
+        $class = new $class();
+        $actionController = 'action'.ucfirst($action);
+
+        $array = $class->$actionController();
+
+        $id = preg_split('/(?<=[a-z])(?=[A-Z])/u',$id);
+        $id = (count($id) > 1 ) ? mb_strtolower($id[0].'-'.$id[1]) : $id[0];
+        $path = '@app/modules/av/modules/'.$module.'/views/'.$id.'/'.$array['view'];
+
+
+
+        if(!file_exists(realpath(Yii::getAlias($path).'.php')))
+            throw new NotFoundHttpException('Файл не найден');
+
+        return $this->render($path, [
+            'model' => $array['model'],
+            'ajax' => false
+        ]);
+    }
+
+    public function actionAjax($module, $id, $action = 'index', $controller, $category = null)
     {
 
         $class = 'app\modules\av\modules\\'.$module.'\controllers\\'.$id.'Controller';
@@ -68,17 +93,15 @@ class PluginsController extends Controller
         $id = (count($id) > 1 ) ? mb_strtolower($id[0].'-'.$id[1]) : $id[0];
         $path = '@app/modules/av/modules/'.$module.'/views/'.$id.'/'.$array['view'];
 
+        $this->layout = "@app/modules/system/views/layouts/empty";
+
         if(!file_exists(realpath(Yii::getAlias($path).'.php')))
             throw new NotFoundHttpException('Файл не найден');
 
-        if($ajax) {
-            return $this->renderPartial($path, [
-                'model' => $array['model']
-            ]);
-        }
-        return $this->render($path, [
-            'model' => $array['model']
-        ]);
-    }
 
+
+        return $this->render($path, [
+                'model' => $array['model'],
+                'ajax' => true]);
+    }
 }

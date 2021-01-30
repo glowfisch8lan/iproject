@@ -12,20 +12,34 @@ $this->params['breadcrumbs'][] = ['label' => Yii::$app->controller->module->name
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="box-body">
-    <div class="col-md-12">
-        <?
+    <div class="col-md-6">
 
-        $form = ActiveForm::begin([
-                'action' => '/av/plugins/load?module=student&id=AcademicPerformance&controller=AcademicPerformance&action=GetGradeSheet&ajax=true'
+        <div class="card">
+            <h5 class="card-header">Текущая успеваемость</h5>
+            <div class="card-body">
+                <h5 class="card-title">Получить сведения о текущей успеваемости</h5>
+                <p class="card-text">
+                    <?php
+
+                    $ajax = ($ajax) ? 'ajax' : 'load';
+                    $groups = array_filter(ArrayHelper::map(StudentsApi::getGroups(), 'id', 'name'), function($data){
+                        if((preg_match('/(ПД|Ю).*.2\d*$/', $data, $matches)))
+                            return $data;
+                    });
+                    $form = ActiveForm::begin([
+                'action' => "/av/plugins/".$ajax."?module=student&id=AcademicPerformance&controller=AcademicPerformance&action=GetGradeSheet"
         ]);
-        echo $form->field($model, 'group')->dropDownList(
-            ArrayHelper::map(StudentsApi::getGroups(), 'id', 'name')
-        );
+        echo $form->field($model, 'group')->dropDownList($groups);
         ?>
-                <div class="form-group">
-                    <?= Html::submitButton('<i class="fa fa-save"></i> Отправить', ['class' => 'btn btn-success']) ?>
-    </div>
-    <?ActiveForm::end();?>
+
+                <div class="d-flex flex-row justify-content-end"">
+                <div class="form-group justify-content-end" style="border:1px solid black">
+                    <?= Html::submitButton('Запросить', ['class' => 'btn btn-primary']) ?>
+                </div>
+            </div>
+            <?php ActiveForm::end(); ?>
+            </p>
+        </div>
     </div>
 </div>
 

@@ -46,6 +46,7 @@ foreach( $model->students as $student )
                 <?
                 foreach( $model->students as $student )
                 {
+
                     $marksArrByDiscipline = $model->filterReMarks($model->getStudentMarks($student['id']));
                     echo '<tr>';
                     echo "<th scope=\"row\">$index</th>

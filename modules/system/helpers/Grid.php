@@ -68,6 +68,11 @@ class Grid extends GridView
                         ]]);
             },
 
+            'ajax' => function ($url,$model) {
+                return Html::a('<i class="fa fa-pencil" aria-hidden="true"></i>', $url,
+                    ['class' => 'btn btn-outline-info',]);
+            },
+
             'delete' => function ($url, $model){
                 return Html::a('<i class="fa fa-trash" aria-hidden="true"></i>', $url,
                     ['class' => 'btn btn-outline-danger',

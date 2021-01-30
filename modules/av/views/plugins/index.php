@@ -20,11 +20,18 @@ $this->params['breadcrumbs'][] = $this->title;
             'dataProvider' => $dataProvider,
             'columns' =>
                 [
-                    'id',
-                    'module.name',
+                    [
+                        'class' => 'yii\grid\SerialColumn',
+
+                    ],
+                    'module.name' => [
+                        'attribute' => 'module.name',
+                        'label' => 'Модуль',
+                    ],
                     'name' => [
-                        'format' => 'raw',
                         'attribute' => 'name',
+                        'format' => 'raw',
+                        'label' => 'Название',
                         'value' => function($data){
                             return
                                 Html::a($data['name'], ['/av/plugins/load',
@@ -38,7 +45,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     ]
                 ],
             'buttonsOptions' => [
-                'template' => '{view}'
+                'template' => '{view} {ajax}'
             ],
             'pagination' => [
                 'forcePageParam' => false,

@@ -20,9 +20,31 @@ $this->params['breadcrumbs'][] = $this->title;
             'dataProvider' => $dataProvider,
             'columns' =>
                 [
-                    'id',
-                    'module.name',
-                    'name',
+                    [
+                        [
+                            'class' => 'yii\grid\SerialColumn',
+
+                        ],
+                        'module.name' => [
+                            'attribute' => 'module.name',
+                            'label' => 'Модуль',
+                        ],
+                        'name' => [
+                            'attribute' => 'name',
+                            'format' => 'raw',
+                            'label' => 'Название',
+                            'value' => function($data){
+                                return
+                                    Html::a($data['name'], ['/av/reports/load',
+                                        'module' => $data['module']['id'],
+                                        'id' => $data['id'],
+                                        'category' => $data['category'],
+                                        'controller' => $data['controller']
+                                    ],
+                                        ['class' => 'link']);
+                            }
+                        ]
+                    ],
                     ],
             'buttonsOptions' => [
                 'template' => '{view}'
