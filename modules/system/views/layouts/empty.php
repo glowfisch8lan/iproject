@@ -42,10 +42,10 @@ $this->registerCssFile($bundle->baseUrl . '/css/CRUD.css', $options);
 
             <div class="content">
                 <div class="container-fluid">
-
+                    <div class="box box-primary">
 
                         <?=$content?>
-
+                    </div>
             </div>
         </div>
     <?php $this->endBody(); ?>
