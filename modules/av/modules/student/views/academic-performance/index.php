@@ -31,7 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
         ]);
         echo $form->field($model, 'group')->dropDownList($groups);
         ?>
-
+                    <input type="hidden" name="_csrf" value="<?=Yii::$app->request->getCsrfToken()?>" />
                 <div class="d-flex flex-row justify-content-end"">
                 <div class="form-group justify-content-end" style="border:1px solid black">
                     <?= Html::submitButton('Запросить', ['class' => 'btn btn-primary']) ?>
