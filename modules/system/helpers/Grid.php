@@ -155,12 +155,12 @@ class Grid extends GridView
 
         $columns = self::collectColumns();
 
-        return GridView::widget([
+        return '<div class="table-responsive">'.GridView::widget([
            'dataProvider' => $dataProvider,
            'filterModel' => $searchModel,
 
            'tableOptions' => [
-               'class' => 'table table-bordered table-hover table-responsive'
+               'class' => 'table table-bordered table-hover'
            ],
            'pager' => [
                'class' => '\yii\widgets\LinkPager',
@@ -186,8 +186,7 @@ class Grid extends GridView
                'class' => ''
            ],
            'columns' => $columns,
-       ]);
-        Pjax::end();
+       ]).'</div>';
     }
 
 }

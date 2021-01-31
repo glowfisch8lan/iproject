@@ -15,14 +15,6 @@ use yii\web\ServerErrorHttpException;
 class PluginsController extends Controller
 {
 
-    public function beforeAction($action)
-    {
-        if (in_array($action->id, ['lti'])) {
-            $this->enableCsrfValidation = false;
-        }
-        return parent::beforeAction($action);
-    }
-
     /**
      * Renders the index view for the module
      * @return string
@@ -31,7 +23,7 @@ class PluginsController extends Controller
     {
 
         //var_dump(Reports::getList());
-        $reports = [
+        $plugins = [
             [
                 'id' => 'AcademicPerformance',
                 'name' => 'Успеваемость',
@@ -45,7 +37,7 @@ class PluginsController extends Controller
         ];
 
         $dataProvider = new ArrayDataProvider([
-            'allModels' => $reports,
+            'allModels' => $plugins,
 //            'sort' => [
 //                'defaultOrder' => ['date' => SORT_DESC],
 //                'attributes' => [

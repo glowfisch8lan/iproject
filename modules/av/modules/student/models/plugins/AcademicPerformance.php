@@ -45,7 +45,6 @@ class AcademicPerformance extends Model
     /**
      * Наполнение модели данными
      *
-     * @return null
      */
     public function fetchDataGradeSheet()
     {
@@ -55,15 +54,16 @@ class AcademicPerformance extends Model
         $this->marks = StudentsApi::getMarksByGroup($this->group['id']);
         $this->markValues = StudentsApi::getMarksValues();
 
-        return 0;
+        return;
     }
 
     /**
      * Все оценки студента
      *
-     * @return null
+     * @param integer $id Идентификатор студента
+     * @return array
      */
-    public function getMarks($id)
+    public function getMarks(int $id)
     {
         foreach ($this->marks as $key => $mark)
         {
@@ -76,13 +76,32 @@ class AcademicPerformance extends Model
 
     }
 
+    /**
+     * Фильтрация оценок студента, выборка нужных оценок за определнный период;
+     * Условия выборки: Дата выставления оценки, оценки, полученные только на парах (исключены экзамены и результаты сессий), оценки вида 5,4,3,2
+     *
+     * @param array $marks Массив оценок,
+     * [0 =>
+            array (size=10)
+            'id' => string '159740' (length=6)
+            'journal_lesson_id' => string '16887' (length=5)
+            'student_id' => string '2510' (length=4)
+            'mark_type_id' => string '1' (length=1)
+            'mark_value_id' => string '2' (length=1)
+            'datetime' => string '2020-09-14 04:34:19' (length=19)
+            'parent_id' => null
+            'control_type_id' => null
+            'curriculum_discipline_id' => string '14547' (length=5)
+            'class_type_id' => string '2' (length=1),
+     * 1 => ... ]
+     * @param array $datetime [0 => (string) Начальная дата, 1 => (string) Конечная дата] Период для фильтрации
+     * @return array
+     */
     public function filterMarks($marks, $datetime)
     {
         foreach ($marks as $key => $value)
         {
-
             $date = strtotime($value['datetime']);
-
             if (
                 $date >= strtotime($datetime[0]) &&
                 $date <= strtotime($datetime[1]) &&
@@ -93,47 +112,46 @@ class AcademicPerformance extends Model
             {
                 $arr[] = $value;
             }
-
         }
         return $arr;
-
     }
 
+    /**
+     * Имя и сокращенное название дисциплины по ее ID
+     * Поиск осуществляется рекурсивно в уже загруженном перечне дисциплин, изучаемых по учебному плану.
+     * Это сделано для экономия ресурсов и снижения количества запросов к СУБД.
+     *
+     * @param integer $id Идентификатор дисциплины
+     * @return sarray | 0
+     */
     public function getDisciplineName($id)
     {
-
-
         $index = ArrayHelper::recursiveArraySearch($id, $this->curriculumDisciplines);
 
-
-        if (empty($this->curriculumDisciplines[$index[0]]['name']))
-        {
-            return 0;
-        }
+        if (empty($this->curriculumDisciplines[$index[0]]['name'])) return 0;
 
         $discipline['name'] = $this->curriculumDisciplines[$index[0]]['name'];
         $discipline['name_short'] = $this->curriculumDisciplines[$index[0]]['name_short'];
 
         return $discipline;
-
     }
 
+    /**
+     * Список дисцплин (сокращенные названия), изучаемых по учебному плану за установленный период;
+     *
+     * @return array Идентификаторы отфильтрованных дисциплин
+     */
     public function collectDisciplines()
     {
-
         $index = 0;
-
         foreach ($this->students as $student)
         {
-            //фильтруем оценки, составляем таблицу оценок. Делаем выборку тех дисциплин, у которых есть оценки за выбранный период времени
             $marksArray = $this->filterMarks($this->getMarks($student['id']) , [$this->startDate , $this->endDate]);
             foreach ($marksArray as $marks)
             {
                 $collection[$marks['curriculum_discipline_id']] = $index;
                 $index++;
             }
-
-
         }
 
         ksort($collection);
@@ -141,6 +159,11 @@ class AcademicPerformance extends Model
 
     }
 
+    /**
+     * Список дисцплин (сокращенные названия), изучаемых по учебному плану за установленный период;
+     *
+     * @return array
+     */
     public function getDisciplines()
     {
 
@@ -155,8 +178,7 @@ class AcademicPerformance extends Model
 
             if($discipline)
             {
-                $index++;
-                $arr[] = $discipline['name_short'];
+                $index++; $arr[] = $discipline['name_short'];
             }
 
         }
@@ -164,20 +186,23 @@ class AcademicPerformance extends Model
 
     }
 
+    /**
+     * Список Фамилия И.О. студентов группы
+     *
+     * @return array
+     */
     public function getStudentsName()
     {
-
         $arr = [];
-        foreach ($this->students as $student)
-        {
-            $arr[] = $this->getShortName((object)$student);
-        }
+        foreach ($this->students as $student) $arr[] = $this->getShortName((object)$student);
         return $arr;
 
     }
+
     /**
      * Сокращенные ФИО обучающегося.
      *
+     * @param object $student Студент как объект со свойствами
      * @return string
      */
     public function getShortName($student)
@@ -185,29 +210,65 @@ class AcademicPerformance extends Model
         return $student->family_name . ' ' . mb_substr($student->name, 0, 1) . '.' . ($student->surname != '' ? mb_substr($student->surname, 0, 1) . '.' : '');
     }
 
+    /**
+     * Оценки студента
+     *
+     * @param integer $id Идентификатор студента
+     * @return array
+     */
     public function getStudentMarks($id)
     {
         return $this->filterMarks($this->getMarks($id) , [$this->startDate , $this->endDate]);
     }
 
+    /**
+     * Оценки студента
+     *
+     * @param integer $id Идентификатор студента
+     * @return array | null
+     */
     public function getMarkValue($id)
     {
+        foreach ($this->markValues as $key => $value) if ($value['id'] == $id) $result = ['name' => $value['name'], 'name_short' => $value['name_short']];
+        if (empty($result)) return;
+        return $result;
+    }
 
-        foreach ($this->markValues as $key => $value)
+    /**
+     * Средний балл студента
+     *
+     * @param integer $id Идентификатор студента
+     * @return array | null
+     */
+    public function getAverageMarksStudent($marksArr)
+    {
+
+        $sumMark = 0;
+        $p = 0;
+
+        foreach ($marksArr as $id => $value)
         {
-            if ($value['id'] == $id)
+
+            foreach ($value['marks'] as $idMark => $mark)
             {
-                $result = ['name' => $value['name'], 'name_short' => $value['name_short']];
+
+                if (preg_match_all("/\(([0-9]+)\/([0-9]+)\)/", $mark, $var))
+                {
+                    $mark = (int)$var[1][0] + (int)$var[2][0];
+                    $p++;
+                }
+
+                $sumMark += (int)$mark;
+                $p++;
             }
 
         }
 
-        if (empty($result))
+        if ($p != 0)
         {
-            return 0;
+            return round($sumMark / $p, 2);
         }
-
-        return $result;
+        else return 0;
     }
 
     public function filterReMarks($studentMarks)
@@ -249,8 +310,4 @@ class AcademicPerformance extends Model
 
         return $marksArrByDiscipline;
     }
-//    public function init()
-//    {
-//        return 0;
-//    }
 }

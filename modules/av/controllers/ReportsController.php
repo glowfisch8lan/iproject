@@ -21,9 +21,14 @@ class ReportsController extends Controller
         //var_dump(Reports::getList());
         $reports = [
             [
-                'id' => 1,
+                'id' => 'AcademicPerformance',
                 'name' => 'Ведомость успеваемости',
-                'module' => 'Студент',
+                'module' => [
+                    'id' => 'student',
+                    'name' => 'Студент',
+                ],
+                'category' => 'plugins',
+                'controller' => 'AcademicPerformance'
             ]
         ];
         $dataProvider = new ArrayDataProvider([

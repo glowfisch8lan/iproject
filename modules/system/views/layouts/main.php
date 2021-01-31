@@ -174,7 +174,7 @@ $this->registerJs($script, $position);
             </ul>
         </nav>
 
-        <div id="body" class="active">
+        <div id="body" class="active" style="min-width: 0;">
 
             <nav class="navbar navbar-expand-lg navbar-primary bg-primary">
                 <button type="button" id="sidebarCollapse" class="btn btn-outline-light default-light-menu" "data-pjax"="0"><i class="fa fa-bars"></i><span></span></button>

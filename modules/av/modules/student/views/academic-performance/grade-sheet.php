@@ -19,18 +19,19 @@ foreach( $model->students as $student )
 ?>
 
 <div class="box-body">
-    <div class="col-md-12">
+    <div class="col-12">
         <a href="#" onclick="history.back();return false;">Назад</a>
-        <table class="table table-responsive" style="font-size:14px">
+        <div class="table-responsive">
+        <table class="table table-bordered" style="font-size:12px">
             <thead>
             <tr>
                 <th scope="col">#</th>
                 <th scope="col">ФИО</th>
                 <?
+
                 $map = [];
                 foreach( $model->collectDisciplines() as $id )
                 {
-
                     $name_short = $model->getDisciplineName($id)['name_short'];
                     if($name_short != null)
                     {
@@ -40,15 +41,17 @@ foreach( $model->students as $student )
                 }
 
                 ?>
-
+                <th scope="col">Ср. балл</th>
             </tr>
             </thead>
             <tbody>
                 <?
+
                 foreach( $model->students as $student )
                 {
 
                     $marksArrByDiscipline = $model->filterReMarks($model->getStudentMarks($student['id']));
+                    var_dump();
                     echo '<tr>';
                     echo "<th scope=\"row\">$index</th>
                             <td>" . $model->getShortName((object)$student) . "</td>";
@@ -64,6 +67,9 @@ foreach( $model->students as $student )
                             echo '</td>';
                         }
                     }
+                    echo '<td>';
+                        echo $model->getAverageMarksStudent($marksArrByDiscipline);
+                    echo '</td>';
                     echo '</tr>';
                     $index++;
                 }
@@ -72,6 +78,7 @@ foreach( $model->students as $student )
 
             </tbody>
         </table>
+        </div>
     </div>
 </div>
 
