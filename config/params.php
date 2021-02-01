@@ -18,5 +18,6 @@ return [
     /*
      * Количество товаров на странице для постраничной навигации
      */
-    'pageSize' => 2
+    'pageSize' => 2,
+    'bsDependencyEnabled' => false, //отключаем зависимость Kartik от внутреннего bootstrap
 ];

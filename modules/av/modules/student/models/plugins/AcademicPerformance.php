@@ -36,7 +36,14 @@ class AcademicPerformance extends Model
             [
                 ['group'],
                 'required',
-                'message' => 'Заполните поля!'
+                'message' => 'Заполните поля!',
+
+            ],
+            [
+                ['startDate'],
+                'required',
+                'message' => 'Заполните поля!',
+
             ],
         ];
 

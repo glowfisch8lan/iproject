@@ -21,9 +21,9 @@ class DefaultController extends Controller
         return [
             'captcha' => [
                 'class' => 'yii\captcha\CaptchaAction',
-                'fixedVerifyCode' => YII_DEBUG ? 'test' : null,
+//                'fixedVerifyCode' => YII_DEBUG ? 'test' : null,
                 'foreColor' => 0xFE980F, // цвет символов
-                'minLength' => 2, // минимальное количество символов
+                'minLength' => 4, // минимальное количество символов
                 'maxLength' => 4, // максимальное
                 'offset' => 5, // расстояние между символами (можно отрицательное)
             ],
@@ -48,6 +48,7 @@ class DefaultController extends Controller
 
            $model->sender = $model->position . ' ' . $model->sender;
            $model->receiver_unit_id = null; //унести в параметр;
+
 
            $uploadManager = new UploadManager();
            $uploadManager->file = UploadManager::getInstance($model, 'file');

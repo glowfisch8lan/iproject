@@ -21,7 +21,8 @@
         "yiisoft/yii2-queue": "2.x-dev",
         "yiisoft/yii2-httpclient": "2.0.x-dev",
 		"phpoffice/phpword": "v0.17.*",
-        "phpoffice/phpspreadsheet": "dev-master"
+        "phpoffice/phpspreadsheet": "dev-master",
+		"kartik-v/yii2-widget-select2": "@dev"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",

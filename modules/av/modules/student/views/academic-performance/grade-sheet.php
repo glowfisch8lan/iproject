@@ -51,7 +51,6 @@ foreach( $model->students as $student )
                 <?
 
                 //$index =
-                var_dump();
                 foreach( $model->students as $student )
                 {
 

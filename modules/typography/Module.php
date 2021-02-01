@@ -40,7 +40,7 @@ class Module extends \app\modules\system\Module
                     [
                         'controllers'=>['typography/default'],
                         'allow' => true,
-                        'actions' => ['index', 'captcha'],
+                        'actions' => ['index', 'captcha','status'],
                         'roles' => ['?'],
                     ],
                 ],

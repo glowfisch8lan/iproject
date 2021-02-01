@@ -20,7 +20,6 @@ $(document).ready(function() {
   $('.file-upload').change(function() {
       console.log(this.files[0]);
     if(typeof this.files[0] != undefined) // если выбрали файл
-        alert(1);
       $('.custom-file-label').text(this.files[0].name);
   });
 });
