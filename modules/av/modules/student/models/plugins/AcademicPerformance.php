@@ -19,8 +19,8 @@ class AcademicPerformance extends Model
 
     public $students;
     public $curriculumDisciplines;
-    public $startDate = '01.09.2020';
-    public $endDate = '30.01.2021';
+    public $startDate = '01.01.2020';
+    public $endDate = '01.02.2021';
     public $marks;
     public $markValues;
 

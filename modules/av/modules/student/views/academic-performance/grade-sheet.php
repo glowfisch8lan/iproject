@@ -1,5 +1,8 @@
 <?php
 /* @var $this yii\web\View */
+
+use app\modules\system\helpers\ArrayHelper;
+
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Успеваемость';
@@ -47,11 +50,13 @@ foreach( $model->students as $student )
             <tbody>
                 <?
 
+                //$index =
+                var_dump();
                 foreach( $model->students as $student )
                 {
 
                     $marksArrByDiscipline = $model->filterReMarks($model->getStudentMarks($student['id']));
-                    var_dump();
+
                     echo '<tr>';
                     echo "<th scope=\"row\">$index</th>
                             <td>" . $model->getShortName((object)$student) . "</td>";
@@ -63,7 +68,12 @@ foreach( $model->students as $student )
                         }
                         else{
                             echo '<td>';
-                                echo implode('' , $marksArrByDiscipline[$value]['marks']);
+                                foreach($marksArrByDiscipline[$value]['marks'] as $key => $mark)
+                                {
+                                    $journal_lesson_id = $model->marks[ArrayHelper::recursiveArraySearch($key, $model->marks)[0]]['journal_lesson_id'];
+                                    $group = $model->group['id'];
+                                    echo "<a href=\"https://av.dvuimvd.ru/student/journal/view?group_id=$group&lesson_id=$journal_lesson_id\" target='_blank'>" . $mark . '</a> ';
+                                }
                             echo '</td>';
                         }
                     }
