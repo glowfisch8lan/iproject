@@ -21,6 +21,14 @@ $options = [
 $this->registerCssFile($bundle->baseUrl . '/css/master.css', $options);
 $this->registerCssFile($bundle->baseUrl . '/css/file-upload.css', $options);
 $this->registerCssFile($bundle->baseUrl . '/css/CRUD.css', $options);
+
+$this->registerCssFile($bundle->baseUrl . '/vendor/airdatepicker/dist/css/datepicker.min.css', $options);
+$this->registerCssFile($bundle->baseUrl . '/vendor/mdtimepicker/mdtimepicker.min.css', $options);
+
+
+$this->registerJsFile( $bundle->baseUrl . '/vendor/airdatepicker/dist/js/datepicker.min.js', $options, $key = null );
+$this->registerJsFile( $bundle->baseUrl . '/vendor/airdatepicker/dist/js/i18n/datepicker.en.js', $options, $key = null );
+$this->registerJsFile( $bundle->baseUrl . '/vendor/mdtimepicker/mdtimepicker.min.js', $options, $key = null );
 ?>
 <?php $this->beginPage() ?>
     <!DOCTYPE html>

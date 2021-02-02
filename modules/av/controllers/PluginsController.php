@@ -65,88 +65,54 @@ class PluginsController extends Controller
         ]);
     }
 
-
-    public function actionLoad($module, $id, $action = 'index', $controller)
-    {
+    /*
+     * Оптимизирующая функция для двух действий Load и Ajax
+     */
+    private function initLoad($module,$id,$action,$controller){
 
         $class = 'app\modules\av\modules\\'.$module.'\controllers\\'.ucfirst($id).'Controller';
+        if(!class_exists($class))
+            throw new NotFoundHttpException('Извините, ошибка в переданных параметрах!');
+
         $class = new $class();
         $actionController = 'action'.ucfirst($action);
-
-
         $array = $class->$actionController();
 
         $id = preg_split('/(?<=[a-z])(?=[A-Z])/u',$id);
         $id = (count($id) > 1 ) ? mb_strtolower($id[0].'-'.$id[1]) : $id[0];
         $path = '@app/modules/av/modules/'.$module.'/views/'.$id.'/'.$array['view'];
 
+        return ['path' => $path, 'array' => $array];
+    }
 
+    public function actionLoad($module, $id, $action = 'index', $controller)
+    {
 
-        if(!file_exists(realpath(Yii::getAlias($path).'.php')))
+        $action = $this->initLoad($module,$id,$action,$controller);
+
+        if(!file_exists(realpath(Yii::getAlias($action['path']).'.php')))
             throw new NotFoundHttpException('Файл не найден');
 
-        return $this->render($path, [
-            'model' => $array['model'],
+        return $this->render($action['path'], [
+            'model' => $action['array']['model'],
             'ajax' => false
         ]);
     }
 
     public function actionAjax($module, $id, $action = 'index', $controller)
     {
-        $class = 'app\modules\av\modules\\'.$module.'\controllers\\'.$id.'Controller';
-
-        $class = new $class();
-        $actionController = 'action'.ucfirst($action);
-
-        $array = $class->$actionController();
-
-        $id = preg_split('/(?<=[a-z])(?=[A-Z])/u',$id);
-        $id = (count($id) > 1 ) ? mb_strtolower($id[0].'-'.$id[1]) : $id[0];
-        $path = '@app/modules/av/modules/'.$module.'/views/'.$id.'/'.$array['view'];
+        $action = $this->initLoad($module,$id,$action,$controller);
 
         $this->layout = "@app/modules/system/views/layouts/empty";
 
-        if(!file_exists(realpath(Yii::getAlias($path).'.php')))
+
+        if(!file_exists(realpath(Yii::getAlias($action['path']).'.php')))
             throw new NotFoundHttpException('Файл не найден');
 
-
-
-        return $this->render($path, [
-                'model' => $array['model'],
+        return $this->render($action['path'], [
+                'model' => $action['array']['model'],
                 'ajax' => true]);
     }
 
-    public function actionLti()
-    {
 
-
-        //$module, $id, $action = 'index', $controller
-
-        if(Yii::$app->request->isPost){
-            echo '1';
-            var_dump(Yii::$app->request->post());
-        }
-        die();
-        $class = 'app\modules\av\modules\\'.$module.'\controllers\\'.$id.'Controller';
-
-        $class = new $class();
-        $actionController = 'action'.ucfirst($action);
-
-        $array = $class->$actionController();
-
-        $id = preg_split('/(?<=[a-z])(?=[A-Z])/u',$id);
-        $id = (count($id) > 1 ) ? mb_strtolower($id[0].'-'.$id[1]) : $id[0];
-        $path = '@app/modules/av/modules/'.$module.'/views/'.$id.'/'.$array['view'];
-
-        $this->layout = "@app/modules/system/views/layouts/empty";
-
-        if(!file_exists(realpath(Yii::getAlias($path).'.php')))
-            throw new NotFoundHttpException('Файл не найден');
-
-
-
-        return $this->render($path, [
-            'model' => $array['model'],
-            'ajax' => true]);
-    }
 }
