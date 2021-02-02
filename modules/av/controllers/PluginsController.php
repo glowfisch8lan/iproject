@@ -69,9 +69,10 @@ class PluginsController extends Controller
     public function actionLoad($module, $id, $action = 'index', $controller)
     {
 
-        $class = 'app\modules\av\modules\\'.$module.'\controllers\\'.$id.'Controller';
+        $class = 'app\modules\av\modules\\'.$module.'\controllers\\'.ucfirst($id).'Controller';
         $class = new $class();
         $actionController = 'action'.ucfirst($action);
+
 
         $array = $class->$actionController();
 
