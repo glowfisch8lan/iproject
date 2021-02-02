@@ -19,11 +19,17 @@ class Module extends \app\modules\system\Module
     public $visible = 'viewSniffer';
     public $layout = '/main';
     public $routes = [
-        [   'route' => '/tools/converter',
-            'name' => 'Конвертер',
-            'access' => '',
-            'description' => 'Доступ к инструменту "Конвертер',
-            'visible' => false,
+        [   'route' => '/sniffer',
+            'name' => 'Сниффер-ссылка',
+            'access' => 'viewSnifferLink',
+            'description' => '',
+            'visible' => true,
+        ],
+        [   'route' => '/sniffer/journal',
+            'name' => 'Журнал',
+            'access' => 'viewSnifferJournal',
+            'description' => '',
+            'visible' => true,
         ],
     ];
 

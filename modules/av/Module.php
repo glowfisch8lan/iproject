@@ -19,12 +19,6 @@ class Module extends \app\modules\system\Module
     public $visible = 'viewAvtorVuz';
 //    public $layout = '/main';
     public $routes = [
-        [   'route' => '/av/reports',
-            'name' => 'Отчеты',
-            'access' => 'viewAvtorVuz',
-            'description' => 'Отчеты',
-            'visible' => true,
-        ],
         [   'route' => '/av/plugins',
             'name' => 'Плагины',
             'access' => 'viewAvtorVuz',

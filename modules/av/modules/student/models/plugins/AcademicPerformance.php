@@ -3,10 +3,11 @@
 namespace app\modules\av\modules\student\models\plugins;
 
 
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use yii\base\Model;
 use app\modules\system\helpers\ArrayHelper;
 use app\modules\av\modules\student\models\StudentsApi;
-use app\modules\av\models\students\reports\grade_sheet\Report;
 
 /**
  * academicPerformance model for the `student` module
@@ -14,15 +15,14 @@ use app\modules\av\models\students\reports\grade_sheet\Report;
 class AcademicPerformance extends Model
 {
     public $group;
-//    public $startDate;
-//    public $endDate;
-
     public $students;
     public $curriculumDisciplines;
     public $startDate = '01.01.2020';
     public $endDate = '01.02.2021';
     public $marks;
     public $markValues;
+
+    public $mapDisciplines;
 
     public function attributeLabels()
     {
@@ -53,7 +53,7 @@ class AcademicPerformance extends Model
      * Наполнение модели данными
      *
      */
-    public function fetchDataGradeSheet()
+    public function fetchData()
     {
         $this->group = StudentsApi::getGroup($this->group);
         $this->students = StudentsApi::getStudentsByGroup($this->group['id']);
@@ -316,5 +316,299 @@ class AcademicPerformance extends Model
         }
 
         return $marksArrByDiscipline;
+    }
+
+    public function createColumnsArray($end_column, $first_letters = '')
+    {
+        $columns = array();
+        $length = strlen($end_column);
+        $letters = range('A', 'Z');
+
+        // Iterate over 26 letters.
+        foreach ($letters as $letter)
+        {
+            // Paste the $first_letters before the next.
+            $column = $first_letters . $letter;
+
+            // Add the column to the final array.
+            $columns[] = $column;
+
+            // If it was the end column that was added, return the columns.
+            if ($column == $end_column) return $columns;
+        }
+
+        // Add the column children.
+        foreach ($columns as $column)
+        {
+            // Don't itterate if the $end_column was already set in a previous itteration.
+            // Stop iterating if you've reached the maximum character length.
+            if (!in_array($end_column, $columns) && strlen($column) < $length)
+            {
+                $new_columns = $this->createColumnsArray($end_column, $column);
+                // Merge the new columns which were created with the final columns array.
+                $columns = array_merge($columns, $new_columns);
+            }
+        }
+
+        return $columns;
+    }
+
+    private function getAverageMarksDiscipline($marksArr)
+    {
+        $sum = [];
+        foreach ($marksArr as $id => $value) //Дисциплина
+        {
+            $index = 0;
+
+            foreach ($value as $type => $arr)  //Оценки, в том числе и отработанные
+            {
+                if ($type == 'marks')
+                {
+                    $sum[$id]['sum'] = (empty($sum[$id]['average'])) ? null : $sum[$id]['average'];
+
+                    /*
+                     * @key - id оценки;
+                     * @mark - величина оценки;
+                     *
+                     * @sum array
+                     * ['Идентификатор Дисциплины] => [ 'sum' => 'Общая сумма оценок Дисциплины', 'average' => 'Средний балл Дисциплины', 'Количество оценок в дисциплине']
+                     *
+                     */
+                    foreach ($arr as $key => $mark)
+                    {
+
+
+                        /*
+                         * Обрабатываем ситуацию, в которой оценка исправлена - (2/3)
+                         */
+                        if (preg_match_all("/\(([0-9]+)\/([0-9]+)\)/", $mark, $var))
+                        {
+
+                            //Прибавляем две оценки в общую сумма оценок и счетчик увеличиваем на два;
+                            $sum[$id]['sum'] += $var[1][0]; // раз оценка;
+                            $sum[$id]['sum'] += $var[2][0]; // два оценка;
+
+                            $index++;
+
+                        }
+                        else
+                        {
+
+                            $sum[$id]['sum'] += $mark;
+
+
+                        }
+                        $index++;
+                    }
+                }
+            }
+            $sum[$id]['count'] = $index;
+            $sum[$id]['average'] = round($sum[$id]['sum'] / $sum[$id]['count'], 2);
+
+        }
+        return $sum;
+    }
+
+    private function countMarks($marksArrByDiscipline)
+    {
+        $countMarkArr['count'] = [];
+
+        //$key - id Дисциплины
+        //$value - оценки дисциплины.
+        /*
+         * Считаем все оценки перебирая каждую дисциплину;
+         */
+
+        foreach ($marksArrByDiscipline as $key => $value)
+        {
+
+            /*
+             * Если нет оценок в дисциплине - вернуть 0;
+             */
+            if(empty($value['marks']))
+                return 0;
+
+            foreach ($value['marks'] as $mark => $markValue) {
+
+
+                if (preg_match_all("/\(([0-9]+)\/([0-9]+)\)/", $markValue, $var)) {
+
+                    /*
+                     * Проверка на существование переменной;
+                     */
+                    if(empty($countMarkArr['count'][$var[2][0]])){$countMarkArr['count']['count'][$var[2][0]] = 0;}
+                    if(empty($countMarkArr['count'][$var[1][0] . '/'])){$countMarkArr['count'][$var[1][0] . '/'] = 0;}
+
+                    $countMarkArr['count'][$var[2][0]]++;
+                    $countMarkArr['count'][$var[1][0] . '/']++;
+                } else {
+
+                    /*
+                    * Проверка на существование переменной;
+                    */
+                    if(empty($countMarkArr['count'][$markValue])){$countMarkArr['count'][$markValue] = 0;}
+
+                    $countMarkArr['count'][$markValue]++;
+                }
+            }
+        }
+        return $countMarkArr;
+    }
+
+    public function generate()
+    {
+
+        $this->fetchData();
+
+        /*
+         * Начинаем генерацию XLS документа;
+        */
+
+        $spreadsheet = new Spreadsheet();
+
+        $spreadsheet->getDefaultStyle()
+            ->getFont()
+            ->setName('Times New Roman')
+            ->setSize(12);
+
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $sheet->getDefaultColumnDimension()
+            ->setWidth(20);
+
+        $sheet ->getColumnDimension('A')
+            ->setWidth(5);
+
+        $sheet->getColumnDimension('B')
+            ->setWidth(30);
+
+
+        foreach (['A' => 'right', 'B' => 'left', 'C:Z' => 'center'] as $key => $value)
+        {
+             $sheet->getStyle($key)->getAlignment()
+                ->setHorizontal($value);
+        }
+
+            $sheet->setCellValue('A1', '№');
+            $sheet->setCellValue('B1', 'ФИО');
+
+            $sheet->getStyle("C1:Y1")
+            ->getAlignment()
+            ->setWrapText(true); //включить перенос текста в колонках;
+
+        $mapLetters = $this->createColumnsArray('ZZ'); //Создаем индексную карту документа;
+
+        /*
+         * Наполняем документ
+         *
+         */
+
+        #
+        # Студенты: ФИО
+        #
+        $index = 1;
+        foreach ($this->students as $student)
+        {
+            $index++;
+            $sheet->setCellValue('A' . $index, $index - 1);
+            $sheet->setCellValue('B' . $index, $this->getShortName((object)$student));
+        }
+
+        #
+        # Дисциплины
+        #
+        $list_disciplines = $this->collectDisciplines(); //собираем список дисциплин
+
+        $index = 0;
+        foreach ($list_disciplines as $id)
+        {
+
+            $discipline = $this->getDisciplineName($id);
+
+            if($discipline)
+            {
+                 $index++;
+                 $sheet->setCellValue($mapLetters[$index + 1] . 1, $discipline['name_short']);
+                 $sheet->getColumnDimension($mapLetters[$index + 1])->setWidth(25);
+                 $this->mapDisciplines[$id] = $mapLetters[$index + 1];
+            }
+
+        }
+
+        $sheet->setCellValue($mapLetters[$index + 2] . 1, 'Ср. балл');
+
+
+        #
+        # Оценки студентов
+        #
+        $index = 1;
+        foreach ($this->students as $student)
+        {
+            $index++;
+
+            $marks = $this->filterMarks($this->getMarks($student['id']) , [$this->startDate , $this->endDate]);
+            $marksArrByDiscipline = $this->filterReMarks($marks);
+
+            /* Заполняем оценки по ячейкам */
+                foreach ($marksArrByDiscipline as $id => $value)
+                {
+                    if (!empty($this->mapDisciplines[$id])) $sheet->setCellValue($this->mapDisciplines[$id].$index, implode(' ', $value['marks']));
+                }
+                /* Заполняем средний балл студента */
+                $sheet->setCellValue($mapLetters[count($this->mapDisciplines) + 2] . $index, $this->getAverageMarksStudent($marksArrByDiscipline));
+        }
+
+        #
+        # Ср. балл дисциплины
+        #
+
+        $marksArr = $this->filterReMarks($this->filterMarks($this->marks, [$this->startDate , $this->endDate]));
+        $sum = $this->getAverageMarksDiscipline($marksArr);
+        foreach ($sum as $id => $value)
+        {
+            if(!empty($this->mapDisciplines[$id])) {$sheet->setCellValue($this->mapDisciplines[$id] . (count($this->students) + 2) , $value['average']);}
+        }
+        $sheet->setCellValue('B' . (count($this->students) + 2) , 'Ср. балл');
+
+
+        #
+        # Кол-во оценок
+        #
+
+        $countMarkArr = $this->countMarks($marksArr);
+        $additionFieldName = ['Кол-во 5', 'Кол-во 4', 'Кол-во 3', 'Кол-во 2/', 'Кол-во 2'];
+        $additionFieldValue = ['5', '4', '3', '2/', '2'];
+
+        $index = 4; //смещение вниз листа;
+        foreach ($additionFieldName as $key => $value)
+        {
+            $sheet->setCellValue('B' . (count($this->students) + $index) , $value);
+            $index++;
+        }
+
+        $index = 4;
+        foreach ($additionFieldValue as $key => $value)
+        {
+            $sheet->setCellValue('C' . (count($this->students) + $index) , $countMarkArr['count'][$value]);
+            $index++;
+        }
+
+        /*
+         *  Отдаем XLS документ;
+        */
+        //header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="Ведомость успеваемости ' . $this
+                ->group['name'] . '.xlsx"');
+        header('Cache-Control: max-age=0');
+        header('Cache-Control: max-age=1');
+
+        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+        header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modified
+        header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+        header('Pragma: public'); // HTTP/1.0
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save('php://output');
+        die();
     }
 }

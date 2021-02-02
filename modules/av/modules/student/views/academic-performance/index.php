@@ -43,7 +43,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     ]);
 
                     ?>
-                    <input type="hidden" name="_csrf" value="<?=Yii::$app->request->getCsrfToken()?>" />
                     <div class="col-2">
                      <?= $form->field($model, 'startDate')->input('text', ['class' => 'datepicker-here form-control', 'data-language' => 'ru', 'value' => date('01.01.Y')])->label('Начало:')?>
                     </div>

@@ -25,14 +25,24 @@ class PluginsController extends Controller
         //var_dump(Reports::getList());
         $plugins = [
             [
-                'id' => 'AcademicPerformance',
+                'id' => 'academicPerformance',
                 'name' => 'Успеваемость',
                 'module' => [
                     'id' => 'student',
                     'name' => 'Студент',
                 ],
                 'category' => 'plugins',
-                'controller' => 'AcademicPerformance'
+                'controller' => 'academicPerformance'
+            ],
+            [
+                'id' => 'journal',
+                'name' => 'Электронный журнал',
+                'module' => [
+                    'id' => 'student',
+                    'name' => 'Студент',
+                ],
+                'category' => 'plugins',
+                'controller' => 'journal'
             ]
         ];
 

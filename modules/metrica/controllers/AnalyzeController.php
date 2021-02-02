@@ -66,6 +66,7 @@ class AnalyzeController extends Controller
     {
         $model = new Analyze();
 
+var_dump(Yii::$app->request->post());
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }

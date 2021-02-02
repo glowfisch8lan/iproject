@@ -2,7 +2,8 @@
 /* @var $this yii\web\View */
 
 use app\modules\system\helpers\ArrayHelper;
-
+use yii\helpers\Html;
+use yii\helpers\Url;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Успеваемость';
@@ -22,16 +23,43 @@ foreach( $model->students as $student )
 ?>
 
 <div class="box-body">
+    <div class="col-12 m-2">
+        <a href="#" class="btn btn-outline-secondary" onclick="history.back();return false;">Назад</a>
+        <?
+        echo Html::a('Экспорт', Url::to([
+            '/av/plugins/load',
+            'module' => 'student',
+            'id' => 'AcademicPerformance',
+            'controller' => 'AcademicPerformance',
+            'action' => 'generateReport'
+        ]), [
+                'class' => 'btn btn-outline-secondary',
+                'data' => [
+                'method' => 'post',
+                'params' => [
+                    'AcademicPerformance[group]' => $model->group['id'],
+                    'AcademicPerformance[startDate]' => $model->startDate,
+                    'AcademicPerformance[endDate]' => $model->endDate,
+                ],
+            ],
+        ]);
+        ?>
+    </div>
+
     <div class="col-12">
-        <a href="#" onclick="history.back();return false;">Назад</a>
         <div class="table-responsive">
         <table class="table table-bordered" style="font-size:12px">
             <thead>
             <tr>
+                <th colspan="100"><a href="https://av.dvuimvd.ru/student/students/<?=$model->group['id']?>/index" target="_blank">Группа: <?=$model->group['name']?></a></th>
+            </tr>
+            <tr>
                 <th scope="col">#</th>
                 <th scope="col">ФИО</th>
                 <?
-
+                #
+                # Дисциплины
+                #
                 $map = [];
                 foreach( $model->collectDisciplines() as $id )
                 {
@@ -50,21 +78,18 @@ foreach( $model->students as $student )
             <tbody>
                 <?
 
-                //$index =
+                #
+                # Студенты
+                #
                 foreach( $model->students as $student )
                 {
-
                     $marksArrByDiscipline = $model->filterReMarks($model->getStudentMarks($student['id']));
-
                     echo '<tr>';
                     echo "<th scope=\"row\">$index</th>
-                            <td>" . $model->getShortName((object)$student) . "</td>";
+                            <td><a href=\"https://av.dvuimvd.ru/student/students/".$model->group['id']."?student_id=".$student['id']."\" target='_blank'>" . $model->getShortName((object)$student) . "</a></td>";
 
                     foreach($map as $value) {
-                        if(empty($marksArrByDiscipline[$value]))
-                        {
-                            echo '<td>-</td>';
-                        }
+                        if(empty($marksArrByDiscipline[$value])) {echo '<td>-</td>';}
                         else{
                             echo '<td>';
                                 foreach($marksArrByDiscipline[$value]['marks'] as $key => $mark)
@@ -76,10 +101,7 @@ foreach( $model->students as $student )
                             echo '</td>';
                         }
                     }
-                    echo '<td>';
-                        echo $model->getAverageMarksStudent($marksArrByDiscipline);
-                    echo '</td>';
-                    echo '</tr>';
+                    echo '<td>'.$model->getAverageMarksStudent($marksArrByDiscipline).'</td></tr>';
                     $index++;
                 }
 

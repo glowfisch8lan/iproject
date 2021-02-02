@@ -2,7 +2,8 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-
+use app\modules\metrica\models\patterns\Patterns;
+use app\modules\system\helpers\ArrayHelper;
 /* @var $this yii\web\View */
 /* @var $model app\modules\metrica\models\patterns\Patterns */
 /* @var $form yii\widgets\ActiveForm */
@@ -22,10 +23,16 @@ use yii\widgets\ActiveForm;
                         ])->textInput(['autofocus' => false]); ?>
                     </div>
 
+                    <?
+                    $patterns = Patterns::find()->all();
+                    $arr = ArrayHelper::map($patterns, 'id','name');
+
+                    ?>
+
                     <div class="form-group col-md-12">
                         <?= $form->field($model, 'pattern_id', [
                             'template' => '<div>{label} <a href="#" class="help"><i class="fa fa-question-circle" aria-hidden="true"></i></a></div><div>{input}</div><div class="text-danger">{error}</div>'
-                        ])->textInput(['autofocus' => false]); ?>
+                        ])->dropDownList($arr); ?>
                     </div>
 
                 </div>

@@ -12,8 +12,6 @@ use app\modules\metrica\models\patterns\Patterns;
  * @property string $url URL-адрес
  * @property int|null $pattern_id Паттерн
  * @property int|null $value Результат
- *
- * @property MetricaPatterns $pattern0
  */
 class Analyze extends \yii\db\ActiveRecord
 {
@@ -31,10 +29,9 @@ class Analyze extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id', 'url'], 'required'],
-            [['id', 'pattern', 'value', 'status'], 'integer'],
+            [['url'], 'required'],
+            [['id', 'pattern_id', 'value', 'status'], 'safe'],
             [['url'], 'string', 'max' => 255],
-            [['pattern_id'], 'exist', 'skipOnError' => true, 'targetClass' => Patterns::className(), 'targetAttribute' => ['pattern' => 'id']],
         ];
     }
 
@@ -50,15 +47,5 @@ class Analyze extends \yii\db\ActiveRecord
             'value' => 'Значение',
             'status' => 'Состояние'
         ];
-    }
-
-    /**
-     * Gets query for [[Pattern0]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getPattern0()
-    {
-        return $this->hasOne(Patterns::className(), ['id' => 'pattern_id']);
     }
 }
