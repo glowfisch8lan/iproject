@@ -10,9 +10,23 @@ $this->title = 'Успеваемость';
 $this->params['breadcrumbs'][] = ['label' => Yii::$app->controller->module->name, 'url' => '/av'];
 $this->params['breadcrumbs'][] = ['label' => 'Плагины', 'url' => '/av/plugins'];
 $this->params['breadcrumbs'][] = $this->title;
-?>
 
-<?
+// регистрируем небольшой js-код в view-шаблоне
+$script = <<< JS
+// $(document).ready(function(){
+//     console.log();
+//     $('.mark-two').on('click', function(){
+//         value = $(this).attr('value');
+//         $('span[value = '+value+']').addClass('bg-success').find('a').addClass('text-white')
+//     });
+//        
+//     });
+JS;
+// значение $position может быть View::POS_READY (значение по умолчанию),
+// или View::POS_LOAD, View::POS_HEAD, View::POS_BEGIN, View::POS_END
+$position = $this::POS_END;
+$this->registerJs($script, $position);
+
 $index = 1;
 
 foreach( $model->students as $student )
@@ -46,9 +60,17 @@ foreach( $model->students as $student )
         ?>
     </div>
 
+<!--    <div class="col-12 m-2">-->
+<!--        <span>Фильтр: </span>-->
+<!--        <a href="#" class="btn btn-outline-danger mark-two" color="danger" data-toggle="button" aria-pressed="false" autocomplete="off" value="2">2</a>-->
+<!--        <a href="#" class="btn btn-outline-warning mark-three" color="warning" data-toggle="button" aria-pressed="false" autocomplete="off" value="3">3</a>-->
+<!--        <a href="#" class="btn btn-outline-success mark-four" color="success" data-toggle="button" aria-pressed="false" autocomplete="off" value="4">4</a>-->
+<!--        <a href="#" class="btn btn-outline-success mark-five" color="success" data-toggle="button" aria-pressed="false" autocomplete="off" value="5">5</a>-->
+<!--    </div>-->
+
     <div class="col-12">
         <div class="table-responsive">
-        <table class="table table-bordered" style="font-size:12px">
+        <table class="table table-bordered" style="font-size:14px">
             <thead>
             <tr>
                 <th colspan="100"><a href="https://av.dvuimvd.ru/student/students/<?=$model->group['id']?>/index" target="_blank">Группа: <?=$model->group['name']?></a></th>
@@ -96,7 +118,14 @@ foreach( $model->students as $student )
                                 {
                                     $journal_lesson_id = $model->marks[ArrayHelper::recursiveArraySearch($key, $model->marks)[0]]['journal_lesson_id'];
                                     $group = $model->group['id'];
-                                    echo "<a href=\"https://av.dvuimvd.ru/student/journal/view?group_id=$group&lesson_id=$journal_lesson_id\" target='_blank'>" . $mark . '</a> ';
+                                    /* Выставляем оценки */
+                                    if((int)$mark == 2){
+                                        echo "<span class='bg-danger p-1'  value='$mark'><a href=\"https://av.dvuimvd.ru/student/journal/view?group_id=$group&lesson_id=$journal_lesson_id\" target='_blank' class='text-white'>" . $mark . '</a></span>';
+                                    }
+                                    else{
+                                        echo "<span class='p-1' value='$mark'><a href=\"https://av.dvuimvd.ru/student/journal/view?group_id=$group&lesson_id=$journal_lesson_id\" target='_blank'>" . $mark . '</a></span>';
+                                    }
+
                                 }
                             echo '</td>';
                         }
