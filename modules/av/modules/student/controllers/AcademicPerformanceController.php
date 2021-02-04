@@ -31,7 +31,7 @@ class AcademicPerformanceController
         $model->fetchData();
         if(!$model->students)
             throw new NotFoundHttpException('В группе нет учащихся!');
-        
+
         return [
             'view' => 'grade-sheet',
             'model' => $model

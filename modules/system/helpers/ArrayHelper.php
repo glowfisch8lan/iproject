@@ -12,7 +12,7 @@ class ArrayHelper extends \yii\helpers\ArrayHelper
      */
     public static function indexMap($array,$key){
 
-        $dataArray = [];var_dump($key);
+        $dataArray = [];
         foreach($array as $value) {
             $dataArray[] = [(int) $key, (int) $value];
         }
