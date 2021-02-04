@@ -71,12 +71,20 @@ class PluginsController extends Controller
     private function initLoad($module,$id,$action,$controller){
 
         $class = 'app\modules\av\modules\\'.$module.'\controllers\\'.ucfirst($id).'Controller';
+
         if(!class_exists($class))
             throw new NotFoundHttpException('Извините, ошибка в переданных параметрах!');
 
+
         $class = new $class();
+
         $actionController = 'action'.ucfirst($action);
+
+        if(!method_exists($class, $actionController))
+            throw new NotFoundHttpException('Извините, метод action не найден!');
+
         $array = $class->$actionController();
+
 
         $id = preg_split('/(?<=[a-z])(?=[A-Z])/u',$id);
         $id = (count($id) > 1 ) ? mb_strtolower($id[0].'-'.$id[1]) : $id[0];
@@ -89,6 +97,7 @@ class PluginsController extends Controller
     {
 
         $action = $this->initLoad($module,$id,$action,$controller);
+
 
         if(!file_exists(realpath(Yii::getAlias($action['path']).'.php')))
             throw new NotFoundHttpException('Файл не найден');

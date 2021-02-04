@@ -10,16 +10,16 @@ use yii\base\Model;
 class Journal extends Model
 {
 
-    public function attributeLabels()
-    {
-        return [
-        ];
-    }
-
-    public function rules(){
-        return [
-        ];
-
-    }
+//    public function attributeLabels()
+//    {
+//        return [
+//        ];
+//    }
+//
+//    public function rules(){
+//        return [
+//        ];
+//
+//    }
 
 }

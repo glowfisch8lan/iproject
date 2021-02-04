@@ -18,7 +18,7 @@ class AcademicPerformance extends Model
     public $students;
     public $curriculumDisciplines;
     public $startDate = '01.01.2020';
-    public $endDate = '01.02.2021';
+    public $endDate;
     public $marks;
     public $markValues;
 
@@ -41,6 +41,12 @@ class AcademicPerformance extends Model
             ],
             [
                 ['startDate'],
+                'required',
+                'message' => 'Заполните поля!',
+
+            ],
+            [
+                ['endDate'],
                 'required',
                 'message' => 'Заполните поля!',
 
@@ -79,6 +85,7 @@ class AcademicPerformance extends Model
                 $arr[] = $mark;
             }
         }
+
         return $arr;
 
     }
@@ -106,9 +113,11 @@ class AcademicPerformance extends Model
      */
     public function filterMarks($marks, $datetime)
     {
+
         foreach ($marks as $key => $value)
         {
-            $date = strtotime($value['datetime']);
+            $date = strtotime( preg_replace('/\s.*/m', '', $value['datetime']) );
+
             if (
                 $date >= strtotime($datetime[0]) &&
                 $date <= strtotime($datetime[1]) &&
@@ -120,6 +129,7 @@ class AcademicPerformance extends Model
                 $arr[] = $value;
             }
         }
+
         return $arr;
     }
 
@@ -150,10 +160,12 @@ class AcademicPerformance extends Model
      */
     public function collectDisciplines()
     {
-        $index = 0;
+        $index = 0; //0
         foreach ($this->students as $student)
         {
-            $marksArray = $this->filterMarks($this->getMarks($student['id']) , [$this->startDate , $this->endDate]);
+
+            $id = $student['id'];
+            $marksArray = $this->filterMarks($this->getMarks($id) , [$this->startDate , $this->endDate]);
             foreach ($marksArray as $marks)
             {
                 $collection[$marks['curriculum_discipline_id']] = $index;

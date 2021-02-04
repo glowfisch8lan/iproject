@@ -32,6 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     $form = ActiveForm::begin([
                 'action' => "/av/plugins/".$ajax."?module=student&id=AcademicPerformance&controller=AcademicPerformance&action=GetGradeSheet"
         ]);
+
                     echo $form->field($model, 'group')->widget(Select2::classname(), [
                         'data' => $groups,
                         'language' => 'ru',
@@ -41,7 +42,6 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
 
                     ]);
-
                     ?>
                     <div class="col-2">
                      <?= $form->field($model, 'startDate')->input('text', ['class' => 'datepicker-here form-control', 'data-language' => 'ru', 'value' => date('01.01.Y')])->label('Начало:')?>

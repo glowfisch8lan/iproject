@@ -37,7 +37,6 @@ $this->params['breadcrumbs'][] = $this->title;
                                 Html::a($data['name'], ['/av/plugins/load',
                                     'module' => $data['module']['id'],
                                     'id' => $data['id'],
-                                    'category' => $data['category'],
                                     'controller' => $data['controller']
                                 ],
                                     ['class' => 'link']);

@@ -19,7 +19,6 @@ $script = <<< JS
 //         value = $(this).attr('value');
 //         $('span[value = '+value+']').addClass('bg-success').find('a').addClass('text-white')
 //     });
-//        
 //     });
 JS;
 // значение $position может быть View::POS_READY (значение по умолчанию),
@@ -40,23 +39,26 @@ foreach( $model->students as $student )
     <div class="col-12 m-2">
         <a href="#" class="btn btn-outline-secondary" onclick="history.back();return false;">Назад</a>
         <?
-        echo Html::a('Экспорт', Url::to([
-            '/av/plugins/load',
-            'module' => 'student',
-            'id' => 'AcademicPerformance',
-            'controller' => 'AcademicPerformance',
-            'action' => 'generateReport'
-        ]), [
+
+        if(!$ajax){
+            echo Html::a('Экспорт', Url::to([
+                '/av/plugins/load',
+                'module' => 'student',
+                'id' => 'AcademicPerformance',
+                'controller' => 'AcademicPerformance',
+                'action' => 'generateReport'
+            ]), [
                 'class' => 'btn btn-outline-secondary',
                 'data' => [
-                'method' => 'post',
-                'params' => [
-                    'AcademicPerformance[group]' => $model->group['id'],
-                    'AcademicPerformance[startDate]' => $model->startDate,
-                    'AcademicPerformance[endDate]' => $model->endDate,
+                    'method' => 'post',
+                    'params' => [
+                        'AcademicPerformance[group]' => $model->group['id'],
+                        'AcademicPerformance[startDate]' => $model->startDate,
+                        'AcademicPerformance[endDate]' => $model->endDate,
+                    ],
                 ],
-            ],
-        ]);
+            ]);
+        }
         ?>
     </div>
 
@@ -73,8 +75,18 @@ foreach( $model->students as $student )
         <table class="table table-bordered" style="font-size:14px">
             <thead>
             <tr>
-                <th colspan="100"><a href="https://av.dvuimvd.ru/student/students/<?=$model->group['id']?>/index" target="_blank">Группа: <?=$model->group['name']?></a></th>
+                <th colspan="100">
+                    <span>
+                        Группа:
+                    <a href="https://av.dvuimvd.ru/student/students/<?=$model->group['id']?>/index" target="_blank"><?=$model->group['name']?></a>
+                        </span>
+                    /
+                    <span>
+                    Учебный план <a href="https://av.dvuimvd.ru/plan/plans/<?=$model->group['education_plan_id'];?>" target="_blank">№<?=$model->group['education_plan_id'];?></a>
+                        </span>
+                </th>
             </tr>
+
             <tr>
                 <th scope="col">#</th>
                 <th scope="col">ФИО</th>

@@ -23,14 +23,15 @@ class AcademicPerformanceController
     public function actionGetGradeSheet()
     {
         $model = new AcademicPerformance();
+
         if(Yii::$app->request->isPost){
             $model->load(Yii::$app->request->post());
         }
+
         $model->fetchData();
         if(!$model->students)
             throw new NotFoundHttpException('В группе нет учащихся!');
-
-
+        
         return [
             'view' => 'grade-sheet',
             'model' => $model

@@ -55,6 +55,7 @@ class Custom extends ApiModule
 
     public function methodGetMarksByGroup($group_id)
     {
+
         $students = $this->methodGetStudentsByGroup($group_id);
 
         return (new Query())
