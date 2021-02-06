@@ -36,30 +36,37 @@ foreach( $model->students as $student )
 ?>
 
 <div class="box-body">
-    <div class="col-12 m-2">
+    <div class="col-12 m-2 p-2">
         <a href="#" class="btn btn-outline-secondary" onclick="history.back();return false;">Назад</a>
-        <?
 
-        if(!$ajax){
-            echo Html::a('Экспорт', Url::to([
-                '/av/plugins/load',
-                'module' => 'student',
-                'id' => 'AcademicPerformance',
-                'controller' => 'AcademicPerformance',
-                'action' => 'generateReport'
-            ]), [
-                'class' => 'btn btn-outline-secondary',
-                'data' => [
-                    'method' => 'post',
-                    'params' => [
-                        'AcademicPerformance[group]' => $model->group['id'],
-                        'AcademicPerformance[startDate]' => $model->startDate,
-                        'AcademicPerformance[endDate]' => $model->endDate,
+            <?
+            if(!$ajax){
+
+                echo '<button class="btn btn-outline-primary" aria-pressed="false" autocomplete="off" role="button" aria-pressed="true" type="button" data-toggle="collapse" data-target="#reports">Отчеты</button>
+
+        <div class="m-2" id="reports" class="collapse">';
+                echo Html::a('Ведомость успеваемости', Url::to([
+                    '/av/plugins/load',
+                    'module' => 'student',
+                    'id' => 'AcademicPerformance',
+                    'controller' => 'AcademicPerformance',
+                    'action' => 'generateReport'
+                ]), [
+                    'class' => 'btn btn-outline-secondary',
+                    'data' => [
+                        'method' => 'post',
+                        'params' => [
+                            'AcademicPerformance[group]' => $model->group['id'],
+                            'AcademicPerformance[startDate]' => $model->startDate,
+                            'AcademicPerformance[endDate]' => $model->endDate,
+                        ],
                     ],
-                ],
-            ]);
-        }
-        ?>
+                ]);
+                echo '</div>';
+            }
+            ?>
+
+
     </div>
 
 <!--    <div class="col-12 m-2">-->
@@ -72,10 +79,11 @@ foreach( $model->students as $student )
 
     <div class="col-12">
         <div class="table-responsive">
-        <table class="table table-bordered" style="font-size:14px">
+        <table class="table table-bordered table-sm table-hover" style="font-size:14px">
             <thead>
             <tr>
-                <th colspan="100">
+                <td colspan="100">
+                    <strong>
                     <span>
                         Группа:
                     <a href="https://av.dvuimvd.ru/student/students/<?=$model->group['id']?>/index" target="_blank"><?=$model->group['name']?></a>
@@ -83,19 +91,34 @@ foreach( $model->students as $student )
                     /
                     <span>
                     Учебный план <a href="https://av.dvuimvd.ru/plan/plans/<?=$model->group['education_plan_id'];?>" target="_blank">№<?=$model->group['education_plan_id'];?></a>
-                        </span>
-                </th>
+                    </span>
+                    /
+                    </strong>
+                    <span>
+                    <?
+                    $date[0] = new DateTime($model->startDate);
+                    $date[1] = new DateTime($model->endDate);
+                    echo $date[0]->format('d.m') . '-' . $date[1]->format('d.m.Y');
+                    ?>
+
+                    </span>
+
+                </td>
             </tr>
 
             <tr>
                 <th scope="col">#</th>
                 <th scope="col">ФИО</th>
                 <?
+
                 #
-                # Дисциплины
+                # Дисциплины - получаем все дисциплины за период
                 #
                 $map = [];
-                foreach( $model->collectDisciplines() as $id )
+
+                $d = $model->collectDisciplines();
+
+                foreach( $d as $id )
                 {
                     $name_short = $model->getDisciplineName($id)['name_short'];
                     if($name_short != null)

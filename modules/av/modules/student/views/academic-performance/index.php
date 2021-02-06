@@ -50,6 +50,21 @@ $this->params['breadcrumbs'][] = $this->title;
                     <div class="col-2">
                         <?= $form->field($model, 'endDate')->input('text', ['class' => 'datepicker-here form-control', 'data-language' => 'ru', 'value' => date('d.m.Y')])->label('Конец:')?>
                     </div>
+                <div class="col-2">
+
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="switch1" name="AcademicPerformance[session]">
+                        <label class="custom-control-label" for="switch1">Результаты сессий</label>
+                    </div>
+
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input " id="switch2" name="AcademicPerformance[isSkip]" disabled>
+                        <label class="custom-control-label" for="switch2">Пропуски</label>
+                    </div>
+
+                </div>
+
+
                 <div class="d-flex flex-row justify-content-end"">
                 <div class="form-group justify-content-end" style="border:1px solid black">
                     <?= Html::submitButton('Запросить', ['class' => 'btn btn-primary']) ?>

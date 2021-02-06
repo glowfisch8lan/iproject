@@ -29,6 +29,7 @@ class AcademicPerformanceController
         }
 
         $model->fetchData();
+
         if(!$model->students)
             throw new NotFoundHttpException('В группе нет учащихся!');
 

@@ -60,4 +60,22 @@ class ArrayHelper extends \yii\helpers\ArrayHelper
         return $arr;
 
     }
+    /**
+     * Рекурсивный поиск в массиве
+     *
+     * @return array | keys
+     */
+    public static function ArrayValueFilter($array, $key, $value)
+    {
+
+        $arr = null;
+        foreach($array as $k => $v){
+            if($v[$key] == $value){
+                $arr[] = $v;
+            }
+        }
+
+        return $arr;
+
+    }
 }

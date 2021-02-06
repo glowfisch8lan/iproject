@@ -23,9 +23,13 @@ $this->params['breadcrumbs'][] = $this->title;
 // регистрируем небольшой js-код в view-шаблоне
 $script = <<< JS
 $(document).ready(function(){
+    $('.collapse').on('hidden.bs.collapse', function () {
+       // $(this).closest('tr').hide();
     
-    $('.select_send_ajax').on('change', function() {
-      alert(1);
+    });
+    
+     $('.collapse').on('show.bs.collapse', function () {
+        $(this).closest('tr').show();
     });
     });
 JS;
@@ -37,7 +41,9 @@ $this->registerJs($script, $position);
 <!--$('.select_send_ajax').on('change', function() {-->
 <!--$(this.form).submit();-->
 <!--});-->
+
 <div class="box-body">
+
     <div class="col-12">
         <div class="dropdown">
             <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -47,8 +53,8 @@ $this->registerJs($script, $position);
                 <button class="dropdown-item" type="button">ТГП</button>
             </div>
         </div>
-        <div class="table-responsive">
-            <table class="table table-bordered">
+        <div class="table-responsive" >
+            <table class="table table-bordered table-hover table-sm ">
                 <thead>
                 <tr>
                     <td>
@@ -60,48 +66,49 @@ $this->registerJs($script, $position);
                         });
 
                         $form = ActiveForm::begin(['action' => "/av/plugins/" . $ajax . "?module=student&id=journal&controller=journal"]);
-                        echo $form->field($model, 'group')->widget(Select2::classname() , ['data' => $groups, 'language' => 'ru', 'value' => 'red', 'options' => ['placeholder' => 'Выберите группу ...'], 'pluginOptions' => ['allowClear' => true], ])->label('');
-                        echo Html::submitButton('Запросить', ['class' => 'btn btn-primary']);
+                        echo $form->field($model, 'group')->widget(Select2::classname() , ['data' => $groups, 'language' => 'ru', 'value' => 'red', 'options' => ['placeholder' => 'Выберите группу ...'], 'pluginOptions' => ['allowClear' => true], ])->label('') . Html::submitButton('Запросить', ['class' => 'btn btn-primary']);
                         ActiveForm::end(); ?>
                     </td>
                 </tr>
                 <tr>
                     <td>ФИО</td>
                     <?
-                    $days = array(
-                        "пнд",
-                        "вт",
-                        "ср",
-                        "чт",
-                        "пт",
-                        "сб",
-                        "вск"
-                    );
+                    $days = ["вск", "пнд", "вт", "ср", "чт", "пт", "сб",];
                     $startDate = (string)'20.01.2021';
 
                     $date = new DateTime($startDate);
                     $format = 'd.m';
-                    $datetime = strtotime($startDate);
-                    $ITS_NUM = date("w", $datetime);
-                    $arrDate = null;
-                    echo "<td>" . $date->format($format) . '&nbsp;(' . $days[$ITS_NUM - 1] . ")</td>";
 
-                    $arrDate[] = $date->format($format);
+                    $arrDate = null;
+                    $accordion = null;
+
                     for ($i = 0;;$i++)
                     {
 
-                        if ($i > 5)
-                        {
-                            break;
-                        }
-                        $date->modify('+1 days');
-                        $arrDate[] = $date->format($format);
-                        echo "<td>" . $date->format($format) . '&nbsp;(' . $days[$i + 1] . ")</td>";
+                        if ($i > 5){break;}
 
+                        $arrDate[] = $date->format($format);
+                        $day_week = date("w", $date->getTimestamp());
+
+                        echo '<td class=\'text-center\'><button class="btn btn-outline-primary" aria-pressed="false" autocomplete="off" role="button" aria-pressed="true" type="button" data-toggle="collapse" data-target="#accordion_'.$i.'">'. $date->format($format) . '&nbsp;(' . $days[$day_week] . ')</button></td>';
+
+                        $date->modify('+1 days');
+                        $accordion[] = $i;
                     }
                     ?>
                 </tr>
                 </thead>
+                <tbody>
+                <tr style="display:none"><td colspan="100">
+                    <?
+                    //var_dump(StudentsApi::getJournalLesson());
+                    foreach($accordion as $i){
+
+                        echo '<div id="accordion_'.$i.'" class="collapse">Тема № 17 - Практическое занятие с пистолетом</div>';
+                    }?>
+                    </td>
+                </tr>
+                </tbody>
                 <tbody>
                 <?
                 //1444 - Огневая; group - 24
@@ -115,20 +122,16 @@ $this->registerJs($script, $position);
 
                     foreach ($students as $student)
                     {
-                        $index++;
 
+                        $index++;
 //                        if($index == 10)
 //                        {
-                            $arr = ArrayHelper::recursiveArraySearch($student['id'], $marks); //Все оценки студента
 
+                            $student_marks = ArrayHelper::ArrayValueFilter($marks, 'student_id', $student['id']);
 
-                            echo '<tr><td>' . AcademicPerformance::getShortName((object)$student) . '</td>'; // Выводим имя;
-                            //выбираем оценки студента;
-                            $student_marks = null;
-                            foreach ($arr as $i => $key)
-                            {
-                                $student_marks[] = $marks[$key];
-                            }
+                            echo '<tr>';
+                            echo '<td><a href="https://av.dvuimvd.ru/student/students/'.$model->group['id'].'?student_id='.$student['id'].'" target=\'_blank\'>' . AcademicPerformance::getShortName((object)$student) . '</a></td>'; // Выводим имя;
+
 
                             uasort($student_marks, function ($a, $b)
                             {
@@ -138,25 +141,22 @@ $this->registerJs($script, $position);
                             foreach($arrDate as $key1 => $value1)
                             {
 
-                                //var_dump($value1);
                                 $h = $value1.'.'.date('Y');
-                                var_dump($student_marks);
-                                die();
+
                                 $r = new DateTime($h);
                                 $result = ArrayHelper::recursiveArraySearch($r->format('Y-m-d'), $student_marks);
 
-                                $html = null;
+
                                 if($result)
                                 {
-
+                                    $html = null;
                                     foreach($result as $key2 => $value2)
                                     {
-                                        var_dump($student_marks[$value2]);
-                                        $html = '<span class=\'p-1\'><a href="https://av.dvuimvd.ru/student/journal/view?group_id='.$model->group.'&lesson_id='.$student_marks[$value2]['journal_lesson_id'].'" target=\'_blank\'>'.Journal::getMarkValue($student_marks[$value2]['mark_value_id'])['name_short'] . '</a></span>&nbsp;';
+                                        $html .= '<span class=\'p-1\'><a href="https://av.dvuimvd.ru/student/journal/view?group_id='.$model->group.'&lesson_id='.$student_marks[$value2]['journal_lesson_id'].'" target=\'_blank\'>'.Journal::getMarkValue($student_marks[$value2]['mark_value_id'])['name_short'] . '</a></span>&nbsp;';
                                     }
-                                    echo '<td>'.$html.'</td>';
+                                    echo '<td class="text-center">'.$html.'</td>';
                                 }
-                                else{echo  '<td>---</td>';}
+                                else{echo  '<td class="text-center"><button type="button" class="btn btn-outline-info btn-sm"><i class="fa fa-plus" aria-hidden="true"></i></button></td>';}
                             }
 
                         }
@@ -170,6 +170,7 @@ $this->registerJs($script, $position);
                     echo 'Список пуст';
                 }
                 ?>
+
                 </tr>
                 </tbody>
             </table>

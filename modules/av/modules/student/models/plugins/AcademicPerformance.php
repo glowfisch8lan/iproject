@@ -21,6 +21,8 @@ class AcademicPerformance extends Model
     public $endDate;
     public $marks;
     public $markValues;
+    public $session = false;
+    public $isSkip = false;
 
     public $mapDisciplines;
 
@@ -47,6 +49,12 @@ class AcademicPerformance extends Model
             ],
             [
                 ['endDate'],
+                'required',
+                'message' => 'Заполните поля!',
+
+            ],
+            [
+                ['session'],
                 'required',
                 'message' => 'Заполните поля!',
 
@@ -93,6 +101,7 @@ class AcademicPerformance extends Model
     /**
      * Фильтрация оценок студента, выборка нужных оценок за определнный период;
      * Условия выборки: Дата выставления оценки, оценки, полученные только на парах (исключены экзамены и результаты сессий), оценки вида 5,4,3,2
+     * Изменено условие выборки : оценки по занятиям;
      *
      * @param array $marks Массив оценок,
      * [0 =>
@@ -107,6 +116,7 @@ class AcademicPerformance extends Model
             'control_type_id' => null
             'curriculum_discipline_id' => string '14547' (length=5)
             'class_type_id' => string '2' (length=1),
+     *   'lesson_date' => string '2020-01-20' (length=10)
      * 1 => ... ]
      * @param array $datetime [0 => (string) Начальная дата, 1 => (string) Конечная дата] Период для фильтрации
      * @return array
@@ -114,20 +124,38 @@ class AcademicPerformance extends Model
     public function filterMarks($marks, $datetime)
     {
 
+        $arr = null;
+
         foreach ($marks as $key => $value)
         {
-            $date = strtotime( preg_replace('/\s.*/m', '', $value['datetime']) );
 
-            if (
-                $date >= strtotime($datetime[0]) &&
-                $date <= strtotime($datetime[1]) &&
-                $value['mark_value_id'] >= 1 &&
-                $value['mark_value_id'] <= 5 &&
-                $value['class_type_id'] != null
-            )
-            {
-                $arr[] = $value;
+            $date = strtotime( preg_replace('/\s.*/m', '', $value['lesson_date']) );
+            switch($this->session){
+                case false:
+                    if (
+                        $date >= strtotime($datetime[0]) &&
+                        $date <= strtotime($datetime[1]) &&
+                        $value['mark_value_id'] >= 1 &&
+                        $value['mark_value_id'] <= 5 &&
+                        $value['class_type_id'] != null
+                    )
+                    {
+                        $arr[] = $value;
+                    }
+                    break;
+                case true:
+                    if (
+                        $date >= strtotime($datetime[0]) &&
+                        $date <= strtotime($datetime[1]) &&
+                        $value['control_type_id'] != null
+                    )
+                    {
+                        $arr[] = $value;
+                    }
+                    break;
+
             }
+
         }
 
         return $arr;
@@ -156,16 +184,19 @@ class AcademicPerformance extends Model
     /**
      * Список дисцплин (сокращенные названия), изучаемых по учебному плану за установленный период;
      *
+     * @param bool $session Вернуть только результаты сессий
      * @return array Идентификаторы отфильтрованных дисциплин
      */
+
     public function collectDisciplines()
     {
-        $index = 0; //0
+        $index = 0;
+
         foreach ($this->students as $student)
         {
 
             $id = $student['id'];
-            $marksArray = $this->filterMarks($this->getMarks($id) , [$this->startDate , $this->endDate]);
+            $marksArray = $this->filterMarks($this->getMarks($id) , [$this->startDate , $this->endDate], $options['session']);
             foreach ($marksArray as $marks)
             {
                 $collection[$marks['curriculum_discipline_id']] = $index;

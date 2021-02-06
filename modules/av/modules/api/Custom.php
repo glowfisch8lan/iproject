@@ -8,6 +8,7 @@ use app\models\interfaces\ApiModule;
 use app\modules\student\models\lists\MarkValues;
 use app\modules\student\models\students\Students;
 use app\modules\load\models\groups\Groups;
+use app\modules\student\models\journal\Lessons;
 
 use Yii;
 use yii\db\Query;
@@ -74,7 +75,12 @@ class Custom extends ApiModule
             ->all();
     }
 
-
+    public function methodGetJournalLesson($id)
+    {
+        return Lessons::find()
+            ->where(['id' => $id])
+            ->one();
+    }
 
 
 }

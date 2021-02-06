@@ -85,5 +85,17 @@ class StudentsApi
 
     }
 
+    public static function getJournalLesson($group_id, $curriculum_discipline_id, $date)
+    {
+        $client = new Client();
+        $response = $client->createRequest()
+            ->setMethod('POST')
+            ->setUrl('https://av.dvuimvd.ru/api/call/system-custom/get-journal-lesson?token='.self::$token_custom)
+            ->setData(['group_id' => $group_id, 'curriculum_discipline_id' => $curriculum_discipline_id, 'date' => $date])
+            ->send();
+
+        return $response->data['data'];
+
+    }
     /*МЕТОДЫ API */
 }
