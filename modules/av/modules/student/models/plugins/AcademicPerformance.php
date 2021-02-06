@@ -396,7 +396,7 @@ class AcademicPerformance extends Model
         return $columns;
     }
 
-    private function getAverageMarksDiscipline($marksArr)
+    public function getAverageMarksDiscipline($marksArr)
     {
         $sum = [];
         foreach ($marksArr as $id => $value) //Дисциплина

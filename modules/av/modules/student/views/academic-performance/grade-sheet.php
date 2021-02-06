@@ -134,7 +134,6 @@ foreach( $model->students as $student )
             </thead>
             <tbody>
                 <?
-
                 #
                 # Студенты
                 #
@@ -149,25 +148,46 @@ foreach( $model->students as $student )
                         if(empty($marksArrByDiscipline[$value])) {echo '<td>-</td>';}
                         else{
                             echo '<td>';
-                                foreach($marksArrByDiscipline[$value]['marks'] as $key => $mark)
-                                {
-                                    $journal_lesson_id = $model->marks[ArrayHelper::recursiveArraySearch($key, $model->marks)[0]]['journal_lesson_id'];
-                                    $group = $model->group['id'];
-                                    /* Выставляем оценки */
-                                    if((int)$mark == 2){
-                                        echo "<span class='bg-danger p-1'  value='$mark'><a href=\"https://av.dvuimvd.ru/student/journal/view?group_id=$group&lesson_id=$journal_lesson_id\" target='_blank' class='text-white'>" . $mark . '</a></span>';
-                                    }
-                                    else{
-                                        echo "<span class='p-1' value='$mark'><a href=\"https://av.dvuimvd.ru/student/journal/view?group_id=$group&lesson_id=$journal_lesson_id\" target='_blank'>" . $mark . '</a></span>';
-                                    }
-
+                            foreach($marksArrByDiscipline[$value]['marks'] as $key => $mark)
+                            {
+                                $journal_lesson_id = $model->marks[ArrayHelper::recursiveArraySearch($key, $model->marks)[0]]['journal_lesson_id'];
+                                $group = $model->group['id'];
+                                /* Выставляем оценки */
+                                if((int)$mark == 2){
+                                    echo "<span class='bg-danger p-1'  value='$mark'><a href=\"https://av.dvuimvd.ru/student/journal/view?group_id=$group&lesson_id=$journal_lesson_id\" target='_blank' class='text-white'>" . $mark . '</a></span>';
                                 }
+                                else{
+                                    echo "<span class='p-1' value='$mark'><a href=\"https://av.dvuimvd.ru/student/journal/view?group_id=$group&lesson_id=$journal_lesson_id\" target='_blank'>" . $mark . '</a></span>';
+                                }
+
+                            }
                             echo '</td>';
                         }
                     }
                     echo '<td>'.$model->getAverageMarksStudent($marksArrByDiscipline).'</td></tr>';
                     $index++;
+
                 }
+
+                #
+                # Ср. балл дисциплины
+                #
+
+                $marksArr = $model->filterReMarks($model->filterMarks($model->marks, [$model->startDate , $model->endDate]));
+                $sum = $model->getAverageMarksDiscipline($marksArr);
+                ksort($sum);
+
+                echo '<tr><td></td><td></td>';
+                foreach($sum as $discipline_key => $discipline_value)
+                {
+                    echo '<td>'.$discipline_value['average'].'</td>';
+                }
+
+                echo '</tr>';
+
+
+
+
 
                 ?>
 
