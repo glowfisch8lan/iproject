@@ -13,13 +13,24 @@ $this->params['breadcrumbs'][] = $this->title;
 
 // регистрируем небольшой js-код в view-шаблоне
 $script = <<< JS
-// $(document).ready(function(){
+$(document).ready(function(){
+    
+    $('.table-row-discipline-remove').on('click',function(){
+        
+        var myIndex = $(this).parent('th').index();
+        $(this).parents("table").find("tr").each(function(){
+        $(this).find("th:eq("+myIndex+")").remove();
+        $(this).find("td:eq("+myIndex+")").remove();
+        });
+
+        
+    });
 //     console.log();
 //     $('.mark-two').on('click', function(){
 //         value = $(this).attr('value');
 //         $('span[value = '+value+']').addClass('bg-success').find('a').addClass('text-white')
 //     });
-//     });
+     });
 JS;
 // значение $position может быть View::POS_READY (значение по умолчанию),
 // или View::POS_LOAD, View::POS_HEAD, View::POS_BEGIN, View::POS_END
@@ -37,37 +48,55 @@ foreach( $model->students as $student )
 
 <div class="box-body">
     <div class="col-12 m-2 p-2">
-        <a href="#" class="btn btn-outline-secondary" onclick="history.back();return false;">Назад</a>
-
             <?
             if(!$ajax){
-
-                echo '<button class="btn btn-outline-primary" aria-pressed="false" autocomplete="off" role="button" aria-pressed="true" type="button" data-toggle="collapse" data-target="#reports">Отчеты</button>
-
-        <div class="m-2" id="reports" class="collapse">';
-                echo Html::a('Ведомость успеваемости', Url::to([
+$reports = [
+        [
+                'name' => 'Ведомость успеваемости',
+                'urlParams' => [
                     '/av/plugins/load',
                     'module' => 'student',
                     'id' => 'AcademicPerformance',
                     'controller' => 'AcademicPerformance',
                     'action' => 'generateReport'
-                ]), [
-                    'class' => 'btn btn-outline-secondary',
-                    'data' => [
-                        'method' => 'post',
-                        'params' => [
-                            'AcademicPerformance[group]' => $model->group['id'],
-                            'AcademicPerformance[startDate]' => $model->startDate,
-                            'AcademicPerformance[endDate]' => $model->endDate,
-                        ],
-                    ],
-                ]);
-                echo '</div>';
+                ],
+            'data' => [
+                'method' => 'post',
+                'params' => [
+                    'AcademicPerformance[group]' => $model->group['id'],
+                    'AcademicPerformance[startDate]' => $model->startDate,
+                    'AcademicPerformance[endDate]' => $model->endDate,
+                ],
+            ],
+
+        ],
+
+
+];
+$html = null;
+foreach($reports as $key => $value)
+{
+    $html .= Html::a('Ведомость успеваемости', Url::to($value['urlParams']), [
+        'class' => 'dropdown-item',
+        'data' => $value['data']
+    ]);
+}
+                echo '
+<div class="dropdown">
+<a href="#" class="btn btn-outline-secondary" onclick="history.back();return false;">Назад</a>
+  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    Отчеты
+  </button>
+  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+'.$html.'
+  </div>
+</div>';
+
             }
             ?>
-
-
     </div>
+
+
 
 <!--    <div class="col-12 m-2">-->
 <!--        <span>Фильтр: </span>-->
@@ -124,7 +153,7 @@ foreach( $model->students as $student )
                     if($name_short != null)
                     {
                         $map[] = $id;
-                        echo "<th scope=\"col\" id='".$id."'>".$name_short."</th>";
+                        echo "<th scope=\"col\" id='".$id."'>".$name_short." <a href='#' class='text-danger table-row-discipline-remove'><i class=\"fa fa-minus-circle\" aria-hidden=\"true\"></a></i></th>";
                     }
                 }
 

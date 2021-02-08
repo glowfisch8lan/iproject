@@ -9,6 +9,7 @@ use yii\data\ArrayDataProvider;
 use yii\web\NotFoundHttpException;
 use yii\web\ServerErrorHttpException;
 
+use app\modules\av\modules\student\Module;
 /**
  * Reports controller for the `av` module
  */
@@ -21,31 +22,15 @@ class PluginsController extends Controller
      */
     public function actionIndex()
     {
+        $modules = new \app\modules\av\modules\student\Module();
+        $plugins = [];
+        foreach ($modules->plugins as $id => $plugin)
+        {
+            if($plugin['visible']){
+                $plugins[] = $plugin;
+            }
 
-        //var_dump(Reports::getList());
-        $plugins = [
-            [
-                'id' => 'academicPerformance',
-                'name' => 'Успеваемость',
-                'module' => [
-                    'id' => 'student',
-                    'name' => 'Студент',
-                ],
-                'category' => 'plugins',
-                'controller' => 'academicPerformance'
-            ],
-            [
-                'id' => 'journal',
-                'name' => 'Электронный журнал',
-                'module' => [
-                    'id' => 'student',
-                    'name' => 'Студент',
-                ],
-                'category' => 'plugins',
-                'controller' => 'journal'
-            ]
-        ];
-
+        }
         $dataProvider = new ArrayDataProvider([
             'allModels' => $plugins,
 //            'sort' => [
