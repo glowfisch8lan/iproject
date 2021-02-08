@@ -15,14 +15,33 @@ $this->params['breadcrumbs'][] = $this->title;
 $script = <<< JS
 $(document).ready(function(){
     
+    $('table.grade-sheet').find("tr").each(function(){
+        var td = $(this).find('td.marks');
+        if(td.html() != '-')
+            {
+                var index = 0;
+                var sum = 0;
+                td.find('span').each(function(){
+                    
+                    let mark = $(this).attr('value');
+                    let result = mark.match(/(\d)/g);
+                    for (let i = 0; i < result.length; i++)
+                        {
+                            sum +=  Number.parseInt(mark);
+                            index++;
+                        }
+
+                });
+            }
+        console.log(sum/index);
+        });
+    
     $('.table-row-discipline-remove').on('click',function(){
-        
         var myIndex = $(this).parent('th').index();
-        
         $(this).parents("table").find("tr").each(function(){
-            
-        $(this).find("th:eq("+myIndex+")").remove()
-        $(this).find("td:eq("+myIndex+")").remove();
+        $(this).find("th:eq("+myIndex+")").fadeOut(150, function(){ $(this).remove();});
+        $(this).find("td:eq("+myIndex+")").fadeOut(150, function(){ $(this).remove();});
+        
         });
 
         
@@ -110,7 +129,7 @@ foreach($reports as $key => $value)
 
     <div class="col-12">
         <div class="table-responsive">
-        <table class="table table-bordered table-sm table-hover" style="font-size:14px">
+        <table class="table table-bordered table-sm table-hover grade-sheet" style="font-size:14px">
             <thead>
             <tr>
                 <td colspan="100">
@@ -176,9 +195,9 @@ foreach($reports as $key => $value)
                             <td type='table-td-students'><a href=\"https://av.dvuimvd.ru/student/students/".$model->group['id']."?student_id=".$student['id']."\" target='_blank'>" . $model->getShortName((object)$student) . "</a></td>";
 
                     foreach($map as $value) {
-                        if(empty($marksArrByDiscipline[$value])) {echo '<td>-</td>';}
+                        if(empty($marksArrByDiscipline[$value])) {echo '<td class="marks">-</td>';}
                         else{
-                            echo '<td>';
+                            echo '<td class="marks">';
                             foreach($marksArrByDiscipline[$value]['marks'] as $key => $mark)
                             {
                                 $journal_lesson_id = $model->marks[ArrayHelper::recursiveArraySearch($key, $model->marks)[0]]['journal_lesson_id'];
@@ -195,7 +214,8 @@ foreach($reports as $key => $value)
                             echo '</td>';
                         }
                     }
-                    echo '<td>'.$model->getAverageMarksStudent($marksArrByDiscipline).'</td></tr>';
+                    //echo '<td>'.$model->getAverageMarksStudent($marksArrByDiscipline).'</td></tr>';
+                    echo '<td class="average"></td></tr>';
                     $index++;
 
                 }
