@@ -5,6 +5,7 @@ use app\modules\av\modules\student\models\StudentsApi;
 use app\modules\system\helpers\ArrayHelper;
 use yii\helpers\Html;
 use kartik\select2\Select2;
+use app\modules\system\models\rbac\AccessControl;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */

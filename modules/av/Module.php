@@ -16,14 +16,26 @@ class Module extends \app\modules\system\Module
     public $modelNamespace = 'app\modules\av\models';
     public $link = 'av';
     public $icon = 'fa fa-angle-double-right';
-    public $visible = 'viewAvtorVuz';
+    public $visible = 'viewAv';
 //    public $layout = '/main';
     public $routes = [
         [   'route' => '/av/plugins',
             'name' => 'Плагины',
-            'access' => 'viewAvtorVuz',
-            'description' => 'Плагины',
+            'access' => 'viewAvPlugins',
+            'description' => 'Общий доступ к Плагинам',
             'visible' => true,
+        ],
+        [   'route' => '/av/plugins/load?module=student&id=academicPerformance&controller=academicPerformance',
+            'name' => 'Успеваемость',
+            'access' => 'accessAvStudentGradeSheet',
+            'description' => 'Доступ к плагину Успеваемость',
+            'visible' => false,
+        ],
+        [   'route' => '/av/plugins/load?module=student&id=journal&controller=journal',
+            'name' => 'Электронный журнал',
+            'access' => 'accessAvStudentJournal',
+            'description' => 'Доступ к плагину Электронный журнал',
+            'visible' => false,
         ],
     ];
 
@@ -39,7 +51,7 @@ class Module extends \app\modules\system\Module
                     [
                         'controllers'=>['av/plugins'],
                         'allow' => true,
-                        'actions' => ['ajax', 'lti'],
+                        'actions' => ['ajax'],
                         'roles' => ['?'],
                     ],
                 ],
