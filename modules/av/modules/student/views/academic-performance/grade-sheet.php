@@ -18,8 +18,10 @@ $(document).ready(function(){
     $('.table-row-discipline-remove').on('click',function(){
         
         var myIndex = $(this).parent('th').index();
+        
         $(this).parents("table").find("tr").each(function(){
-        $(this).find("th:eq("+myIndex+")").remove();
+            
+        $(this).find("th:eq("+myIndex+")").remove()
         $(this).find("td:eq("+myIndex+")").remove();
         });
 
@@ -170,8 +172,8 @@ foreach($reports as $key => $value)
                 {
                     $marksArrByDiscipline = $model->filterReMarks($model->getStudentMarks($student['id']));
                     echo '<tr>';
-                    echo "<th scope=\"row\">$index</th>
-                            <td><a href=\"https://av.dvuimvd.ru/student/students/".$model->group['id']."?student_id=".$student['id']."\" target='_blank'>" . $model->getShortName((object)$student) . "</a></td>";
+                    echo "<td scope=\"row\">$index</td>
+                            <td type='table-td-students'><a href=\"https://av.dvuimvd.ru/student/students/".$model->group['id']."?student_id=".$student['id']."\" target='_blank'>" . $model->getShortName((object)$student) . "</a></td>";
 
                     foreach($map as $value) {
                         if(empty($marksArrByDiscipline[$value])) {echo '<td>-</td>';}
@@ -198,21 +200,21 @@ foreach($reports as $key => $value)
 
                 }
 
-                #
-                # Ср. балл дисциплины
-                #
-
-                $marksArr = $model->filterReMarks($model->filterMarks($model->marks, [$model->startDate , $model->endDate]));
-                $sum = $model->getAverageMarksDiscipline($marksArr);
-                ksort($sum);
-
-                echo '<tr><td></td><td></td>';
-                foreach($sum as $discipline_key => $discipline_value)
-                {
-                    echo '<td>'.$discipline_value['average'].'</td>';
-                }
-
-                echo '</tr>';
+//                #
+//                # Ср. балл дисциплины
+//                #
+//
+//                $marksArr = $model->filterReMarks($model->filterMarks($model->marks, [$model->startDate , $model->endDate]));
+//                $sum = $model->getAverageMarksDiscipline($marksArr);
+//                ksort($sum);
+//
+//                echo '<tr><td></td><td></td>';
+//                foreach($sum as $discipline_key => $discipline_value)
+//                {
+//                    echo '<td>'.$discipline_value['average'].'</td>';
+//                }
+//
+//                echo '</tr>';
 
 
 
