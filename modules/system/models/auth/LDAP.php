@@ -3,6 +3,7 @@
 
 namespace app\modules\system\models\auth;
 
+use Yii;
 use Adldap\Adldap;
 use Adldap\Auth\PasswordRequiredException;
 use Adldap\Auth\UsernameRequiredException;
@@ -15,6 +16,7 @@ use DateInterval;
 use DateTime;
 use yii\base\Exception;
 use yii\helpers\ArrayHelper;
+use app\modules\system\models\auth\Auth;
 
 /**
  * Class LDAP
@@ -23,7 +25,7 @@ use yii\helpers\ArrayHelper;
  * Авторизация на LDAP-сервере.
  * Поддерживается Microsoft ActiveDirectory.
  */
-class LDAP
+class LDAP extends Auth
 {
     const BAD_SYMBOLS = '/\[]:;|=,+*?<>"';
 
@@ -64,16 +66,10 @@ class LDAP
     public function process($username, $password)
     {
         $result = $this->authenticate($username, $password);
-        var_dump($result);
-        die();
         if (is_array($result)) {
             return self::login($result);
         } else {
-            if (!is_null($module->error)) {
-                return [
-                    'error' => $module->error,
-                ];
-            }
+            throw new Exception('Ошибка входа');
         }
 
     }
@@ -147,11 +143,9 @@ class LDAP
             return false;
         try {
 
-            $login = 'grigorov_de';
 
-            $this->provider->auth()->attempt(str_replace($this->getValue('account_suffix'), '', $login), '18954569');
-
-            $user = $this->provider->search()->findBy('samaccountname', 'grigorov_de');
+            if($this->provider->auth()->attempt(str_replace($this->getValue('account_suffix'), '', $login), $password)){
+            $user = $this->provider->search()->findBy('samaccountname', $login);
             $ldapGroups = array_map(function($item) {
 
                     return preg_replace('/^iDapp\s*\-\s*/ui', '', $item->getName());
@@ -166,14 +160,16 @@ class LDAP
                     return str_replace(str_split(self::BAD_SYMBOLS), '_', $item['name']);
                 });
 
-
                 $userData = [
                     'name' => $user->getCommonName(),
                     'login' => $login,
+                    'password' => $password,
                     'groupsIds' => array_keys(array_intersect($systemGroups, $ldapGroups)),
                 ];
 
                 return $userData;
+                }
+            else {return false;}
 
 
 
@@ -255,7 +251,6 @@ class LDAP
 
         if(!$this->test()['status'])
             return ['status' => 11];
-
 
         $this->isConnected();
         $group = $this->provider->make()->group();

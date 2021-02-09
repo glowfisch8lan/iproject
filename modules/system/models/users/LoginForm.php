@@ -18,6 +18,7 @@ class LoginForm extends Model
     public $login;
     public $password;
     public $rememberMe = true;
+    public static $sessionDuration = 2592000;
 
     private $_user = false;
 
@@ -58,6 +59,7 @@ class LoginForm extends Model
             $user = $this->getUser();
 
             $result = $user && $user->validatePassword($this->password); //Проверяем наличие локального пользователя;
+            //Нужно проверять группы с LDAP;
             if ($result)
                 return;
 
