@@ -82,5 +82,17 @@ class Custom extends ApiModule
             ->one();
     }
 
+    /**
+     * Получение всех возможных причин пропуска
+     *
+     * @return array
+     */
+    public function methodGetSkipReasons()
+    {
+        return (new Query())
+            ->select(['*'])
+            ->from('student_skip_reason')
+            ->all();
+    }
 
 }

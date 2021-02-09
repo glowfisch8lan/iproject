@@ -15,26 +15,26 @@ $this->params['breadcrumbs'][] = $this->title;
 $script = <<< JS
 $(document).ready(function(){
     
-    $('table.grade-sheet').find("tr").each(function(){
-        var td = $(this).find('td.marks');
-        if(td.html() != '-')
-            {
-                var index = 0;
-                var sum = 0;
-                td.find('span').each(function(){
-                    
-                    let mark = $(this).attr('value');
-                    let result = mark.match(/(\d)/g);
-                    for (let i = 0; i < result.length; i++)
-                        {
-                            sum +=  Number.parseInt(mark);
-                            index++;
-                        }
-
-                });
-            }
-        console.log(sum/index);
-        });
+    // $('table.grade-sheet').find("tr").each(function(){
+    //     var td = $(this).find('td.marks');
+    //     if(td.html() != '-')
+    //         {
+    //             var index = 0;
+    //             var sum = 0;
+    //             td.find('span').each(function(){
+    //                
+    //                 let mark = $(this).attr('value');
+    //                 let result = mark.match(/(\d)/g);
+    //                 for (let i = 0; i < result.length; i++)
+    //                     {
+    //                         sum +=  Number.parseInt(mark);
+    //                         index++;
+    //                     }
+    //
+    //             });
+    //         }
+    //     console.log(sum/index);
+    //     });
     
     $('.table-row-discipline-remove').on('click',function(){
         var myIndex = $(this).parent('th').index();
@@ -87,17 +87,37 @@ $reports = [
                     'AcademicPerformance[group]' => $model->group['id'],
                     'AcademicPerformance[startDate]' => $model->startDate,
                     'AcademicPerformance[endDate]' => $model->endDate,
+                    'AcademicPerformance[report]' => 'gradesheet'
                 ],
             ],
 
         ],
+    [
+        'name' => 'Сводная ведомость',
+        'urlParams' => [
+            '/av/plugins/load',
+            'module' => 'student',
+            'id' => 'AcademicPerformance',
+            'controller' => 'AcademicPerformance',
+            'action' => 'generateReport'
+        ],
+        'data' => [
+            'method' => 'post',
+            'params' => [
+                'AcademicPerformance[group]' => $model->group['id'],
+                'AcademicPerformance[startDate]' => $model->startDate,
+                'AcademicPerformance[endDate]' => $model->endDate,
+            ],
+        ],
+
+    ],
 
 
 ];
 $html = null;
 foreach($reports as $key => $value)
 {
-    $html .= Html::a('Ведомость успеваемости', Url::to($value['urlParams']), [
+    $html .= Html::a($value['name'], Url::to($value['urlParams']), [
         'class' => 'dropdown-item',
         'data' => $value['data']
     ]);
@@ -187,9 +207,10 @@ foreach($reports as $key => $value)
                 #
                 # Студенты
                 #
+
                 foreach( $model->students as $student )
                 {
-                    $marksArrByDiscipline = $model->filterReMarks($model->getStudentMarks($student['id']));
+                    $marksArrByDiscipline = $model->filterReMarks($model->getStudentMarks($student['id']), $model->isSkip);
                     echo '<tr>';
                     echo "<td scope=\"row\">$index</td>
                             <td type='table-td-students'><a href=\"https://av.dvuimvd.ru/student/students/".$model->group['id']."?student_id=".$student['id']."\" target='_blank'>" . $model->getShortName((object)$student) . "</a></td>";
@@ -198,19 +219,32 @@ foreach($reports as $key => $value)
                         if(empty($marksArrByDiscipline[$value])) {echo '<td class="marks">-</td>';}
                         else{
                             echo '<td class="marks">';
-                            foreach($marksArrByDiscipline[$value]['marks'] as $key => $mark)
-                            {
-                                $journal_lesson_id = $model->marks[ArrayHelper::recursiveArraySearch($key, $model->marks)[0]]['journal_lesson_id'];
-                                $group = $model->group['id'];
-                                /* Выставляем оценки */
-                                if((int)$mark == 2){
-                                    echo "<span class='bg-danger p-1'  value='$mark'><a href=\"https://av.dvuimvd.ru/student/journal/view?group_id=$group&lesson_id=$journal_lesson_id\" target='_blank' class='text-white'>" . $mark . '</a></span>';
-                                }
-                                else{
-                                    echo "<span class='p-1' value='$mark'><a href=\"https://av.dvuimvd.ru/student/journal/view?group_id=$group&lesson_id=$journal_lesson_id\" target='_blank'>" . $mark . '</a></span>';
+
+                                foreach($marksArrByDiscipline[$value]['marks'] as $key => $mark)
+                                {
+                                    $journal_lesson_id = $model->marks[ArrayHelper::recursiveArraySearch($key, $model->marks)[0]]['journal_lesson_id'];
+                                    $group = $model->group['id'];
+                                    /* Выставляем оценки */
+
+                                    $lightMarks = [
+                                            '2' => ['class' => 'bg-danger', 'text-color' => 'text-white'],
+                                            '5' => ['class' => 'bg-success', 'text-color' => 'text-white'],
+                                            '4' => ['class' => 'bg-info', 'text-color' => 'text-white'],
+                                            '3' => ['class' => 'bg-secondary', 'text-color' => 'text-white'],
+                                            'н.' => ['class' => 'bg-warning', 'text-color' => 'text-white'],
+                                            'б.' => ['class' => 'bg-warning', 'text-color' => 'text-white'],
+                                            'к.' => ['class' => 'bg-warning', 'text-color' => 'text-white'],
+                                            'о.' => ['class' => 'bg-warning', 'text-color' => 'text-white'],
+                                    ];
+
+                                    $class['bg'] = (isset($lightMarks[$mark])) ? $lightMarks[$mark]['class'] : 'default';
+                                    $class['text-color'] = (isset($lightMarks[$mark])) ? $lightMarks[$mark]['text-color'] : null;
+
+                                    echo "<a href=\"https://av.dvuimvd.ru/student/journal/view?group_id=$group&lesson_id=$journal_lesson_id\" target='_blank' class='m-1 ".$class['text-color']."'><span class='".$class['bg']." p-1'  value='$mark'>" . $mark . '</span></a>';
+
+
                                 }
 
-                            }
                             echo '</td>';
                         }
                     }

@@ -38,6 +38,33 @@ class AcademicPerformanceController
             'model' => $model
         ];
     }
+    /*
+        * Оптимизирующая функция для двух действий Load и Ajax
+        */
+    private function initLoad($module,$id,$action,$controller){
+
+        $class = 'app\modules\av\modules\\'.$module.'\controllers\\'.ucfirst($id).'Controller';
+
+        if(!class_exists($class))
+            throw new NotFoundHttpException('Извините, ошибка в переданных параметрах!');
+
+
+        $class = new $class();
+
+        $actionController = 'action'.ucfirst($action);
+
+        if(!method_exists($class, $actionController))
+            throw new NotFoundHttpException('Извините, метод action не найден!');
+
+        $array = $class->$actionController();
+
+
+        $id = preg_split('/(?<=[a-z])(?=[A-Z])/u',$id);
+        $id = (count($id) > 1 ) ? mb_strtolower($id[0].'-'.$id[1]) : $id[0];
+        $path = '@app/modules/av/modules/'.$module.'/views/'.$id.'/'.$array['view'];
+
+        return ['path' => $path, 'array' => $array];
+    }
 
     public function actionGenerateReport()
     {
@@ -46,8 +73,16 @@ class AcademicPerformanceController
         if(Yii::$app->request->isPost){
             $model->load(Yii::$app->request->post());
         }
-        $model->fetchData();
-        $model->generate();
+
+
+        $namespace = str_replace('\controllers','',__NAMESPACE__ );
+        $class = $namespace . '\models\plugins\reports\\'.$model->report . '\Report';
+        $class = new $class();
+
+        var_dump($model->endDate);
+        var_dump($class);
+        //$model->fetchData();
+        //$model->generateGradeSheet();
         die();
         if(!$model->students)
             throw new NotFoundHttpException('В группе нет учащихся!');

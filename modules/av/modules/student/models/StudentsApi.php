@@ -97,5 +97,17 @@ class StudentsApi
         return $response->data['data'];
 
     }
+
+    public static function getSkipReasons()
+    {
+        $client = new Client();
+        $response = $client->createRequest()
+            ->setMethod('POST')
+            ->setUrl('https://av.dvuimvd.ru/api/call/system-custom/get-skip-reasons?token='.self::$token_custom)
+            ->send();
+
+        return $response->data['data'];
+
+    }
     /*МЕТОДЫ API */
 }

@@ -41,7 +41,6 @@ $this->params['breadcrumbs'][] = $this->title;
                         'pluginOptions' => [
                             'allowClear' => true
                         ],
-
                     ]);
                     ?>
                     <div class="col-2">
@@ -59,7 +58,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     </div>
 
                     <div class="custom-control custom-switch">
-                        <input type="checkbox" class="custom-control-input " id="switch2" name="AcademicPerformance[isSkip]" disabled>
+                        <input type="checkbox" class="custom-control-input " id="switch2" name="AcademicPerformance[isSkip]">
                         <label class="custom-control-label" for="switch2">Пропуски</label>
                     </div>
 

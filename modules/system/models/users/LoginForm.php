@@ -5,6 +5,7 @@ namespace app\modules\system\models\users;
 use Yii;
 use yii\base\Model;
 use app\modules\system\models\users\Users;
+use app\modules\system\models\auth\LDAP;
 
 /**
  * LoginForm is the model behind the login form.
@@ -45,12 +46,30 @@ class LoginForm extends Model
      */
     public function validatePassword($attribute, $params)
     {
+//        if (!$this->hasErrors()) {
+//            $user = $this->getUser();
+//
+//            if (!$user || !$user->validatePassword($this->password)) {
+//                $this->addError($attribute, 'Incorrect username or password.');
+//            }
+//        }
+
         if (!$this->hasErrors()) {
             $user = $this->getUser();
 
-            if (!$user || !$user->validatePassword($this->password)) {
-                $this->addError($attribute, 'Incorrect username or password.');
-            }
+            $result = $user && $user->validatePassword($this->password); //Проверяем наличие локального пользователя;
+            if ($result)
+                return;
+
+            $auth = new LDAP();
+            $LdapResult = $auth->process($this->login, $this->password); //Иначе ищем его в LDAP
+            if ($LdapResult && !isset($LdapResult[ 'error' ]))
+                return;
+
+            if (isset($LdapResult[ 'error' ]))
+                $this->addError($attribute, $LdapResult[ 'error' ]);
+
+            $this->addError($attribute, 'Неверное имя пользователя или пароль.');
         }
     }
 

@@ -23,7 +23,10 @@ class AcademicPerformance extends Model
     public $markValues;
     public $session = false;
     public $isSkip = false;
+    public $skipReasons;
 
+    public $report = null;
+    
     public $mapDisciplines;
 
     public function attributeLabels()
@@ -59,6 +62,18 @@ class AcademicPerformance extends Model
                 'message' => 'Заполните поля!',
 
             ],
+            [
+                ['isSkip'],
+                'required',
+                'message' => 'Заполните поля!',
+
+            ],
+            [
+                ['report'],
+                'required',
+                'message' => 'Заполните поля!',
+
+            ],
         ];
 
     }
@@ -74,6 +89,7 @@ class AcademicPerformance extends Model
         $this->curriculumDisciplines = StudentsApi::getCurriculumDisciplines($this->group['education_plan_id']);
         $this->marks = StudentsApi::getMarksByGroup($this->group['id']);
         $this->markValues = StudentsApi::getMarksValues();
+        $this->skipReasons = StudentsApi::getSkipReasons();
 
         return;
     }
@@ -125,32 +141,48 @@ class AcademicPerformance extends Model
     {
 
         $arr = null;
+        $arr2 = null;
+        $arr3 = null;
 
+
+        /*
+        * Фильтр: Дата
+        */
         foreach ($marks as $key => $value)
         {
 
             $date = strtotime( preg_replace('/\s.*/m', '', $value['lesson_date']) );
-            switch($this->session){
-                case false:
                     if (
                         $date >= strtotime($datetime[0]) &&
-                        $date <= strtotime($datetime[1]) &&
-                        $value['mark_value_id'] >= 1 &&
-                        $value['mark_value_id'] <= 5 &&
-                        $value['class_type_id'] != null
+                        $date <= strtotime($datetime[1])
                     )
                     {
                         $arr[] = $value;
                     }
+
+        }
+
+        /*
+         * Фильтр: Результаты сессии
+         */
+        foreach ($arr as $key => $value)
+        {
+
+            switch($this->session){
+                case false:
+                    if (
+                        $value['class_type_id'] != null
+                    )
+                    {
+                        $arr2[] = $value;
+                    }
                     break;
                 case true:
                     if (
-                        $date >= strtotime($datetime[0]) &&
-                        $date <= strtotime($datetime[1]) &&
                         $value['control_type_id'] != null
                     )
                     {
-                        $arr[] = $value;
+                        $arr2[] = $value;
                     }
                     break;
 
@@ -158,7 +190,36 @@ class AcademicPerformance extends Model
 
         }
 
-        return $arr;
+        /*
+         * Фильтр по отработкам
+         */
+        foreach($arr2 as $key => $value)
+        {
+            switch($this->isSkip){
+                case false:
+                    if(
+                        $value['mark_value_id'] >= 1 &&
+                        $value['mark_value_id'] <= 5
+                    )
+                    {
+                        $arr3[] = $value;
+                    }
+                    break;
+                case true:
+                    if(
+                        ($value['mark_value_id'] >= 1 &&
+                        $value['mark_value_id'] <= 5)  ||
+                        $value['mark_value_id'] == null
+                    )
+                    {
+                        $arr3[] = $value;
+                    }
+
+                    break;
+
+            }
+        }
+        return $arr3;
     }
 
     /**
@@ -196,7 +257,7 @@ class AcademicPerformance extends Model
         {
 
             $id = $student['id'];
-            $marksArray = $this->filterMarks($this->getMarks($id) , [$this->startDate , $this->endDate], $options['session']);
+            $marksArray = $this->filterMarks($this->getMarks($id) , [$this->startDate , $this->endDate]);
             foreach ($marksArray as $marks)
             {
                 $collection[$marks['curriculum_discipline_id']] = $index;
@@ -272,14 +333,27 @@ class AcademicPerformance extends Model
     }
 
     /**
-     * Оценки студента
+     * Получить тип Оценки студента
      *
-     * @param integer $id Идентификатор студента
+     * @param integer $id Идентификатор оценки
      * @return array | null
      */
     public function getMarkValue($id)
     {
         foreach ($this->markValues as $key => $value) if ($value['id'] == $id) $result = ['name' => $value['name'], 'name_short' => $value['name_short']];
+        if (empty($result)) return;
+        return $result;
+    }
+
+    /**
+     * Получить информацию о пропуске
+     *
+     * @param integer $id Идентификатор пропуска
+     * @return array | null
+     */
+    public function getSkipReasonValue($id)
+    {
+        foreach ($this->skipReasons as $key => $value) if ($value['id'] == $id) $result = ['name' => $value['name'], 'name_short' => $value['name_short']];
         if (empty($result)) return;
         return $result;
     }
@@ -325,15 +399,33 @@ class AcademicPerformance extends Model
     {
         foreach ($studentMarks as $key => $value)
         {
+
             if ($value['mark_value_id'] < 5)
             {
-                $marksArrByDiscipline[$value['curriculum_discipline_id']]['marks'][$value['id']] = $this->getMarkValue($value['mark_value_id']) ['name_short'];
+
+                $marksArrByDiscipline[$value['curriculum_discipline_id']]['marks'][$value['id']] = $this->getMarkValue($value['mark_value_id'])['name_short']; //Записываем оценку в массив
+
                 if (!empty($value['parent_id']))
                 {
-                    $marksArrByDiscipline[$value['curriculum_discipline_id']]['parent_id'][$value['id']] = $value['parent_id'];
+                    $marksArrByDiscipline[$value['curriculum_discipline_id']]['parent_id'][$value['id']] = $value['parent_id']; //Записываем родителя оценки. если эт отработка
                 }
 
             }
+            /*
+             * Если mark_value_id = null, значит это пропуск, проверить наличие skipReasonb
+             */
+            if($value['mark_value_id'] == null)
+            {
+                if($value['skip_reason_id'] != null)
+                {
+                    $marksArrByDiscipline[$value['curriculum_discipline_id']]['marks'][$value['id']] = $this->getSkipReasonValue($value['skip_reason_id'])['name_short']; //Записываем оценку в массив
+                }
+                if (!empty($value['parent_id']))
+                {
+                    $marksArrByDiscipline[$value['curriculum_discipline_id']]['parent_id'][$value['id']] = $value['parent_id']; //Записываем родителя оценки. если эт отработка
+                }
+            }
+
         }
 
         foreach ($marksArrByDiscipline as $key => $value)
@@ -498,9 +590,11 @@ class AcademicPerformance extends Model
         return $countMarkArr;
     }
 
-    public function generate()
-    {
-
+    /**
+     * Отчет Сводная ведомость по факультету
+     */
+    public function generateConsolidatedStatement(){
+        
         $this->fetchData();
 
         /*
@@ -509,149 +603,5 @@ class AcademicPerformance extends Model
 
         $spreadsheet = new Spreadsheet();
 
-        $spreadsheet->getDefaultStyle()
-            ->getFont()
-            ->setName('Times New Roman')
-            ->setSize(12);
-
-        $sheet = $spreadsheet->getActiveSheet();
-
-        $sheet->getDefaultColumnDimension()
-            ->setWidth(20);
-
-        $sheet ->getColumnDimension('A')
-            ->setWidth(5);
-
-        $sheet->getColumnDimension('B')
-            ->setWidth(30);
-
-
-        foreach (['A' => 'right', 'B' => 'left', 'C:Z' => 'center'] as $key => $value)
-        {
-             $sheet->getStyle($key)->getAlignment()
-                ->setHorizontal($value);
-        }
-
-            $sheet->setCellValue('A1', '№');
-            $sheet->setCellValue('B1', 'ФИО');
-
-            $sheet->getStyle("C1:Y1")
-            ->getAlignment()
-            ->setWrapText(true); //включить перенос текста в колонках;
-
-        $mapLetters = $this->createColumnsArray('ZZ'); //Создаем индексную карту документа;
-
-        /*
-         * Наполняем документ
-         *
-         */
-
-        #
-        # Студенты: ФИО
-        #
-        $index = 1;
-        foreach ($this->students as $student)
-        {
-            $index++;
-            $sheet->setCellValue('A' . $index, $index - 1);
-            $sheet->setCellValue('B' . $index, $this->getShortName((object)$student));
-        }
-
-        #
-        # Дисциплины
-        #
-        $list_disciplines = $this->collectDisciplines(); //собираем список дисциплин
-
-        $index = 0;
-        foreach ($list_disciplines as $id)
-        {
-
-            $discipline = $this->getDisciplineName($id);
-
-            if($discipline)
-            {
-                 $index++;
-                 $sheet->setCellValue($mapLetters[$index + 1] . 1, $discipline['name_short']);
-                 $sheet->getColumnDimension($mapLetters[$index + 1])->setWidth(25);
-                 $this->mapDisciplines[$id] = $mapLetters[$index + 1];
-            }
-
-        }
-
-        $sheet->setCellValue($mapLetters[$index + 2] . 1, 'Ср. балл');
-
-
-        #
-        # Оценки студентов
-        #
-        $index = 1;
-        foreach ($this->students as $student)
-        {
-            $index++;
-
-            $marks = $this->filterMarks($this->getMarks($student['id']) , [$this->startDate , $this->endDate]);
-            $marksArrByDiscipline = $this->filterReMarks($marks);
-
-            /* Заполняем оценки по ячейкам */
-                foreach ($marksArrByDiscipline as $id => $value)
-                {
-                    if (!empty($this->mapDisciplines[$id])) $sheet->setCellValue($this->mapDisciplines[$id].$index, implode(' ', $value['marks']));
-                }
-                /* Заполняем средний балл студента */
-                $sheet->setCellValue($mapLetters[count($this->mapDisciplines) + 2] . $index, $this->getAverageMarksStudent($marksArrByDiscipline));
-        }
-
-        #
-        # Ср. балл дисциплины
-        #
-
-        $marksArr = $this->filterReMarks($this->filterMarks($this->marks, [$this->startDate , $this->endDate]));
-        $sum = $this->getAverageMarksDiscipline($marksArr);
-        foreach ($sum as $id => $value)
-        {
-            if(!empty($this->mapDisciplines[$id])) {$sheet->setCellValue($this->mapDisciplines[$id] . (count($this->students) + 2) , $value['average']);}
-        }
-        $sheet->setCellValue('B' . (count($this->students) + 2) , 'Ср. балл');
-
-
-        #
-        # Кол-во оценок
-        #
-
-        $countMarkArr = $this->countMarks($marksArr);
-        $additionFieldName = ['Кол-во 5', 'Кол-во 4', 'Кол-во 3', 'Кол-во 2/', 'Кол-во 2'];
-        $additionFieldValue = ['5', '4', '3', '2/', '2'];
-
-        $index = 4; //смещение вниз листа;
-        foreach ($additionFieldName as $key => $value)
-        {
-            $sheet->setCellValue('B' . (count($this->students) + $index) , $value);
-            $index++;
-        }
-
-        $index = 4;
-        foreach ($additionFieldValue as $key => $value)
-        {
-            $sheet->setCellValue('C' . (count($this->students) + $index) , $countMarkArr['count'][$value]);
-            $index++;
-        }
-
-        /*
-         *  Отдаем XLS документ;
-        */
-        //header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename="Ведомость успеваемости ' . $this
-                ->group['name'] . '.xlsx"');
-        header('Cache-Control: max-age=0');
-        header('Cache-Control: max-age=1');
-
-        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
-        header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modified
-        header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
-        header('Pragma: public'); // HTTP/1.0
-
-        $writer = new Xlsx($spreadsheet);
-        $writer->save('php://output');
-        die();
     }
 }

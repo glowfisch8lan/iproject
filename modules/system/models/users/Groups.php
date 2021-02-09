@@ -43,9 +43,11 @@ class Groups extends ActiveRecord
         ];
     }
 
-    /*
-     *  Получить "разрешения" группы
-     *  Принимает id группы
+    /**
+     * Разрешения группы
+     *
+     * @param $id Идентификатор группы
+     * @return array
      */
     public static function getPermissions($id){
 
@@ -60,8 +62,11 @@ class Groups extends ActiveRecord
             ->all();
     }
 
-    /*
-     *  Получить список членов группы
+    /**
+     * Список участников группы
+     *
+     * @param $id Идентификатор группы
+     * @return array
      */
     public function getGroupMembers($id){
 
@@ -79,13 +84,16 @@ class Groups extends ActiveRecord
             ->addParams([':group_id' => (int) $id])
             ->all();
 
-
-
     }
 
-    /*
-     *  Удалить пользователя из группы
+    /**
+     * Удалить пользователя из группы
+     *
+     * @param $user_id Идентификатор пользоватедя;
+     * @param $group_id Идентификатор группы
+     * @return boolean
      */
+
     public function removeGroupMember($user_id, $group_id){
 
         return (new \yii\db\Query())
@@ -96,6 +104,11 @@ class Groups extends ActiveRecord
 
     }
 
+    /**
+     * Список всех групп
+     *
+     * @return array
+     */
     public static function getAllGroupList(): array{
         return self::find()->asArray()->all();
     }

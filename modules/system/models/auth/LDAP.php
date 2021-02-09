@@ -10,8 +10,10 @@ use Adldap\Connections\ProviderInterface;
 use Adldap\Auth\Events\Failed;
 use Adldap\Models\Attributes\DistinguishedName;
 
+use app\modules\system\models\users\Groups;
 use DateInterval;
 use DateTime;
+use yii\base\Exception;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -32,6 +34,7 @@ class LDAP
      */
     private $provider;
     private $connected;
+    public  $error;
 
     private $config = [
         // An array of your LDAP hosts. You can use either
@@ -46,18 +49,44 @@ class LDAP
         // be a full distinguished name of the user account.
         'username' => 'avtorvuz',
         'password' => 'avtorvuz',
+        'port' => '389'
     ];
-    /**
-     * LDAP constructor.
-     *
-     * @param array $settings
-     */
+
     public function __construct($settings = [])
     {
         // создание клиента LDAP
         $this->client = new Adldap();
         $this->client->addProvider($this->config);
+
     }
+
+
+    public function process($username, $password)
+    {
+        $result = $this->authenticate($username, $password);
+        var_dump($result);
+        die();
+        if (is_array($result)) {
+            return self::login($result);
+        } else {
+            if (!is_null($module->error)) {
+                return [
+                    'error' => $module->error,
+                ];
+            }
+        }
+
+    }
+
+    public function getValue($value)
+    {
+        return $this->config[$value];
+    }
+    /**
+     * LDAP constructor.
+     *
+     * @param array $settings
+     */
 
     /**
      * Проверка подключения.
@@ -90,55 +119,176 @@ class LDAP
         return $this->isConnected() && $this->config['username'] != '';
     }
 
+    /**
+     * Обработка данных аутентификации (логина и пароля).
+     * Функция должна возвращать false, если аутентификация не прошла, или массив атрибутов для создания нового пользователя.
+     *
+     * @param $login
+     * @param $password
+     * @return mixed
+     * @throws \Adldap\Auth\BindException
+     * @throws \Adldap\Auth\PasswordRequiredException
+     * @throws \Adldap\Auth\UsernameRequiredException
+     */
+    public function authenticate($login, $password)
+    {
+
+       $this->syncGroups();
+
+        $config = $this->config;
+        $config['port'] = '3268';
+
+
+        $this->client = new Adldap();
+        $this->client->addProvider($config);
+        $this->connected = null;
+
+        if (!$this->isConnected())
+            return false;
+        try {
+
+            $login = 'grigorov_de';
+
+            $this->provider->auth()->attempt(str_replace($this->getValue('account_suffix'), '', $login), '18954569');
+
+            $user = $this->provider->search()->findBy('samaccountname', 'grigorov_de');
+            $ldapGroups = array_map(function($item) {
+
+                    return preg_replace('/^iDapp\s*\-\s*/ui', '', $item->getName());
+                }, array_filter($user->getGroups()->all(), function($item) {
+
+                    return preg_match('/^iDapp\s*\-\s*/ui', $item->getName());
+                }));
+
+
+
+                $systemGroups = ArrayHelper::map(Groups::getAllGroupList(), 'id', function($item) {
+                    return str_replace(str_split(self::BAD_SYMBOLS), '_', $item['name']);
+                });
+
+
+                $userData = [
+                    'name' => $user->getCommonName(),
+                    'login' => $login,
+                    'groupsIds' => array_keys(array_intersect($systemGroups, $ldapGroups)),
+                ];
+
+                return $userData;
+
+
+
+//
+//                if (empty($ldapGroups)) {
+//                    $this->error = 'Пользователь ' . $login .' не входит ни в одну из групп iDapp.';
+//                    return false;
+//                }
+//
+//                $systemGroups = ArrayHelper::map(Groups::find()->all(), 'id', function($item) {
+//                    return str_replace(str_split(self::BAD_SYMBOLS), '_', $item->name);
+//                });
+//
+
+//
+//
+//                return $userData;
+
+        } catch (UsernameRequiredException $e) {
+            // The user didn't supply a username.
+            return false;
+        } catch (PasswordRequiredException $e) {
+            // The user didn't supply a password.
+            return false;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
 
     /**
      * Полная синхронизация списка групп.
      *
      * @return mixed
+     * 10 - синхронизация не требуется;
+     * 11 - требуются права администратора;
      */
     public function syncGroups()
     {
+
         if (!$this->isAdmin())
             return false;
 
-        $groups = ArrayHelper::map(Groups::find()->all(), 'id', function($item) {
-            return str_replace(str_split(self::BAD_SYMBOLS), '_', $item->name);
+        $groups = Groups::getAllGroupList();
+        if(empty($groups))
+            return false;
+
+        $groups = ArrayHelper::map($groups, 'id', function($item) {
+            return str_replace(str_split(self::BAD_SYMBOLS), '_', $item['name']);;
         });
 
         $ldapGroups = array_map(function($item) {
-            return preg_replace('/^Автор\-ВУЗ\s*\-\s*/ui', '', $item->getName());
+            return preg_replace('/^iDapp\s*\-\s*/ui', '', $item->getName());
         }, array_filter($this->provider->search()->groups()->get()->all(), function($item) {
-            return preg_match('/^Автор\-ВУЗ\s*\-\s*/ui', $item->getName());
+            return preg_match('/^iDapp\s*\-\s*/ui', $item->getName());
         }));
 
-        // только добавляем, не удаляем имеющиеся группы
-        foreach (array_diff($groups, $ldapGroups) as $groupName)
-            $this->addGroup($groupName);
+        $arr = array_diff($groups, $ldapGroups);
+
+        if(empty($arr))
+            return ['status' => 10];
+
+        foreach ($arr as $groupName)
+        {
+           $this->addGroup($groupName);
+        }
+
+
     }
 
     /**
      * Добавление группы.
      *
      * @param $name
+     * @param $description
      * @return mixed
      */
-    public function addGroup()
+    public function addGroup($name, $description = 'Описание')
     {
-        var_dump($this->test());
+
+        if(!$this->test()['status'])
+            return ['status' => 11];
+
+
         $this->isConnected();
         $group = $this->provider->make()->group();
 
-
         $dn = $group->getDnBuilder();
-        $dn->addCn('iDapp - Администраторы');
+        $dn->addCn('iDapp - '.$name);
         $dn->addCn('Users');
-        var_dump($dn);
 
-        $group->setDn('CN=Тестовая,OU=iDapp,OU=Группы,OU=ДВЮИ МВД РФ,DC=dvuimvd,DC=ru');
+        //$group->setDn('CN=Тестовая,OU=iDapp,OU=Группы,OU=ДВЮИ МВД РФ,DC=dvuimvd,DC=ru');
+        $group->setDn($dn);
+        $group->setDescription($description);
+        if($group->save())
+            return true;
 
-        //$group->setDn($dn);
-        $group->setDescription('Группа Администраторов');
-        var_dump($group->save());
+        return false;
+    }
+
+    /**
+     * Удаление группы.
+     *
+     * @param $name
+     * @return mixed
+     * @throws \Adldap\Models\ModelDoesNotExistException
+     */
+    public function deleteGroup($name)
+    {
+        if (!$this->isAdmin())
+            return false;
+
+        $name = str_replace(str_split(self::BAD_SYMBOLS), '_', $name);
+
+        $group = $this->provider->search()->findByDn('cn=Автор-ВУЗ - ' . $name . ',CN=Users,' . $this->getValue('base_dn'));
+        $group->delete();
     }
 
     /**
