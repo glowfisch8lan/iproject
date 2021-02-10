@@ -94,7 +94,7 @@ class Groups extends ActiveRecord
      * @return boolean
      */
 
-    public function removeGroupMember($user_id, $group_id){
+    public static function removeGroupMember($user_id, $group_id){
 
         return (new \yii\db\Query())
             ->createCommand()

@@ -6,6 +6,7 @@ use Yii;
 use yii\base\Model;
 use app\modules\system\models\users\Users;
 use app\modules\system\models\auth\LDAP;
+use app\modules\system\models\auth\Auth;
 
 /**
  * LoginForm is the model behind the login form.
@@ -45,7 +46,7 @@ class LoginForm extends Model
      * @param string $attribute the attribute currently being validated
      * @param array $params the additional name-value pairs given in the rule
      */
-    public function validatePassword($attribute, $params)
+    public function validatePassword($attribute, $params): bool
     {
 //        if (!$this->hasErrors()) {
 //            $user = $this->getUser();
@@ -56,22 +57,26 @@ class LoginForm extends Model
 //        }
 
         if (!$this->hasErrors()) {
+
             $user = $this->getUser();
+            $result = $user && $user->validatePassword($this->password);
 
-            $result = $user && $user->validatePassword($this->password); //Проверяем наличие локального пользователя;
-            //Нужно проверять группы с LDAP;
-            if ($result)
-                return;
+            if ($result){
+                return true;
+            }
 
-            $auth = new LDAP();
-            $LdapResult = $auth->process($this->login, $this->password); //Иначе ищем его в LDAP
-            if ($LdapResult && !isset($LdapResult[ 'error' ]))
-                return;
+            $userData = Auth::getInstance()->process($this->login, $this->password);
+            if (is_array($userData)) {
+                if(Auth::getInstance()->createUser($userData)){
+                    return true;
+                }
+            }
 
-            if (isset($LdapResult[ 'error' ]))
-                $this->addError($attribute, $LdapResult[ 'error' ]);
+//            if (isset($LdapResult[ 'error' ]))
+//                $this->addError($attribute, $LdapResult[ 'error' ]);
 
             $this->addError($attribute, 'Неверное имя пользователя или пароль.');
+            return false;
         }
     }
 

@@ -25,7 +25,7 @@ use app\modules\system\models\auth\Auth;
  * Авторизация на LDAP-сервере.
  * Поддерживается Microsoft ActiveDirectory.
  */
-class LDAP extends Auth
+class LDAP
 {
     const BAD_SYMBOLS = '/\[]:;|=,+*?<>"';
 
@@ -38,7 +38,7 @@ class LDAP extends Auth
     private $connected;
     public  $error;
 
-    private $config = [
+    public $config = [
         // An array of your LDAP hosts. You can use either
         // the host name or the IP address of your host.
         'hosts'    => ['172.16.20.31'],
@@ -59,18 +59,6 @@ class LDAP extends Auth
         // создание клиента LDAP
         $this->client = new Adldap();
         $this->client->addProvider($this->config);
-
-    }
-
-
-    public function process($username, $password)
-    {
-        $result = $this->authenticate($username, $password);
-        if (is_array($result)) {
-            return self::login($result);
-        } else {
-            throw new Exception('Ошибка входа');
-        }
 
     }
 
@@ -142,7 +130,6 @@ class LDAP extends Auth
         if (!$this->isConnected())
             return false;
         try {
-
 
             if($this->provider->auth()->attempt(str_replace($this->getValue('account_suffix'), '', $login), $password)){
             $user = $this->provider->search()->findBy('samaccountname', $login);
@@ -227,7 +214,6 @@ class LDAP extends Auth
         }));
 
         $arr = array_diff($groups, $ldapGroups);
-
         if(empty($arr))
             return ['status' => 10];
 

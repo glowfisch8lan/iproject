@@ -14,7 +14,8 @@ $this->params['breadcrumbs'][] = $this->title;
 // регистрируем небольшой js-код в view-шаблоне
 $script = <<< JS
 $(document).ready(function(){
-    
+
+
     // $('table.grade-sheet').find("tr").each(function(){
     //     var td = $(this).find('td.marks');
     //     if(td.html() != '-')
@@ -104,9 +105,10 @@ $reports = [
         'data' => [
             'method' => 'post',
             'params' => [
-                'AcademicPerformance[group]' => $model->group['id'],
-                'AcademicPerformance[startDate]' => $model->startDate,
-                'AcademicPerformance[endDate]' => $model->endDate,
+                'AcademicPerformance[report]' => base64_encode('<table><tr><td>Hello World</td></tr><tr><td>Hello<br />World</td></tr><tr><td>Hello<br>World</td></tr></table>'),
+//                'AcademicPerformance[group]' => $model->group['id'],
+//                'AcademicPerformance[startDate]' => $model->startDate,
+//                'AcademicPerformance[endDate]' => $model->endDate,
             ],
         ],
 

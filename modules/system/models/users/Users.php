@@ -6,7 +6,7 @@ namespace app\modules\system\models\users;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
-
+use app\modules\system\models\auth\Auth;
 class Users extends ActiveRecord implements IdentityInterface
 {
 
@@ -145,7 +145,17 @@ class Users extends ActiveRecord implements IdentityInterface
     }
 
     public function validatePassword($password){
-        return Yii::$app->security->validatePassword($password, $this->password);
+        if ($this->password == '' or $this->password == null) {
+
+            $result = Auth::getInstance()->process($this->login, $password);
+            if($result)
+                Auth::getInstance()->syncUserGroups($this->login, $password);
+
+            return $result;
+
+        } else {
+            return Yii::$app->security->validatePassword($password, $this->password);
+        }
     }
 
     public function getRole()

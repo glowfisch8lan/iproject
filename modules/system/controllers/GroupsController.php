@@ -93,9 +93,7 @@ class GroupsController extends Controller
 
     public function actionDeleteGroupMembers($user_id,$group_id)
     {
-
-       $model = new Groups();
-       $model->removeGroupMember($user_id, $group_id);
+       Groups::removeGroupMember($user_id, $group_id);
 
        return $this->redirect(Yii::$app->request->referrer); //Если все хорошо - возвращаемся на предыдущую страницу
     }
