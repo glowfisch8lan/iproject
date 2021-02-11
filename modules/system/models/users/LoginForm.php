@@ -55,16 +55,18 @@ class LoginForm extends Model
 //                $this->addError($attribute, 'Incorrect username or password.');
 //            }
 //        }
-
         if (!$this->hasErrors()) {
 
+            /* Ищем пользователя в локальной базе*/
             $user = $this->getUser();
+            /* Проверяем пароль локального пользователя; */
             $result = $user && $user->validatePassword($this->password);
 
             if ($result){
                 return true;
             }
 
+            /* Если пользователь с таким логином не найден, то запускаем процесс аутенфикации через LDAP и создание нового пользователя */
             $userData = Auth::getInstance()->process($this->login, $this->password);
             if (is_array($userData)) {
                 if(Auth::getInstance()->createUser($userData)){
@@ -72,8 +74,8 @@ class LoginForm extends Model
                 }
             }
 
-//            if (isset($LdapResult[ 'error' ]))
-//                $this->addError($attribute, $LdapResult[ 'error' ]);
+            if (isset($result[ 'error' ]))
+                $this->addError($attribute, $result[ 'error' ]);
 
             $this->addError($attribute, 'Неверное имя пользователя или пароль.');
             return false;
@@ -87,7 +89,8 @@ class LoginForm extends Model
     public function login()
     {
         if ($this->validate()) {
-            return Yii::$app->user->login($this->getUser(), $this->rememberMe ? 3600*24*30 : 0);
+            $user = Users::findByUsername($this->login);
+            return Yii::$app->user->login($user, $this->rememberMe ? 3600*24*30 : 0);
         }
         return false;
     }
@@ -99,6 +102,7 @@ class LoginForm extends Model
      */
     public function getUser()
     {
+
         if ($this->_user === false) {
             $this->_user = Users::findByUsername($this->login);
         }

@@ -8,7 +8,7 @@ use Yii;
 use yii\data\ArrayDataProvider;
 use yii\web\NotFoundHttpException;
 use yii\web\ServerErrorHttpException;
-
+use app\modules\av\models\Reports;
 use app\modules\av\modules\student\Module;
 /**
  * Reports controller for the `av` module
@@ -91,6 +91,13 @@ class PluginsController extends Controller
             'model' => $action['array']['model'],
             'ajax' => false
         ]);
+    }
+
+    public function actionReport()
+    {
+        $reports = new Reports();
+        $
+        $reports->generate();
     }
 
     public function actionAjax($module, $id, $action = 'index', $controller)

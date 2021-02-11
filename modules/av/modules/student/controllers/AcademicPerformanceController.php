@@ -75,12 +75,11 @@ class AcademicPerformanceController
         }
 
 
-        $namespace = str_replace('\controllers','',__NAMESPACE__ );
-        $class = $namespace . '\models\plugins\reports\\'.$model->report . '\Report';
-        $class = new $class();
-
-        var_dump($model->endDate);
-        var_dump($class);
+//        $namespace = str_replace('\controllers','',__NAMESPACE__ );
+//        $class = $namespace . '\models\plugins\reports\\'.$model->report . '\Report';
+//        $class = new $class();
+//
+//        var_dump($class);
         //$model->fetchData();
         //$model->generateGradeSheet();
         die();

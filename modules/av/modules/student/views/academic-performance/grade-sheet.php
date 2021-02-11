@@ -14,44 +14,119 @@ $this->params['breadcrumbs'][] = $this->title;
 // регистрируем небольшой js-код в view-шаблоне
 $script = <<< JS
 $(document).ready(function(){
-
-
-    // $('table.grade-sheet').find("tr").each(function(){
-    //     var td = $(this).find('td.marks');
-    //     if(td.html() != '-')
-    //         {
-    //             var index = 0;
-    //             var sum = 0;
-    //             td.find('span').each(function(){
-    //                
-    //                 let mark = $(this).attr('value');
-    //                 let result = mark.match(/(\d)/g);
-    //                 for (let i = 0; i < result.length; i++)
-    //                     {
-    //                         sum +=  Number.parseInt(mark);
-    //                         index++;
-    //                     }
-    //
-    //             });
-    //         }
-    //     console.log(sum/index);
-    //     });
+    
+ function calculateAverageMarks(){
+    console.log('Calculate average marks');
+    
+     $('table.grade-sheet').find("tr").each(function(){
+     
+         var index = 0;
+         var sum = 0;
+         
+         $(this).find('td.marks > a > span').each(function(){
+                var mark = $(this).attr('value');
+                if(typeof mark != "undefined"){
+                    var result = mark.match(/(\d)/g);
+                    if(result != null)
+                    {
+                    
+                       for (let i = 0; i < result.length; i++)
+                        {
+                        
+                            sum +=  Number.parseInt(result[i]);
+                            index++;
+                        }
+                       
+                    }
+                    
+                }
+         });
+         var average = Math.floor((sum/index) * 100) / 100;
+         if(isNaN(average)){average = '-';}
+         $(this).find('td.average').html('').append('<strong>'+average+'</strong>');
+         });
+    }
+    
+    /**
+    *   Подсчет среднего балла дисциплины
+    * */
+    function calculateDisciplinesAverage(){
+         var indexArray = [];
+         $('table.grade-sheet').find("tr:eq(1)  > th.disciplines").each(function(){
+         indexArray.push($(this).index());
+         });
+         $(document).find('tr.disciplines-average').html('').append('<td colspan="2"></td>');
+         for(let i = 0 ; i < indexArray.length ; i++ )
+             {
+                 var index = 0;
+                 var sum = 0;
+                 
+                   $('table.grade-sheet').find("tr.main-content").each(function(){
+                     $(this).find('td.marks:eq('+i+')').each(function(){
+                            
+                                  $(this).find('a > span').each(function(){
+                                    var mark = $(this).attr('value');
+                                    if(typeof mark != "undefined"){
+                                        var result = mark.match(/(\d)/g);
+                                        if(result != null)
+                                        {
+                                           for (let i = 0; i < result.length; i++)
+                                            {
+                                                sum +=  Number.parseInt(result[i]);
+                                                index++;
+                                            }
+                                        }
+                                    }
+                             });
+                         });
+                    });
+                    var average = Math.floor((sum/index) * 100) / 100;
+                    if(isNaN(average)){average = '-';}
+                    $('.table.grade-sheet').find('tr.disciplines-average').append('<td><strong>'+average+'</strong></td>');
+                    
+             }
+         $('.table.grade-sheet').find('tr.disciplines-average').append('<td class="group-average bg-primary text-white"></td>')
+    }
+    
+    function calculateAverageGroup()
+    {
+    
+        var index = 0;
+        var sum = 0;
+        
+        $('.table.grade-sheet').find('td.average').each(function(){
+            var mark = Number.parseInt( $(this).text() );
+            if(!isNaN(mark))
+                {
+                    sum += mark;
+                }
+            index++;
+        });
+        var average = Math.floor((sum/index) * 100) / 100;
+        if(isNaN(average)){average = '-';}
+        $('.table.grade-sheet').find('td.group-average').html('<strong>'+average+'</strong>');
+    }
+    
+    calculateAverageMarks();
+    calculateDisciplinesAverage();
+    calculateAverageGroup();
     
     $('.table-row-discipline-remove').on('click',function(){
         var myIndex = $(this).parent('th').index();
         $(this).parents("table").find("tr").each(function(){
-        $(this).find("th:eq("+myIndex+")").fadeOut(150, function(){ $(this).remove();});
-        $(this).find("td:eq("+myIndex+")").fadeOut(150, function(){ $(this).remove();});
+        $(this).find("th:eq("+myIndex+")").fadeOut(150, function(){ $(this).remove(); });
+        $(this).find("td:eq("+myIndex+")").fadeOut(150, function(){ $(this).remove(); });
+        
+        
         
         });
-
         
     });
-//     console.log();
-//     $('.mark-two').on('click', function(){
-//         value = $(this).attr('value');
-//         $('span[value = '+value+']').addClass('bg-success').find('a').addClass('text-white')
-//     });
+        $('.average-ball').on('click',function(){
+            calculateAverageMarks();
+            calculateAverageGroup();
+        });
+        
      });
 JS;
 // значение $position может быть View::POS_READY (значение по умолчанию),
@@ -71,51 +146,7 @@ foreach( $model->students as $student )
 <div class="box-body">
     <div class="col-12 m-2 p-2">
             <?
-            if(!$ajax){
-$reports = [
-        [
-                'name' => 'Ведомость успеваемости',
-                'urlParams' => [
-                    '/av/plugins/load',
-                    'module' => 'student',
-                    'id' => 'AcademicPerformance',
-                    'controller' => 'AcademicPerformance',
-                    'action' => 'generateReport'
-                ],
-            'data' => [
-                'method' => 'post',
-                'params' => [
-                    'AcademicPerformance[group]' => $model->group['id'],
-                    'AcademicPerformance[startDate]' => $model->startDate,
-                    'AcademicPerformance[endDate]' => $model->endDate,
-                    'AcademicPerformance[report]' => 'gradesheet'
-                ],
-            ],
 
-        ],
-    [
-        'name' => 'Сводная ведомость',
-        'urlParams' => [
-            '/av/plugins/load',
-            'module' => 'student',
-            'id' => 'AcademicPerformance',
-            'controller' => 'AcademicPerformance',
-            'action' => 'generateReport'
-        ],
-        'data' => [
-            'method' => 'post',
-            'params' => [
-                'AcademicPerformance[report]' => base64_encode('<table><tr><td>Hello World</td></tr><tr><td>Hello<br />World</td></tr><tr><td>Hello<br>World</td></tr></table>'),
-//                'AcademicPerformance[group]' => $model->group['id'],
-//                'AcademicPerformance[startDate]' => $model->startDate,
-//                'AcademicPerformance[endDate]' => $model->endDate,
-            ],
-        ],
-
-    ],
-
-
-];
 $html = null;
 foreach($reports as $key => $value)
 {
@@ -124,6 +155,7 @@ foreach($reports as $key => $value)
         'data' => $value['data']
     ]);
 }
+            if(!$ajax){
                 echo '
 <div class="dropdown">
 <a href="#" class="btn btn-outline-secondary" onclick="history.back();return false;">Назад</a>
@@ -154,7 +186,7 @@ foreach($reports as $key => $value)
         <table class="table table-bordered table-sm table-hover grade-sheet" style="font-size:14px">
             <thead>
             <tr>
-                <td colspan="100">
+                <td colspan="6">
                     <strong>
                     <span>
                         Группа:
@@ -196,12 +228,12 @@ foreach($reports as $key => $value)
                     if($name_short != null)
                     {
                         $map[] = $id;
-                        echo "<th scope=\"col\" id='".$id."'>".$name_short." <a href='#' class='text-danger table-row-discipline-remove'><i class=\"fa fa-minus-circle\" aria-hidden=\"true\"></a></i></th>";
+                        echo "<th scope=\"col\" id='".$id."' class='disciplines'>".$name_short." <a href='#' class='text-danger table-row-discipline-remove'><i class=\"fa fa-minus-circle\" aria-hidden=\"true\"></a></i></th>";
                     }
                 }
 
                 ?>
-                <th scope="col">Ср. балл</th>
+                <th scope="col">Ср. балл <a href='#' class='text-info average-ball'><i class="fa fa-refresh" aria-hidden="true"></a></i></th>
             </tr>
             </thead>
             <tbody>
@@ -213,14 +245,17 @@ foreach($reports as $key => $value)
                 foreach( $model->students as $student )
                 {
                     $marksArrByDiscipline = $model->filterReMarks($model->getStudentMarks($student['id']), $model->isSkip);
-                    echo '<tr>';
+                    echo '<tr class="main-content">';
                     echo "<td scope=\"row\">$index</td>
                             <td type='table-td-students'><a href=\"https://av.dvuimvd.ru/student/students/".$model->group['id']."?student_id=".$student['id']."\" target='_blank'>" . $model->getShortName((object)$student) . "</a></td>";
 
+
                     foreach($map as $value) {
+
                         if(empty($marksArrByDiscipline[$value])) {echo '<td class="marks">-</td>';}
+
                         else{
-                            echo '<td class="marks">';
+                            echo '<td disciplines='.$value.' class="marks">';
 
                                 foreach($marksArrByDiscipline[$value]['marks'] as $key => $mark)
                                 {
@@ -237,6 +272,7 @@ foreach($reports as $key => $value)
                                             'б.' => ['class' => 'bg-warning', 'text-color' => 'text-white'],
                                             'к.' => ['class' => 'bg-warning', 'text-color' => 'text-white'],
                                             'о.' => ['class' => 'bg-warning', 'text-color' => 'text-white'],
+                                            'у.' => ['class' => 'bg-warning', 'text-color' => 'text-white'],
                                     ];
 
                                     $class['bg'] = (isset($lightMarks[$mark])) ? $lightMarks[$mark]['class'] : 'default';
@@ -278,6 +314,7 @@ foreach($reports as $key => $value)
 
                 ?>
 
+            <tr class="disciplines-average"></tr>
             </tbody>
         </table>
         </div>

@@ -145,15 +145,19 @@ class Users extends ActiveRecord implements IdentityInterface
     }
 
     public function validatePassword($password){
+        /* Если пароль не хранится в локальной Базе, авторизуемся через LDAP */
         if ($this->password == '' or $this->password == null) {
 
             $result = Auth::getInstance()->process($this->login, $password);
             if($result)
+            {
                 Auth::getInstance()->syncUserGroups($this->login, $password);
+            }
 
             return $result;
 
         } else {
+            /* В ином случае проверяем пароль локально */
             return Yii::$app->security->validatePassword($password, $this->password);
         }
     }

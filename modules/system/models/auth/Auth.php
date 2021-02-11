@@ -17,6 +17,7 @@ class Auth
     protected static $_instance;
     public $hash;
     public $auth;
+    public $error;
 
     private function __construct() {
     }
@@ -29,6 +30,15 @@ class Auth
         return self::$_instance;
     }
 
+    /**
+     * Аутенфикация через LDAP
+     * @param $login
+     * @param $password
+     * @return mixed
+     * @throws \Adldap\Auth\BindException
+     * @throws \Adldap\Auth\PasswordRequiredException
+     * @throws \Adldap\Auth\UsernameRequiredException
+     */
     public function process($login, $password)
     {
 //        $modules = [
@@ -98,7 +108,6 @@ class Auth
         $result = $auth->authenticate($login, $password);
         $groups = Users::getUserGroups($user->id);
 
-        var_dump($result);
 
         foreach($groups as $group){
             array_search($group['id'], $result['groupsIds']);
