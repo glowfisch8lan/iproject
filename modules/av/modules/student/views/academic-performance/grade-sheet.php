@@ -106,7 +106,7 @@ $(document).ready(function(){
         if(isNaN(average)){average = '-';}
         $('.table.grade-sheet').find('td.group-average').html('<strong>'+average+'</strong>');
     }
-    
+    фдуке(1)ж
     calculateAverageMarks();
     calculateDisciplinesAverage();
     calculateAverageGroup();

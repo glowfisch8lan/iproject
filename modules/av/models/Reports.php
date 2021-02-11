@@ -10,7 +10,7 @@ use yii\helpers\HtmlPurifier;
 
 class Reports
 {
-
+ 
     public $htmlString;
 
     public function __construct()
