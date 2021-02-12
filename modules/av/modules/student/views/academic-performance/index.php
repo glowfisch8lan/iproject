@@ -32,7 +32,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     });
                     $form = ActiveForm::begin([
                 'action' => "/av/plugins/".$ajax."?module=student&id=AcademicPerformance&controller=AcademicPerformance&action=GetGradeSheet"
-        ]);
+        ]); 
 
                     echo $form->field($model, 'group')->widget(Select2::classname(), [
                         'data' => $groups,
