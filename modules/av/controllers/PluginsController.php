@@ -10,6 +10,7 @@ use yii\web\NotFoundHttpException;
 use yii\web\ServerErrorHttpException;
 use app\modules\av\models\Reports;
 use app\modules\av\modules\student\Module;
+use yii\helpers\Url;
 /**
  * Reports controller for the `av` module
  */
@@ -75,6 +76,9 @@ class PluginsController extends Controller
         $id = (count($id) > 1 ) ? mb_strtolower($id[0].'-'.$id[1]) : $id[0];
         $path = '@app/modules/av/modules/'.$module.'/views/'.$id.'/'.$array['view'];
 
+        if($action == 'index')
+            Yii::$app->session->set('home', Url::current([], true));
+
         return ['path' => $path, 'array' => $array];
     }
 
@@ -93,10 +97,9 @@ class PluginsController extends Controller
         ]);
     }
 
-    public function actionReport()
+    public function actionReports()
     {
         $reports = new Reports();
-        $
         $reports->generate();
     }
 
@@ -109,6 +112,7 @@ class PluginsController extends Controller
 
         if(!file_exists(realpath(Yii::getAlias($action['path']).'.php')))
             throw new NotFoundHttpException('Файл не найден');
+
 
         return $this->render($action['path'], [
                 'model' => $action['array']['model'],

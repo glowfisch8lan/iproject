@@ -3,42 +3,36 @@
 
 namespace app\modules\av\models;
 
-
+use Yii;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use yii\helpers\HtmlPurifier;
 
 class Reports
 {
- 
-    public $htmlString;
-
-    public function __construct()
-    {
-        $this->htmlString = HtmlPurifier::process($this->htmlString);
-    }
 
     public function generate()
     {
 
+        $html = HtmlPurifier::process(base64_decode(Yii::$app->request->post('h')));
 
         $reader = new \PhpOffice\PhpSpreadsheet\Reader\Html();
-        $spreadsheet = $reader->loadFromString($this->htmlString);
+        $spreadsheet = $reader->loadFromString($html);
         $spreadsheet->getDefaultStyle()
             ->getFont()
             ->setName('Times New Roman')
             ->setSize(12);
 
-        $sheet = $spreadsheet->getActiveSheet();
-
-        foreach ($sheet->getRowIterator() as $row) {
-            $cellIterator = $row->getCellIterator();
-            $cellIterator->setIterateOnlyExistingCells(TRUE);
-            foreach ($cellIterator as $cell) {
-                    $cell->setHyperlink(null);
-            }
-
-        }
+//        $sheet = $spreadsheet->getActiveSheet();
+//
+//        foreach ($sheet->getRowIterator() as $row) {
+//            $cellIterator = $row->getCellIterator();
+//            $cellIterator->setIterateOnlyExistingCells(TRUE);
+//            foreach ($cellIterator as $cell) {
+//                    $cell->setHyperlink(null);
+//            }
+//
+//        }
 
         //
 

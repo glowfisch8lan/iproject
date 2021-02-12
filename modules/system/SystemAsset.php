@@ -7,7 +7,7 @@ class SystemAsset extends AssetBundle
     public $sourcePath = '@app/modules/system/assets';
     public $baseUrl = '@app/modules/system/assets';
     public $publishOptions = [
-        'forceCopy' => true //отключает кеширование
+        //'forceCopy' => true //отключает кеширование
     ];
     public $css = [
         'vendor/fontawesome/4.7.0/css/font-awesome.min.css',
@@ -15,8 +15,8 @@ class SystemAsset extends AssetBundle
     ];
 	public $js = [
         'vendor/bootstrap4/js/bootstrap.bundle.min.js',
-//        'vendor/tabletoexcel/parser.js',
-        'vendor/table2excel/jquery.table2excel.js',
+        'vendor/base64/base64.js',
+        'vendor/lzw/lzw.js',
     ];
     public $depends = [
         'yii\web\YiiAsset'

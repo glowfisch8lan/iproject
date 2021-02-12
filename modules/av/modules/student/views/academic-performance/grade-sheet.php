@@ -6,6 +6,8 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
+Html::csrfMetaTags();
+
 $this->title = 'Успеваемость';
 $this->params['breadcrumbs'][] = ['label' => Yii::$app->controller->module->name, 'url' => '/av'];
 $this->params['breadcrumbs'][] = ['label' => 'Плагины', 'url' => '/av/plugins'];
@@ -15,7 +17,10 @@ $this->params['breadcrumbs'][] = $this->title;
 $script = <<< JS
 $(document).ready(function(){
     
- function calculateAverageMarks(){
+    /**
+    *   Подсчет среднего балла студента
+    * */
+    function calculateAverageMarks(){
     console.log('Calculate average marks');
     
      $('table.grade-sheet').find("tr").each(function(){
@@ -87,7 +92,9 @@ $(document).ready(function(){
              }
          $('.table.grade-sheet').find('tr.disciplines-average').append('<td class="group-average bg-primary text-white"></td>')
     }
-    
+    /**
+    *   Подсчет среднего балла группы
+    * */
     function calculateAverageGroup()
     {
     
@@ -106,10 +113,53 @@ $(document).ready(function(){
         if(isNaN(average)){average = '-';}
         $('.table.grade-sheet').find('td.group-average').html('<strong>'+average+'</strong>');
     }
-    фдуке(1)ж
+    
     calculateAverageMarks();
     calculateDisciplinesAverage();
     calculateAverageGroup();
+    
+    /**
+    * Отправка запроса на генерацию отчета
+    */
+    $('.generate-report').on('click',function(){
+        
+            var param = $('meta[name=csrf-param]').attr("content");
+            var token = $('meta[name=csrf-token]').attr("content");console.log(param);
+            
+            
+            let msg = $('.main-table-content').html();
+            
+            msg = msg.replace(/\s{2,}/g, "");
+            msg = msg.replace(/<a href="(.*?)" (.*?)>/g, "");
+            msg = msg.replace(/<\/a>/g, "");
+            
+            msg = msg.replace(/class="(.*?)"/g, "");
+            msg = msg.replace(/style="(.*?)"/g, "");
+            msg = msg.replace(/type="(.*?)"/g, "");
+            msg = msg.replace(/\s{2,}/g, "");
+            
+            let form = document.createElement('form');
+            form.action = '/av/plugins/reports';
+            form.method = 'POST';
+            form.innerHTML = '<input type="hidden" name="h" value='+Base64.encode(msg)+'><input type="hidden" name="'+param+'" value="'+token+'">';
+            document.body.append(form);
+            form.submit();
+            
+//           var form = document.createElement("form");
+//            form.setAttribute("method", 'post');
+//            form.setAttribute("action", url);
+//        
+//            var input = document.createElement("input");
+//            input.setAttribute("type", "hidden");
+//            input.setAttribute("name", 'table');
+//            input.setAttribute("value", btoa(toBinary(msg)));
+//        
+//            form.appendChild(input);
+//            form.submit();
+        
+    });
+    
+
     
     $('.table-row-discipline-remove').on('click',function(){
         var myIndex = $(this).parent('th').index();
@@ -122,7 +172,8 @@ $(document).ready(function(){
         });
         
     });
-        $('.average-ball').on('click',function(){
+    
+    $('.average-ball').on('click',function(){
             calculateAverageMarks();
             calculateAverageGroup();
         });
@@ -146,19 +197,23 @@ foreach( $model->students as $student )
 <div class="box-body">
     <div class="col-12 m-2 p-2">
             <?
+$reports = [
+        [
+                'name' => 'Текущая успеваемость',
 
+        ]
+];
 $html = null;
 foreach($reports as $key => $value)
 {
-    $html .= Html::a($value['name'], Url::to($value['urlParams']), [
-        'class' => 'dropdown-item',
-        'data' => $value['data']
+    $html .= Html::a($value['name'], '#', [
+        'class' => 'dropdown-item generate-report'
     ]);
 }
-            if(!$ajax){
+            if( !$ajax || 1 == 1 ){
                 echo '
 <div class="dropdown">
-<a href="#" class="btn btn-outline-secondary" onclick="history.back();return false;">Назад</a>
+<a href="'.Yii::$app->session->get('home').'" class="btn btn-outline-secondary">Назад</a>
   <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
     Отчеты
   </button>
@@ -182,7 +237,7 @@ foreach($reports as $key => $value)
 <!--    </div>-->
 
     <div class="col-12">
-        <div class="table-responsive">
+        <div class="main-table-content table-responsive">
         <table class="table table-bordered table-sm table-hover grade-sheet" style="font-size:14px">
             <thead>
             <tr>
@@ -278,7 +333,7 @@ foreach($reports as $key => $value)
                                     $class['bg'] = (isset($lightMarks[$mark])) ? $lightMarks[$mark]['class'] : 'default';
                                     $class['text-color'] = (isset($lightMarks[$mark])) ? $lightMarks[$mark]['text-color'] : null;
 
-                                    echo "<a href=\"https://av.dvuimvd.ru/student/journal/view?group_id=$group&lesson_id=$journal_lesson_id\" target='_blank' class='m-1 ".$class['text-color']."'><span class='".$class['bg']." p-1'  value='$mark'>" . $mark . '</span></a>';
+                                    echo "<a href=\"https://av.dvuimvd.ru/student/journal/view?group_id=$group&lesson_id=$journal_lesson_id\" target='_blank' class='m-1 ".$class['text-color']."'><span class='".$class['bg']." p-1' value='$mark'>" . $mark . '</span></a>';
 
 
                                 }
