@@ -12,6 +12,7 @@ class Journal extends Model
 {
 
     public $group;
+    public $discipline;
 
     public function attributeLabels()
     {
@@ -24,6 +25,12 @@ class Journal extends Model
         return [
             [
                 ['group'],
+                'required',
+                'message' => 'Заполните поля!',
+
+            ],
+            [
+                ['discipline'],
                 'required',
                 'message' => 'Заполните поля!',
 

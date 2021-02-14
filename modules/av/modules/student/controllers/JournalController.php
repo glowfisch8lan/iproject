@@ -14,18 +14,25 @@ class JournalController
 {
     public function actionIndex()
     {
-//        $model = new DynamicModel(['group']);
-//        $model
-//            ->addRule(['group'], 'required');
+        $model = new Journal();
+
+        return [
+            'view' => 'index',
+            'model' => $model
+        ];
+    }
+
+    public function actionJournal()
+    {
+
         $model = new Journal();
 
         if(Yii::$app->request->isPost){
             $model->load(Yii::$app->request->post());
-            //$model->attributes = \Yii::$app->request->post('DynamicModel');
         }
 
         return [
-            'view' => 'index',
+            'view' => 'journal',
             'model' => $model
         ];
     }
