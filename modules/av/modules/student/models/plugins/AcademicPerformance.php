@@ -2,16 +2,18 @@
 
 namespace app\modules\av\modules\student\models\plugins;
 
-
+use Yii;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use yii\base\Model;
 use app\modules\system\helpers\ArrayHelper;
 use app\modules\av\modules\student\models\StudentsApi;
+use app\modules\system\models\cache\Cache;
 
 /**
  * academicPerformance model for the `student` module
  */
+
 class AcademicPerformance extends Model
 {
     public $group;
@@ -79,17 +81,100 @@ class AcademicPerformance extends Model
     }
 
     /**
+     * Данные о студентах в конкретной группе
+     *
+     * @param $id
+     * @return mixed
+     */
+    public static function getStudentsByGroup($id){
+        return StudentsApi::getStudentsByGroup($id);
+    }
+
+    /**
+     * Данные о группе
+     *
+     * @param $id
+     * @return mixed
+     */
+    public static function getGroup($id)
+    {
+        return StudentsApi::getGroup($id);
+    }
+
+    /**
+     * Все дисциплины из учебного плана
+     *
+     * @param $education_plan_id
+     * @return mixed
+     */
+    public static function getCurriculumDisciplines($education_plan_id)
+    {
+        return StudentsApi::getCurriculumDisciplines($education_plan_id);
+    }
+
+    /**
+     * Все оценки в группе
+     *
+     * @param $group
+     * @return mixed
+     */
+    public static function getMarksByGroup($group)
+    {
+        return StudentsApi::getMarksByGroup($group);
+    }
+
+    /**
+     * Справочник оценка - значение
+     * @return mixed
+     */
+    public static function getMarksValues()
+    {
+        return StudentsApi::getMarksValues();
+    }
+
+    /**
+     * Справочник причин пропусков
+     *
+     * @return mixed
+     */
+    public static function getSkipReasons()
+    {
+        return StudentsApi::getSkipReasons();
+    }
+
+    /**
      * Наполнение модели данными
      *
      */
+    //TODO: сделать кеширование
     public function fetchData()
     {
-        $this->group = StudentsApi::getGroup($this->group);
-        $this->students = StudentsApi::getStudentsByGroup($this->group['id']);
-        $this->curriculumDisciplines = StudentsApi::getCurriculumDisciplines($this->group['education_plan_id']);
-        $this->marks = StudentsApi::getMarksByGroup($this->group['id']);
-        $this->markValues = StudentsApi::getMarksValues();
-        $this->skipReasons = StudentsApi::getSkipReasons();
+        $cache = Yii::$app->cache;
+        $duration = 120;
+
+        /**
+         * Кеширование наименований оценок;
+         */
+        $this->markValues = $cache->get('markValues');
+        if ($this->markValues === false) {
+            $this->markValues = self::getMarksValues();
+            $cache->set('markValues', $this->markValues, $duration);
+        }
+
+        /**
+         *  Кеширование причин пропусков
+         */
+        $this->skipReasons = $cache->get('skipReasons');
+        if ($this->skipReasons === false) {
+            $this->skipReasons = self::getSkipReasons();
+            $cache->set('skipReasons', $this->skipReasons, $duration);
+        }
+
+
+        $this->group = self::getGroup($this->group);
+        $this->students = self::getStudentsByGroup($this->group['id']);
+        $this->curriculumDisciplines = self::getCurriculumDisciplines($this->group['education_plan_id']);
+        $this->marks = self::getMarksByGroup($this->group['id']);
 
         return;
     }
@@ -327,9 +412,14 @@ class AcademicPerformance extends Model
      * @param integer $id Идентификатор студента
      * @return array
      */
-    public function getStudentMarks($id)
+    public function getStudentMarks($id, $startDate = false, $endDate = false)
     {
-        return $this->filterMarks($this->getMarks($id) , [$this->startDate , $this->endDate]);
+        if(!$startDate)
+            $startDate = $this->startDate;
+        if(!$endDate)
+            $endDate = $this->endDate;
+
+        return $this->filterMarks($this->getMarks($id) , [$startDate, $endDate]);
     }
 
     /**
@@ -395,11 +485,21 @@ class AcademicPerformance extends Model
         else return 0;
     }
 
+    /**
+     *  Отсеивание оценок 2,3,4,5, пропуск и сортировка их по дисциплинам
+     *
+     * @param $studentMarks
+     * @return mixed
+     */
     public function filterReMarks($studentMarks)
     {
+
         foreach ($studentMarks as $key => $value)
         {
 
+            /**
+             * 2,3,4,5
+             */
             if ($value['mark_value_id'] < 5)
             {
 
@@ -411,8 +511,8 @@ class AcademicPerformance extends Model
                 }
 
             }
-            /*
-             * Если mark_value_id = null, значит это пропуск, проверить наличие skipReasonb
+            /**
+             * Если mark_value_id = null, значит это пропуск, проверить наличие skipReason
              */
             if($value['mark_value_id'] == null)
             {
@@ -428,6 +528,9 @@ class AcademicPerformance extends Model
 
         }
 
+        /**
+         * Отрабатываем пропуска и формируем оценки типа (2/3)
+         */
         foreach ($marksArrByDiscipline as $key => $value)
         {
 
@@ -453,6 +556,13 @@ class AcademicPerformance extends Model
         return $marksArrByDiscipline;
     }
 
+    /**
+     *  Создание массива из букв от A до Z для карты Excel
+     *
+     * @param $end_column
+     * @param string $first_letters
+     * @return array
+     */
     public function createColumnsArray($end_column, $first_letters = '')
     {
         $columns = array();
@@ -544,6 +654,12 @@ class AcademicPerformance extends Model
         return $sum;
     }
 
+    /**
+     * Считаем количество оценок в массиве;
+     *
+     * @param $marksArrByDiscipline
+     * @return int
+     */
     private function countMarks($marksArrByDiscipline)
     {
         $countMarkArr['count'] = [];
@@ -591,17 +707,105 @@ class AcademicPerformance extends Model
     }
 
     /**
-     * Отчет Сводная ведомость по факультету
+     * Подсчет оценок студента по ID
+     *
+     * @param $id
+     * @param $startDate
+     * @param $endDate
+     * @return int
      */
-    public function generateConsolidatedStatement(){
-        
+    public function countMarksStudent($id,$startDate,$endDate)
+    {
+        $marks = $this->getStudentMarks($id, $startDate, $endDate);
+        $marksArrByDiscipline = $this->filterReMarks($marks);
+        return $this->countMarks($marksArrByDiscipline);
+    }
+
+    /**
+     * Средний балл по факультету за выбранный период
+     *
+     * @param $faculty
+     * @param $startDate
+     * @param $endDate
+     * @return false|float
+     */
+    public function getAverageFaculty($faculty, $startDate, $endDate)
+    {
+        $sum = 0;
+        $index = 0;
+        $arr['above4'] = 0;
+        $arr['less3'] = 0;
+        $arr['count2'] = 0;
+        $arr['count2corrected'] = 0;
+
+        foreach($faculty['items'] as $key => $group){
+
+            $students = $this->getStudentsByGroup($group['id']);
+            $this->group = self::getGroup($group['id']); //заполняем информацию о группе для дальнейшего наполнения данными;
+            $this->fetchData();
+
+            foreach($students as $student)
+            {
+                $p = $this->getAverageStudent($student['id'],$startDate,$endDate);
+                $c = $this->countMarksStudent($student['id'],$startDate,$endDate);
+                if(!is_null($c['count']['2'])){$arr['count2'] += 1;}
+                if(!is_null($c['count']['2/'])){$arr['count2corrected'] += 1;}
+                if($p >= 4 ){$arr['above4'] += 1;}
+                if($p <= 3 ){$arr['less3'] += 1;}
+                $sum += $p;
+                $index++;
+
+            }
+        }
+
+        return ['count' => $arr, 'average' => round($sum/$index,2)];
+    }
+
+    /**
+     * Средний балл группы
+     *
+     * @param $group
+     * @param $startDate
+     * @param $endDate
+     * @return false|float
+     */
+    public function getAverageGroup($group, $startDate, $endDate)
+    {
+        $students = $this->getStudentsByGroup($group['id']);
+
+        $this->group = self::getGroup($group['id']); //заполняем информацию о группе для дальнейшего наполнения данными;
         $this->fetchData();
 
-        /*
-         * Начинаем генерацию XLS документа;
-        */
+        $sum = 0;
+        $index = 0;
+        $arrStudentBall = [];
+        foreach($students as $student)
+        {
+            $p = $this->getAverageStudent($student['id'],$startDate,$endDate);
+            $arrStudentBall[] = $p;
+            $sum += $p;
+            $index++;
+        }
 
-        $spreadsheet = new Spreadsheet();
+        return [$arrStudentBall, 'average' => round($sum/$index,2)];
+    }
 
+    /**
+     * Средний балл студента за период
+     *
+     * @param $id
+     * @param $startDate
+     * @param $endDate
+     * @return array|null
+     */
+    public function getAverageStudent($id,$startDate,$endDate)
+    {
+        $marks = $this->getStudentMarks($id, $startDate, $endDate);
+        $marksArrByDiscipline = $this->filterReMarks($marks);
+        return $this->getAverageMarksStudent($marksArrByDiscipline);
+    }
+
+    public static function getGroupList(){
+        return StudentsApi::getGroupList();
     }
 }

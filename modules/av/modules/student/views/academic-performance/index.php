@@ -30,11 +30,11 @@ $this->params['breadcrumbs'][] = $this->title;
                         if((preg_match('/(ПД|Ю).*.2\d*$/', $data, $matches)))
                             return $data;
                     });
-                    $form = ActiveForm::begin([
+                    ?>
+                    <? $form = ActiveForm::begin([
                 'action' => "/av/plugins/".$ajax."?module=student&id=AcademicPerformance&controller=AcademicPerformance&action=GetGradeSheet"
-        ]);
-
-                    echo $form->field($model, 'group')->widget(Select2::classname(), [
+        ]);?>
+                   <?=$form->field($model, 'group')->widget(Select2::classname(), [
                         'data' => $groups,
                         'language' => 'ru',
                         'options' => ['placeholder' => 'Выберите группу ...'],
@@ -43,6 +43,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                     ]);
                     ?>
+
                     <div class="col-2">
                      <?= $form->field($model, 'startDate')->input('text', ['class' => 'datepicker-here form-control', 'data-language' => 'ru', 'value' => date('01.01.Y')])->label('Начало:')?>
                     </div>
@@ -71,7 +72,36 @@ $this->params['breadcrumbs'][] = $this->title;
                 </div>
             </div>
             <?php ActiveForm::end(); ?>
+
             </p>
+            <hr>
+            <?
+            $reports = [
+                [
+                    'name' => 'Сводная успеваемость по факультетам',
+                    'link' => '/av/plugins/load?module=student&id=AcademicPerformance&controller=AcademicPerformance&action=ConsolidatedStatement'
+
+                ]
+            ];
+            $html = null;
+            foreach($reports as $key => $value)
+            {
+                $html .= Html::a($value['name'], $value['link'], [
+                    'class' => 'generate-report'
+                ]);
+            }
+
+            ?>
+            <p>
+                <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+                    Отчеты
+                </a>
+            </p>
+            <div class="collapse" id="collapseExample">
+                <div class="card card-body">
+                    <?=$html;?>
+                </div>
+            </div>
         </div>
     </div>
 </div>

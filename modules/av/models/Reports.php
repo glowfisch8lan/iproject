@@ -11,11 +11,13 @@ use yii\helpers\HtmlPurifier;
 class Reports
 {
 
+
     public function generate()
     {
 
-        $html = HtmlPurifier::process(base64_decode(Yii::$app->request->post('h')));
-
+        $req = Yii::$app->request;
+        $html = HtmlPurifier::process(base64_decode($req->post('h')));
+        $filename = ($req->post('filename') == 'undefined') ? 'Отчет' : $req->post('filename');
         $reader = new \PhpOffice\PhpSpreadsheet\Reader\Html();
         $spreadsheet = $reader->loadFromString($html);
         $spreadsheet->getDefaultStyle()
@@ -40,8 +42,7 @@ class Reports
          *  Отдаем XLS документ;
         */
         //header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename="Ведомость успеваемости ' . $this
-                ->group['name'] . '.xlsx"');
+        header('Content-Disposition: attachment;filename="'.$filename.'.xlsx"');
         header('Cache-Control: max-age=0');
         header('Cache-Control: max-age=1');
 

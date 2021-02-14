@@ -85,6 +85,9 @@ class StudentsApi
 
     }
 
+    /*
+     * Не работает!
+     */
     public static function getJournalLesson($group_id, $curriculum_discipline_id, $date)
     {
         $client = new Client();
@@ -108,6 +111,24 @@ class StudentsApi
 
         return $response->data['data'];
 
+    }
+
+    /**
+     * Список групп, по курсам с количеством студентов;
+     *
+     * @return mixed
+     * @throws \yii\base\InvalidConfigException
+     * @throws \yii\httpclient\Exception
+     */
+    public static function getGroupList(){
+
+        $client = new Client();
+        $response = $client->createRequest()
+            ->setMethod('POST')
+            ->setUrl('https://av.dvuimvd.ru/api/call/system-custom/get-group-list?token='.self::$token_custom)
+            ->send();
+
+        return $response->data['data'];
     }
     /*МЕТОДЫ API */
 }

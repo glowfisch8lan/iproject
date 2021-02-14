@@ -95,4 +95,16 @@ class Custom extends ApiModule
             ->all();
     }
 
+    /**
+     * Получение списк студентов по факультетам;
+     *
+     * @return array
+     */
+    public function methodGetGroupList(){
+        $data = array_filter(\app\modules\load\models\helpers\Groups::getGroupsList($this->getYear()), function($item) {
+            return Yii::$app->user->identity->hasRight('student.students.department', $item[ 'id' ]);
+        });
+      return $data;
+    }
+
 }

@@ -3,8 +3,10 @@
 
 namespace app\modules\av\modules\student\controllers;
 
+
 use Yii;
 use app\modules\av\modules\student\models\plugins\AcademicPerformance;
+use app\modules\av\modules\student\models\plugins\ConsolidatedStatement;
 use yii\web\NotFoundHttpException;
 
 /**
@@ -20,6 +22,14 @@ class AcademicPerformanceController
             'model' => $model
         ];
     }
+
+    /**
+     * Отчет "Текущая успеваемость"
+     *
+     * @return array
+     * @throws NotFoundHttpException
+     */
+
     public function actionGetGradeSheet()
     {
         $model = new AcademicPerformance();
@@ -35,6 +45,42 @@ class AcademicPerformanceController
 
         return [
             'view' => 'grade-sheet',
+            'model' => $model
+        ];
+    }
+
+    /**
+     *  Отчет "Сводная ведомость успеваемости"
+     * 
+     * @return array
+     * @throws NotFoundHttpException
+     */
+    public function actionConsolidatedStatement()
+    {
+        $model = new ConsolidatedStatement();
+
+        return [
+            'view' => 'consolidated-statement',
+            'model' => $model
+        ];
+    }
+
+    /**
+     *  Сформировать отчет "Сводная ведомость успеваемости"
+     *
+     * @return array
+     * @throws NotFoundHttpException
+     */
+    public function actionGetConsolidatedStatement()
+    {
+        $model = new ConsolidatedStatement();
+
+        if(Yii::$app->request->isPost){
+            $model->load(Yii::$app->request->post());
+        }
+
+        return [
+            'view' => 'get-consolidated-statement',
             'model' => $model
         ];
     }
@@ -66,31 +112,6 @@ class AcademicPerformanceController
         return ['path' => $path, 'array' => $array];
     }
 
-    public function actionGenerateReport()
-    {
-
-        $model = new AcademicPerformance();
-        if(Yii::$app->request->isPost){
-            $model->load(Yii::$app->request->post());
-        }
-
-
-//        $namespace = str_replace('\controllers','',__NAMESPACE__ );
-//        $class = $namespace . '\models\plugins\reports\\'.$model->report . '\Report';
-//        $class = new $class();
-//
-//        var_dump($class);
-        //$model->fetchData();
-        //$model->generateGradeSheet();
-        die();
-        if(!$model->students)
-            throw new NotFoundHttpException('В группе нет учащихся!');
-
-        return [
-            'view' => 'grade-sheet',
-            'model' => $model
-        ];
-    }
 }
 
 

@@ -159,25 +159,18 @@ $(document).ready(function(){
         
     });
     
-
-    
     $('.table-row-discipline-remove').on('click',function(){
         var myIndex = $(this).parent('th').index();
         $(this).parents("table").find("tr").each(function(){
         $(this).find("th:eq("+myIndex+")").fadeOut(150, function(){ $(this).remove(); });
         $(this).find("td:eq("+myIndex+")").fadeOut(150, function(){ $(this).remove(); });
-        
-        
-        
         });
-        
     });
     
     $('.average-ball').on('click',function(){
             calculateAverageMarks();
             calculateAverageGroup();
         });
-        
      });
 JS;
 // значение $position может быть View::POS_READY (значение по умолчанию),
