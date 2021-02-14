@@ -88,9 +88,6 @@ class Module extends \yii\base\Module
      */
     private function verifyAccess(){
 
-
-
-
         $act = '/' . Yii::$app->controller->module->id . '/' . Yii::$app->controller->id;
 
         foreach($this->excludedRules as $eRule){

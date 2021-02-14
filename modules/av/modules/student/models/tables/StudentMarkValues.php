@@ -5,7 +5,7 @@ use Yii;
 use yii\db\ActiveRecord;
 
 
-class StudentMarks extends ActiveRecord
+class StudentMarkValues  extends ActiveRecord
 {
 
     public static function getDb(){
@@ -14,7 +14,7 @@ class StudentMarks extends ActiveRecord
 
     public static function tableName()
     {
-        return 'student_marks';
+        return 'student_mark_values';
     }
 
 

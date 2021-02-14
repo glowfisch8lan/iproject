@@ -150,16 +150,8 @@ class AcademicPerformance extends Model
     public function fetchData()
     {
         $cache = Yii::$app->cache;
-        $duration = 120;
+        $duration = 1200;
 
-        /**
-         * Кеширование наименований оценок;
-         */
-        $this->markValues = $cache->get('markValues');
-        if ($this->markValues === false) {
-            $this->markValues = self::getMarksValues();
-            $cache->set('markValues', $this->markValues, $duration);
-        }
 
         /**
          *  Кеширование причин пропусков
@@ -171,6 +163,7 @@ class AcademicPerformance extends Model
         }
 
 
+        $this->markValues = self::getMarksValues();
         $this->group = self::getGroup($this->group);
         $this->students = self::getStudentsByGroup($this->group['id']);
         $this->curriculumDisciplines = self::getCurriculumDisciplines($this->group['education_plan_id']);

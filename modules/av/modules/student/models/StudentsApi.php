@@ -10,6 +10,7 @@ use yii\httpclient\Client;
 
 use app\modules\av\modules\student\models\tables\StudentSkipReasons;
 use app\modules\av\modules\student\models\tables\StudentMarks;
+use app\modules\av\modules\student\models\tables\StudentMarkValues;
 
 class StudentsApi extends ActiveRecord
 {
@@ -23,12 +24,25 @@ class StudentsApi extends ActiveRecord
     /*МЕТОДЫ API */
     public static function getGroups()
     {
-        $client = new Client();
-        $response = $client->createRequest()
-            ->setMethod('POST')
-            ->setUrl('https://av.dvuimvd.ru/api/call/system-custom/get-groups?token='.self::$token_custom)
-            ->send();
-        return $response->data['data'];
+        $cache = Yii::$app->cache;
+        $duration = 1200;
+
+        /**
+         * Кеширование списка групп
+         */
+        $response = $cache->get('groups');
+        if ($response === false) {
+
+            $client = new Client();
+            $response = $client->createRequest()
+                ->setMethod('POST')
+                ->setUrl('https://av.dvuimvd.ru/api/call/system-custom/get-groups?token='.self::$token_custom)
+                ->send()
+                ->data['data'];
+            $cache->set('groups', $response, $duration);
+        }
+
+        return $response;
 
     }
 
@@ -86,30 +100,28 @@ class StudentsApi extends ActiveRecord
                 ->asArray()
             ->all();
 
-
-
-//
-//
-
-
-        $client = new Client();
-        $response = $client->createRequest()
-            ->setMethod('POST')
-            ->setUrl('https://av.dvuimvd.ru/api/call/system-custom/get-marks-by-group?token='.self::$token_custom)
-            ->setData(['group_id' => $group_id])
-            ->send();
-        return $response->data['data'];
-
     }
 
     public static function getMarksValues()
     {
-        $client = new Client();
-        $response = $client->createRequest()
-            ->setMethod('POST')
-            ->setUrl('https://av.dvuimvd.ru/api/call/system-custom/get-mark-values?token='.self::$token_custom)
-            ->send();
-        return $response->data['data'];
+
+        $cache = Yii::$app->cache;
+        $duration = 1200;
+
+        /**
+         * Кеширование списка групп
+         */
+        $response = $cache->get('markValues');
+        if ($response === false) {
+
+            $response = StudentMarkValues::find()
+                ->asArray()
+                ->all();
+
+            $cache->set('markValues', $response, $duration);
+        }
+
+        return $response;
 
     }
 
