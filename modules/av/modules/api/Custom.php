@@ -90,9 +90,9 @@ class Custom extends ApiModule
     public function methodGetSkipReasons()
     {
         return (new Query())
-            ->select(['*'])
-            ->from('student_skip_reason')
-            ->all();
+        ->select(['*'])
+        ->from('student_skip_reason')
+        ->all();
     }
 
     /**

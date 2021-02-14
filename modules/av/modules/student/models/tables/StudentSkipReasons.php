@@ -4,7 +4,7 @@ namespace app\modules\av\modules\student\models\tables;
 use Yii;
 use yii\db\ActiveRecord;
 
-class StudentsSkipReasons extends ActiveRecord
+class StudentSkipReasons extends ActiveRecord
 {
 
     public static function getDb(){
