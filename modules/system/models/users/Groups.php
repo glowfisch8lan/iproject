@@ -2,6 +2,7 @@
 
 namespace app\modules\system\models\users;
 
+
 use Yii;
 use yii\db\ActiveRecord;
 use app\modules\system\models\users\Users;
@@ -51,15 +52,28 @@ class Groups extends ActiveRecord
      */
     public static function getPermissions($id){
 
-        return (new \yii\db\Query())
-            ->select('permissions')
-            ->from('system_groups')
-            ->where(
-                ['or',
-                    ['id' => $id ]
-                ]
-            )
-            ->all();
+        $cache = Yii::$app->cache;
+        $duration = 1200;
+
+        /**
+         * Кеширование списка групп
+         */
+        $response = $cache->get('permissions'.$id);
+        if ($response === false) {
+            $response = (new \yii\db\Query())
+                ->select('permissions')
+                ->from('system_groups')
+                ->where(
+                    ['or',
+                        ['id' => $id ]
+                    ]
+                )
+                ->all();
+
+            $cache->set('permissions'.$id, $response, $duration);
+        }
+
+        return $response;
     }
 
     /**
