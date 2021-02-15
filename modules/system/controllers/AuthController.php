@@ -3,8 +3,10 @@
 namespace app\modules\system\controllers;
 
 use Yii;
+use yii\base\DynamicModel;
 use yii\web\Controller;
-
+use app\modules\system\models\auth\LDAP;
+use app\modules\system\models\settings\Settings;
 /**
  * Default controller for the `system` module
  */
@@ -15,12 +17,17 @@ class AuthController extends Controller
     public function actionIndex()
     {
 
-        return $this->render('index');
-    }
+        $model = new DynamicModel(['name', 'value']);
+        $model
+            ->addRule(['name','value'], 'required', ['message' => 'Укажите параметр!']);
 
-    public function actionSyncGroup()
+        return $this->render('index',
+        ['model' => $model]
+        );
+    }
+    public function actionSave()
     {
-
-//        return $this->render('index');
+        var_dump(Yii::$app->request->post());
     }
+
 }

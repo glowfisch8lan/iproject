@@ -35,12 +35,7 @@ class GroupsController extends Controller
                 'actions' => [
                     'delete' => ['POST'],
                 ],
-            ],
-            [
-                'class' => CachedBehavior::class,
-                'actions' => ['create', 'update', 'delete'],
-                'cache' => Yii::$app->cacheGroups
-            ],
+            ]
         ];
     }
 

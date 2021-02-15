@@ -3,10 +3,13 @@
 namespace app\modules\system\models\users;
 
 
+
 use Yii;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
 use app\modules\system\models\auth\Auth;
+use app\modules\system\components\behaviors\CachedBehavior;
+
 class Users extends ActiveRecord implements IdentityInterface
 {
 
@@ -32,7 +35,6 @@ class Users extends ActiveRecord implements IdentityInterface
 //            ['password', 'match', 'pattern' => '/[a-z0-9]*/', 'message' => 'Пароль не должен содержать пробелы'],
 
         ];
-
     }
 
     public function beforeSave($insert)
@@ -44,7 +46,15 @@ class Users extends ActiveRecord implements IdentityInterface
         }
         return false;
     }
-
+    public function behaviors()
+    {
+        return [
+            'CachedBehavior' => [
+                'class' => CachedBehavior::class,
+                'cache' => Yii::$app->cacheUsers
+            ]
+        ];
+    }
     public function attributeLabels()
     {
         return [
@@ -70,7 +80,7 @@ class Users extends ActiveRecord implements IdentityInterface
     public static function getUserGroups($user_id)
     {
 
-        $cache = Yii::$app->cache;
+        $cache = Yii::$app->cacheUsers;
         $duration = 12000;
 
         /**
@@ -137,7 +147,7 @@ class Users extends ActiveRecord implements IdentityInterface
     public static function findIdentity($id){
 
 
-        $cache = Yii::$app->cache;
+        $cache = Yii::$app->cacheUsers;
         $duration = 1200;
 
         if(self::$cache == 'disabled'){$response = static::findOne($id);}

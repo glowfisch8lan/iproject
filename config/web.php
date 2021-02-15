@@ -85,6 +85,9 @@ $config = [
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
+        'cacheUsers' => [
+            'class' => 'yii\caching\FileCache',
+        ],
         'cacheGroups' => [
             'class' => 'yii\caching\FileCache',
         ],

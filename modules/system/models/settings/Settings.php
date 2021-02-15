@@ -5,7 +5,7 @@ namespace app\modules\system\models\settings;
 use Yii;
 
 /**
- * This is the model class for table "system_settings".
+ * Это модель класса 'Settings' для "system_settings".
  *
  * @property int $id
  * @property string $name Настройка
@@ -61,7 +61,7 @@ class Settings extends \yii\db\ActiveRecord
     }
 
     /**
-     * Установка параметра
+     * Установка параметра: модуль.категория.параметр
      *
      * @param $code
      * @param $value

@@ -7,7 +7,7 @@ use Yii;
 use yii\db\ActiveRecord;
 use app\modules\system\models\users\Users;
 use app\modules\system\models\interfaces\modules\Modules;
-
+use app\modules\system\components\behaviors\CachedBehavior;
 class Groups extends ActiveRecord
 {
 
@@ -44,6 +44,16 @@ class Groups extends ActiveRecord
         ];
     }
 
+    public function behaviors()
+    {
+        return [
+            'CachedBehavior' => [
+                'class' => CachedBehavior::class,
+                'cache' => Yii::$app->cacheGroups
+            ]
+        ];
+    }
+
     /**
      * Разрешения группы
      *
@@ -53,12 +63,12 @@ class Groups extends ActiveRecord
     public static function getPermissions($id){
 
         $cache = Yii::$app->cacheGroups;
-        $duration = 0;
+        $duration = 1200;
 
         /**
          * Кеширование списка групп
          */
-        $response = $cache->get('groups_permissions'.$id);
+        $response = $cache->get('permissions'.$id);
         if ($response === false) {
             $response = (new \yii\db\Query())
                 ->select('permissions')
@@ -70,7 +80,7 @@ class Groups extends ActiveRecord
                 )
                 ->all();
 
-            $cache->set('groups_permissions'.$id, $response, $duration);
+            $cache->set('permissions'.$id, $response, $duration);
         }
 
         return $response;
