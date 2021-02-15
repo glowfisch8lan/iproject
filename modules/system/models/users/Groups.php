@@ -52,13 +52,13 @@ class Groups extends ActiveRecord
      */
     public static function getPermissions($id){
 
-        $cache = Yii::$app->cache;
-        $duration = 1200;
+        $cache = Yii::$app->cacheGroups;
+        $duration = 0;
 
         /**
          * Кеширование списка групп
          */
-        $response = $cache->get('permissions'.$id);
+        $response = $cache->get('groups_permissions'.$id);
         if ($response === false) {
             $response = (new \yii\db\Query())
                 ->select('permissions')
@@ -70,7 +70,7 @@ class Groups extends ActiveRecord
                 )
                 ->all();
 
-            $cache->set('permissions'.$id, $response, $duration);
+            $cache->set('groups_permissions'.$id, $response, $duration);
         }
 
         return $response;

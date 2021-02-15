@@ -52,6 +52,12 @@ class Module extends \yii\base\Module
             'description' => 'Доступ к подразделу Группы',
             'visible' => true
         ],
+        [   'route' => '/system/auth',
+            'name' => 'Авторизация',
+            'access' => 'viewAuth',
+            'description' => 'Доступ к настройкам Авторизации',
+            'visible' => true
+        ],
     ];
 
     private $excludedRules = [

@@ -16,6 +16,7 @@ use yii\web\ForbiddenHttpException;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
 use yii\filters\VerbFilter;
+use app\modules\system\components\behaviors\CachedBehavior;
 
 class GroupsController extends Controller
 {
@@ -34,6 +35,11 @@ class GroupsController extends Controller
                 'actions' => [
                     'delete' => ['POST'],
                 ],
+            ],
+            [
+                'class' => CachedBehavior::class,
+                'actions' => ['create', 'update', 'delete'],
+                'cache' => Yii::$app->cacheGroups
             ],
         ];
     }
@@ -131,9 +137,9 @@ class GroupsController extends Controller
 
             $model->permissions = Json::encode($model->permissions); //в таблице system_users храним все разрешения группы в json
 
-            if( !$model->save() ){
+            if( !$model->save() )
                 throw ServerErrorHttpException('Ошибка при сохранении Группы!');
-            }
+
             return $this->redirect('index');
         }
         return $this->render('update', [

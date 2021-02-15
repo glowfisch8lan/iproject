@@ -85,6 +85,9 @@ $config = [
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
+        'cacheGroups' => [
+            'class' => 'yii\caching\FileCache',
+        ],
         'user' => [
             'identityClass' => 'app\modules\system\models\users\Users',
             'loginUrl' => '/login',
