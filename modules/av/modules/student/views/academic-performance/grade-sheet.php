@@ -8,9 +8,10 @@ use yii\helpers\Url;
 
 Html::csrfMetaTags();
 
-$this->title = 'Успеваемость';
+$this->title = 'Сводная ведомость успеваемости';
 $this->params['breadcrumbs'][] = ['label' => Yii::$app->controller->module->name, 'url' => '/av'];
 $this->params['breadcrumbs'][] = ['label' => 'Плагины', 'url' => '/av/plugins'];
+$this->params['breadcrumbs'][] = ['label' => 'Успеваемость', 'url' => '/av/plugins/load?module=student&id=academicPerformance&controller=academicPerformance'];
 $this->params['breadcrumbs'][] = $this->title;
 
 // регистрируем небольшой js-код в view-шаблоне
@@ -139,9 +140,10 @@ $(document).ready(function(){
             msg = msg.replace(/\s{2,}/g, "");
             
             let form = document.createElement('form');
+            let filename = $(this).attr('filename');
             form.action = '/av/plugins/reports';
             form.method = 'POST';
-            form.innerHTML = '<input type="hidden" name="h" value='+Base64.encode(msg)+'><input type="hidden" name="'+param+'" value="'+token+'">';
+            form.innerHTML = '<input type="hidden" name="h" value='+Base64.encode(msg)+'><input type="hidden" name="'+param+'" value="'+token+'"><input type="hidden" name="filename" value='+filename+'>';
             document.body.append(form);
             form.submit();
             
@@ -193,6 +195,7 @@ foreach( $model->students as $student )
 $reports = [
         [
                 'name' => 'Текущая успеваемость',
+                'filename' => 'Текущая_успеваемость'
 
         ]
 ];
@@ -200,7 +203,8 @@ $html = null;
 foreach($reports as $key => $value)
 {
     $html .= Html::a($value['name'], '#', [
-        'class' => 'dropdown-item generate-report'
+        'class' => 'dropdown-item generate-report',
+        'filename' => $value['filename']
     ]);
 }
             if( !$ajax || 1 == 1 ){

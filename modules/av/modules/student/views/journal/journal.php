@@ -55,6 +55,8 @@ $this->registerJs($script, $position);
                     {
                         if ((preg_match('/(ПД|Ю).*.2\d*$/', $data, $matches))) return $data;
                     });
+
+                    $model->academicPerformance->listDisciplines($model->group);
                     $disciplines = ['1444' => 'ТСП'];
 
                     $form = ActiveForm::begin(['action' => "/av/plugins/" . $ajax . "?module=student&id=journal&controller=journal"]);
@@ -106,7 +108,6 @@ $this->registerJs($script, $position);
             </tbody>
             <tbody>
             <?
-            var_dump($model->discipline);
             //1444 - Огневая; group - 24
             if ($model->group)
             {

@@ -2,6 +2,7 @@
 
 namespace app\modules\av\modules\student\models\plugins;
 
+use app\modules\av\models\Year;
 use Yii;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -16,6 +17,8 @@ use app\modules\system\models\cache\Cache;
 
 class AcademicPerformance extends Model
 {
+    use Year;
+
     public $group;
     public $students;
     public $curriculumDisciplines;
@@ -326,7 +329,6 @@ class AcademicPerformance extends Model
      * @param bool $session Вернуть только результаты сессий
      * @return array Идентификаторы отфильтрованных дисциплин
      */
-
     public function collectDisciplines()
     {
         $index = 0;
@@ -373,6 +375,21 @@ class AcademicPerformance extends Model
         }
         return $arr;
 
+    }
+
+    /**
+     * Список дисциплин, изучаемых группой в текущем семестре;
+     *
+     * @param $group_id
+     * @return array
+     */
+    public function listDisciplines($group_id)
+    {
+
+        $this->getSemesterNow();
+//        $this->group = self::getGroup($group_id); //заполняем информацию о группе для дальнейшего наполнения данными;
+//        $this->fetchData();
+//        return $this->getDisciplines();
     }
 
     /**
@@ -478,7 +495,7 @@ class AcademicPerformance extends Model
         else return 0;
     }
 
-    /**
+    /*
      *  Отсеивание оценок 2,3,4,5, пропуск и сортировка их по дисциплинам
      *
      * @param $studentMarks

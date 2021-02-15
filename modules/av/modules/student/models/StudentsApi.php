@@ -31,6 +31,7 @@ class StudentsApi extends ActiveRecord
          * Кеширование списка групп
          */
         $response = $cache->get('groups');
+
         if ($response === false) {
 
             $client = new Client();

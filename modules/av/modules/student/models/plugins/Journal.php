@@ -12,7 +12,8 @@ class Journal extends Model
 {
 
     public $group;
-    public $discipline;
+    public $discipline = null;
+    public $academicPerformance = null;
 
     public function attributeLabels()
     {

@@ -9,7 +9,9 @@ use app\modules\system\helpers\Grid;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Плагины';
+$this->params['breadcrumbs'][] = ['label' => Yii::$app->controller->module->name, 'url' => '/av'];
 $this->params['breadcrumbs'][] = $this->title;
+
 ?>
 <div class="box-body">
     <div class="col-md-12">
