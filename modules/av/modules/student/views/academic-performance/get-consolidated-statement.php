@@ -83,9 +83,10 @@ $this->registerJs($script, $position);
                     <th>Кол-во л/c</th>
                     <th>Ср. балл</th>
                     <th>Кол-во курсантов, имеющих ср. балл < 4</th>
-                    <th>Кол-во курсантов, имеющих ср. балл < 3</th>
-                    <th>Кол-во неудов. оценок</th>
-                    <th>Кол-во отр. неудов. оценок</th>
+                    <th>Кол-во курсантов, имеющих ср. балл < 3.7</th>
+                    <th>Кол-во неуд. оценок (за неделю)</th>
+                    <th>Кол-во неудов. оценок (с начала обучения)</th>
+                    <th>Кол-во отр. неуд. оценок (с начала обучения)</th>
                     </thead>
                     <tbody>
                     <?
@@ -105,6 +106,7 @@ $this->registerJs($script, $position);
                                     <td class="count-less3">'.$average['count']['less3'].'</td>
                                     <td class="count-count2">'.$average['count']['count2'].'</td>
                                     <td class="count-count2corrected">'.$average['count']['count2corrected'].'</td>
+                                    <td class="count-count2week">'.$average['count']['count2week'].'</td>
                                      </tr>';
 
 

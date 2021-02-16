@@ -747,6 +747,7 @@ class AcademicPerformance extends Model
         $arr['less3'] = 0;
         $arr['count2'] = 0;
         $arr['count2corrected'] = 0;
+        $arr['count2week'] = 0;
 
         foreach($faculty['items'] as $key => $group){
 
@@ -758,10 +759,18 @@ class AcademicPerformance extends Model
             {
                 $p = $this->getAverageStudent($student['id'],$startDate,$endDate);
                 $c = $this->countMarksStudent($student['id'],$startDate,$endDate);
+
+                $week = date("W",  strtotime(date('d.m.Y')));
+                $week_array = Year::getStartAndEndDate($week,date('Y'));
+                $week = $this->countMarksStudent($student['id'],$week_array['week_start'],$week_array['week_end']);
+
+
                 if(!is_null($c['count']['2'])){$arr['count2'] += 1;}
+                if(!is_null($week['count']['2'])){$arr['count2week'] += 1;}
                 if(!is_null($c['count']['2/'])){$arr['count2corrected'] += 1;}
+
                 if($p >= 4 ){$arr['above4'] += 1;}
-                if($p <= 3 ){$arr['less3'] += 1;}
+                if($p <= 3.7 ){$arr['less3'] += 1;}
                 $sum += $p;
                 $index++;
 
