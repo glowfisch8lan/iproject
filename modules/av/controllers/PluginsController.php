@@ -34,14 +34,6 @@ class PluginsController extends Controller
         }
         $dataProvider = new ArrayDataProvider([
             'allModels' => $plugins,
-//            'sort' => [
-//                'defaultOrder' => ['date' => SORT_DESC],
-//                'attributes' => [
-//                    'ip',
-//                    'date',
-//                    'userAgent'
-//                ],
-//            ],
             'pagination' => [
                 'pageSize' => 10,
             ],
@@ -51,18 +43,25 @@ class PluginsController extends Controller
         ]);
     }
 
-    /*
+    /**
      * Оптимизирующая функция для двух действий Load и Ajax
+     *
+     * @param $module
+     * @param $id
+     * @param $action
+     * @param $controller
+     * @return array
+     * @throws NotFoundHttpException
      */
     private function initLoad($module,$id,$action,$controller){
 
-        $class = 'app\modules\av\modules\\'.$module.'\controllers\\'.ucfirst($id).'Controller';
+        $cl = 'app\modules\av\modules\\'.$module.'\controllers\\'.ucfirst($id).'Controller';
 
-        if(!class_exists($class))
+        if(!class_exists($cl))
             throw new NotFoundHttpException('Извините, ошибка в переданных параметрах!');
 
 
-        $class = new $class();
+        $class = new $cl();
 
         $actionController = 'action'.ucfirst($action);
 
@@ -82,11 +81,20 @@ class PluginsController extends Controller
         return ['path' => $path, 'array' => $array];
     }
 
+    /**
+     * Загрузка подконтроллера подмодуля
+     *
+     * @param $module
+     * @param $id
+     * @param string $action | default = 'index'
+     * @param $controller
+     * @return string
+     * @throws NotFoundHttpException
+     */
     public function actionLoad($module, $id, $action = 'index', $controller)
     {
 
         $action = $this->initLoad($module,$id,$action,$controller);
-
 
         if(!file_exists(realpath(Yii::getAlias($action['path']).'.php')))
             throw new NotFoundHttpException('Файл не найден');
@@ -95,12 +103,6 @@ class PluginsController extends Controller
             'model' => $action['array']['model'],
             'ajax' => false
         ]);
-    }
-
-    public function actionReports()
-    {
-        $reports = new Reports();
-        $reports->generate();
     }
 
     public function actionAjax($module, $id, $action = 'index', $controller)
@@ -119,5 +121,24 @@ class PluginsController extends Controller
                 'ajax' => true]);
     }
 
+    /**
+     *  Генерация отчета из HTML => XLS посредством PHPSPREADSHEET;
+     */
+    public function actionReports()
+    {
+        $model = new Reports();
+        $load = $model->load(
+            [
+                'Reports' => [
+                    'filename' => Yii::$app->request->post('filename'),
+                    'html' => Yii::$app->request->post('h')
+                ]]);
+
+        if($load)
+            $model->generate();
+
+        throw new ServerErrorHttpException('Ошибка формирования отчета');
+
+    }
 
 }

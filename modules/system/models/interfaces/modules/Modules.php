@@ -81,7 +81,9 @@ class Modules extends \yii\base\Module
 
         $module = self::findModule($id);
 
-        $permissions = Json::Decode(Groups::getPermissions(1)[0]['permissions']);
+        var_dump(Groups::getPermissions($id));
+        die();
+        //$permissions = Json::Decode(Groups::getPermissions($id)['permissions']);
         if(!in_array($module->visible, $permissions))
         {
                 $permissions[] = $module->visible;

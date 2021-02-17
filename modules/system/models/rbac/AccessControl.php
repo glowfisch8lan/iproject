@@ -12,35 +12,29 @@ use yii\web\ServerErrorHttpException;
 class AccessControl
 {
 
-    /*
-     *  Принимает id пользователя, доступ которого надо проверить;
+    /**
+     *
+     * @param int $user_id
+     * @param string $rule
+     * @return bool
+     * @throws ServerErrorHttpException
      */
-    public static function checkAccess( $id, $rule ): bool{
 
-        $users = new Users();
+    public static function checkAccess( int $user_id, string $rule ): bool{
 
-        $data = [];
 
-        foreach($users->getUserGroups($id) as $val){
-            $data[] = $val['id'];
-        }
-
-        $groupPermissions = Groups::getPermissions($data);
         $arr = [];
-        foreach( $groupPermissions as $val )
-        {
-            $arr[] = Json::Decode($val['permissions']);
+        foreach(Users::getUserGroups($user_id) as $group){
+            $arr[] = Json::Decode(Groups::getPermissions($group['id'])['permissions']);
         }
 
-        if(count($arr) < 2 && empty($arr[0])){
+        if(empty($arr)){
             Yii::$app->user->logout();
             throw new ServerErrorHttpException('В группе отсутствуют разрешения, дальнейшая работа невозможна!');
         }
-        foreach($arr as $val ){
-            if(in_array($rule, $val)){
-                return true; //access granted;
-            }
-        }
+
+        foreach($arr as $val )
+            if(in_array($rule, $val)) return true; //access granted;
 
         return false; //access deny;
     }

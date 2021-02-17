@@ -3,13 +3,17 @@
 namespace app\modules\system\models\users;
 
 
+use app\modules\system\models\settings\Settings;
 use Yii;
 use yii\db\ActiveRecord;
 use app\modules\system\models\users\Users;
 use app\modules\system\models\interfaces\modules\Modules;
 use app\modules\system\components\behaviors\CachedBehavior;
+use app\modules\system\models\cache\Cache;
 class Groups extends ActiveRecord
 {
+
+    use Cache;
 
  /*@var $name <- колонка в таблице system_groups
  * @var $description;
@@ -21,6 +25,16 @@ class Groups extends ActiveRecord
     public $listUsers; //здесь хранится список всех пользователей
     public $action; //переменная, в которую записываем действие, которое нужно выполнить actionView()
     public $usedPermissions; //переменная, в которую записываем список используемых разрешений группой
+
+    protected $cache;
+
+    /**
+     * Users constructor. Определяем в какой кеш будем сбрасывать данные
+     */
+    public function __construct()
+    {
+        $this->cache = Yii::$app->cacheGroups;
+    }
 
     public static function tableName()
     {
@@ -55,32 +69,25 @@ class Groups extends ActiveRecord
     }
 
     /**
-     * Разрешения группы
+     * Разрешения для группы
      *
      * @param $id Идентификатор группы
-     * @return array
+     * @return array | 'permissions' => '['permission',...]
      */
-    public static function getPermissions($id){
-
-        $cache = Yii::$app->cacheGroups;
-        $duration = 1200;
+    public static function getPermissions($group_id){
 
         /**
          * Кеширование списка групп
          */
-        $response = $cache->get('permissions'.$id);
-        if ($response === false) {
-            $response = (new \yii\db\Query())
-                ->select('permissions')
-                ->from('system_groups')
-                ->where(
-                    ['or',
-                        ['id' => $id ]
-                    ]
-                )
-                ->all();
 
-            $cache->set('permissions'.$id, $response, $duration);
+        $response = self::cache()->get('permissions'.$group_id[0]);
+
+        if(!$response)
+        {
+            $response = (new \yii\db\Query())->select('permissions')->from('system_groups')
+            ->where(['or', ['id' => $group_id ]])->one();
+            self::cache()->set('permissions'.$group_id[0], $response);
+
         }
 
         return $response;

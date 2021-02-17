@@ -18,6 +18,8 @@ use yii\base\Exception;
 use yii\helpers\ArrayHelper;
 use app\modules\system\models\auth\Auth;
 
+use app\modules\system\models\settings\Settings;
+
 /**
  * Class LDAP
  * @package app\models\auth
@@ -31,9 +33,6 @@ class LDAP
 
     public $name = 'LDAP (Microsoft ActiveDirectory)';
     private $client;
-    /**
-     * @var ProviderInterface
-     */
     private $provider;
     private $connected;
     public  $error;
@@ -54,12 +53,26 @@ class LDAP
         'port' => '389'
     ];
 
-    public function __construct($settings = [])
+    public function __construct()
     {
-        // создание клиента LDAP
+
         $this->client = new Adldap();
         $this->client->addProvider($this->config);
 
+
+    }
+
+    /**
+     *  Проверка статуса плагина Авторизации;
+     *
+     * @return bool
+     */
+    public static function status()
+    {
+        if(filter_var(Settings::getValue('system.auth.ldap.status'), FILTER_VALIDATE_BOOLEAN))
+            return true;
+
+        return false;
     }
 
     public function getValue($value)

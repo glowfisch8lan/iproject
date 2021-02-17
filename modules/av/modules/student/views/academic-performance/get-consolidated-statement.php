@@ -80,13 +80,13 @@ $this->registerJs($script, $position);
                 <table class="table table-bordered table-sm table-hover grade-sheet" style="font-size:14px">
                     <thead>
                     <th>Курс</th>
-                    <th>Кол-во л/c</th>
+                    <th>Количетсво л/c</th>
                     <th>Ср. балл</th>
-                    <th class="bg-success text-white">Кол-во курсантов, имеющих ср. балл > 4</th>
-                    <th class="bg-warning">Кол-во курсантов, имеющих ср. балл < 3.7</th>
-                    <th class="bg-warning">Кол-во неуд. оценок (за неделю)</th>
-                    <th class="bg-danger text-white">Кол-во неудов. оценок (с начала обучения)</th>
-                    <th class="bg-success text-white">Кол-во отр. неуд. оценок (с начала обучения)</th>
+                    <th class="bg-success text-white">Кол-во курсантов, имеющих ср. балл "4" и выше</th>
+                    <th class="bg-warning">Кол-во курсантов, имеющих ср. балл "3.7" и нижу</th>
+                    <th class="bg-warning">Кол-во "2", полученных за истекшую неделю</th>
+                    <th class="bg-success text-white">Кол-во отработанных "2" (с начала семестра)</th>
+                    <th class="bg-danger text-white">Кол-во неотработанных "2" (с начала семестра)</th>
                     </thead>
                     <tbody>
                     <?
@@ -104,9 +104,9 @@ $this->registerJs($script, $position);
                                     <td class="average-faculty">'.$average['average'].'</td>
                                     <td class="count-above4">'.$average['count']['above4'].'</td>
                                     <td class="count-less3">'.$average['count']['less3'].'</td>  <!-- Балл ниже 3.7 -->
-                                    <td class="count-count2">'.$average['count']['count2week'].'</td> <!-- Неотработанные двойки за неделю -->
-                                    <td class="count-count2corrected">'.$average['count']['count2'].'</td> <!-- Отработанные двойки за весь период обучения -->
-                                    <td class="count-count2week">'.$average['count']['count2corrected'].'</td> <!-- Неотработанные двойки за весь период обучения -->
+                                    <td class="count-count2week">'.$average['count']['count2week'].'</td> <!-- Неотработанные двойки за неделю -->
+                                    <td class="count-count2corrected">'.$average['count']['count2corrected'].'</td> <!-- Отработанные двойки за весь период обучения -->
+                                    <td class="count-count2">'.$average['count']['count2'].'</td> <!-- Неотработанные двойки за весь период обучения -->
                                      </tr>';
 
 

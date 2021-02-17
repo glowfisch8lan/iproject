@@ -6,18 +6,34 @@ namespace app\modules\av\models;
 use Yii;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use yii\base\Model;
 use yii\helpers\HtmlPurifier;
 
-class Reports
+class Reports extends Model
 {
 
+    public $filename;
+    public $html;
+
+    public function rules(){
+       return [
+          [
+              ['html', 'filename'],
+              'required'
+          ],
+          [
+          ['html', 'filename'],
+              'safe'
+          ]
+      ];
+    }
 
     public function generate()
     {
 
-        $req = Yii::$app->request;
-        $html = HtmlPurifier::process(base64_decode($req->post('h')));
-        $filename = ($req->post('filename') == 'undefined') ? 'Отчет' : $req->post('filename');
+        $html = HtmlPurifier::process(base64_decode($this->html));
+        $filename = ($this->filename == 'undefined') ? 'Отчет' : $this->filename;
+
         $reader = new \PhpOffice\PhpSpreadsheet\Reader\Html();
         $spreadsheet = $reader->loadFromString($html);
         $spreadsheet->getDefaultStyle()
@@ -42,7 +58,7 @@ class Reports
          *  Отдаем XLS документ;
         */
         //header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename="'.$filename.'.xlsx"');
+        header('Content-Disposition: attachment;filename="'.$this->filename.'.xlsx"');
         header('Cache-Control: max-age=0');
         header('Cache-Control: max-age=1');
 

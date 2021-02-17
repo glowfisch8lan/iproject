@@ -16,6 +16,9 @@ use Yii;
  */
 class Settings extends \yii\db\ActiveRecord
 {
+
+    //TODO Сделать кеширование Настроек;
+
     /**
      * {@inheritdoc}
      */
@@ -81,6 +84,6 @@ class Settings extends \yii\db\ActiveRecord
      */
     public static function getValue($name)
     {
-        return self::findOne()->where(['name' => ':name', [':name' => $name]]);
+        return self::find()->where(['name' => $name])->one()->value;
     }
 }

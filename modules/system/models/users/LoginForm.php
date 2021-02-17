@@ -7,7 +7,6 @@ use yii\base\Model;
 use app\modules\system\models\users\Users;
 use app\modules\system\models\auth\LDAP;
 use app\modules\system\models\auth\Auth;
-
 /**
  * LoginForm is the model behind the login form.
  *
@@ -48,13 +47,6 @@ class LoginForm extends Model
      */
     public function validatePassword($attribute, $params): bool
     {
-//        if (!$this->hasErrors()) {
-//            $user = $this->getUser();
-//
-//            if (!$user || !$user->validatePassword($this->password)) {
-//                $this->addError($attribute, 'Incorrect username or password.');
-//            }
-//        }
         if (!$this->hasErrors()) {
 
             /* Ищем пользователя в локальной базе*/
@@ -66,6 +58,8 @@ class LoginForm extends Model
                 return true;
             }
 
+
+            //Включить LDAP авторизацию;
             /* Если пользователь с таким логином не найден, то запускаем процесс аутенфикации через LDAP и создание нового пользователя */
             $userData = Auth::getInstance()->process($this->login, $this->password);
             if (is_array($userData)) {
@@ -102,11 +96,9 @@ class LoginForm extends Model
      */
     public function getUser()
     {
-
         if ($this->_user === false) {
             $this->_user = Users::findByUsername($this->login);
         }
-
         return $this->_user;
     }
 

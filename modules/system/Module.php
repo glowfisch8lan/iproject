@@ -98,8 +98,6 @@ class Module extends \yii\base\Module
 
         foreach($this->excludedRules as $eRule){
             if($eRule['route'] != $act){
-
-                //Проверка доступа к целому модулю;
                 if(!AccessControl::checkAccess(Yii::$app->user->identity->id,$this->visible)){
                     throw new ForbiddenHttpException('You are not allowed to perform this action.');
                 }

@@ -112,9 +112,9 @@ class StudentsApi extends ActiveRecord
         /**
          * Кеширование списка групп
          */
+
         $response = $cache->get('markValues');
         if ($response === false) {
-
             $response = StudentMarkValues::find()
                 ->asArray()
                 ->all();

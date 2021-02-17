@@ -12,6 +12,12 @@ use app\modules\system\models\users\Users;
 use app\modules\system\models\users\LoginForm;
 use app\modules\system\models\auth\LDAP;
 
+/**
+ * Провайдер аутенфикации. Паттерн - Синглтон.
+ *
+ * Class Auth
+ * @package app\modules\system\models\auth
+ */
 class Auth
 {
     protected static $_instance;
@@ -41,24 +47,16 @@ class Auth
      */
     public function process($login, $password)
     {
-//        $modules = [
-//            ['class' => 'app\modules\system\models\auth\Ldap']
-//            ];
-//        foreach($modules as $module)
-//        {
-            $auth = new LDAP();
-            $result = $auth->authenticate($login, $password);
-            return $result;
-//        }
+            if(LDAP::status()){
+                $auth = new LDAP();
+                $result = $auth->authenticate($login, $password);
+                return $result;
+            }
 
-//        $result = $this->authenticate($username, $password);
-//        if (is_array($result)) {
-//            return self::login($result);
-//        } else {
-//            throw new \yii\base\Exception('Ошибка входа');
-//        }
+            return false;
 
     }
+
     /**
      * Регистрация в системе пользователя с данными $userData, полученными от провайдера аутентификации, и его авторизация.
      *
@@ -81,7 +79,6 @@ class Auth
      * @param $userData
      * @return bool|array
      */
-
     public function createUser($userData): bool
     {
         // пробуем найти указанного пользователя
@@ -101,6 +98,7 @@ class Auth
 
         return true;
     }
+
     public function syncUserGroups($login, $password)
     {
         $auth = new LDAP();

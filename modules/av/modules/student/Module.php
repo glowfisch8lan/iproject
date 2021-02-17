@@ -33,14 +33,17 @@ class Module
             ],
             'category' => 'plugins',
             'controller' => 'journal',
-             'visible' => true,
+            'visible' => false,
         ]
     ];
 
     public function __construct() {
-        foreach($this->plugins as $key => $value)
-        {
-            $this->plugins[$key]['visible'] = true;
-        }
+        /**
+         * Принудительно открываем доступ ко всем плагинам
+         */
+//        foreach($this->plugins as $key => $value)
+//        {
+//            $this->plugins[$key]['visible'] = true;
+//        }
     }
 }

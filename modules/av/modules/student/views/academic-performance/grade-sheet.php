@@ -17,107 +17,126 @@ $this->params['breadcrumbs'][] = $this->title;
 // регистрируем небольшой js-код в view-шаблоне
 $script = <<< JS
 $(document).ready(function(){
-    
     /**
-    *   Подсчет среднего балла студента
-    * */
-    function calculateAverageMarks(){
-    console.log('Calculate average marks');
-    
-     $('table.grade-sheet').find("tr").each(function(){
-     
-         var index = 0;
-         var sum = 0;
+    * Класс GradeSheet
+    */
+    class GradeSheet {
+        
+        constructor(table) {
+            this.table = table;
+        }
+          
+        /**
+        *   Подсчет среднего балла студента
+        * */
+        calculateAverageMarks(){
+         $(this.table).find("tr").each(function(){
          
-         $(this).find('td.marks > a > span').each(function(){
-                var mark = $(this).attr('value');
-                if(typeof mark != "undefined"){
-                    var result = mark.match(/(\d)/g);
-                    if(result != null)
-                    {
-                    
-                       for (let i = 0; i < result.length; i++)
+             var index = 0;
+             var sum = 0;
+             
+             $(this).find('td.marks > a > span').each(function(){
+                    var mark = $(this).attr('value');
+                    if(typeof mark != "undefined"){
+                        var result = mark.match(/(\d)/g);
+                        if(result != null)
                         {
                         
-                            sum +=  Number.parseInt(result[i]);
-                            index++;
-                        }
-                       
-                    }
-                    
-                }
-         });
-         var average = Math.floor((sum/index) * 100) / 100;
-         if(isNaN(average)){average = '-';}
-         $(this).find('td.average').html('').append('<strong>'+average+'</strong>');
-         });
-    }
-    
-    /**
-    *   Подсчет среднего балла дисциплины
-    * */
-    function calculateDisciplinesAverage(){
-         var indexArray = [];
-         $('table.grade-sheet').find("tr:eq(1)  > th.disciplines").each(function(){
-         indexArray.push($(this).index());
-         });
-         $(document).find('tr.disciplines-average').html('').append('<td colspan="2"></td>');
-         for(let i = 0 ; i < indexArray.length ; i++ )
-             {
-                 var index = 0;
-                 var sum = 0;
-                 
-                   $('table.grade-sheet').find("tr.main-content").each(function(){
-                     $(this).find('td.marks:eq('+i+')').each(function(){
+                           for (let i = 0; i < result.length; i++)
+                            {
                             
-                                  $(this).find('a > span').each(function(){
-                                    var mark = $(this).attr('value');
-                                    if(typeof mark != "undefined"){
-                                        var result = mark.match(/(\d)/g);
-                                        if(result != null)
-                                        {
-                                           for (let i = 0; i < result.length; i++)
+                                sum +=  Number.parseInt(result[i]);
+                                index++;
+                            }
+                           
+                        }
+                        
+                    }
+             });
+             var average = Math.floor((sum/index) * 100) / 100;
+             if(isNaN(average)){average = '-';}
+             $(this).find('td.average').html('').append('<strong>'+average+'</strong>');
+             });
+        }
+        
+        /**
+        *   Подсчет среднего балла дисциплины
+        * */
+        calculateDisciplinesAverage(){
+             var indexArray = [];
+             $(this.table).find("tr:eq(1)  > th.disciplines").each(function(){
+             indexArray.push($(this).index());
+             });
+             $(document).find('tr.disciplines-average').html('').append('<td colspan="2"></td>');
+             for(let i = 0 ; i < indexArray.length ; i++ )
+                 {
+                     var index = 0;
+                     var sum = 0;
+
+                       $(this.table).find("tr.main-content").each(function(){
+                         $(this).find('td.marks:eq('+i+')').each(function(){
+                                
+                                      $(this).find('a > span').each(function(){
+                                        var mark = $(this).attr('value');
+                                        if(typeof mark != "undefined"){
+                                            var result = mark.match(/(\d)/g);
+                                            if(result != null)
                                             {
-                                                sum +=  Number.parseInt(result[i]);
-                                                index++;
+                                               for (let i = 0; i < result.length; i++)
+                                                {
+                                                    sum +=  Number.parseInt(result[i]);
+                                                    index++;
+                                                }
                                             }
                                         }
-                                    }
+                                 });
                              });
-                         });
-                    });
-                    var average = Math.floor((sum/index) * 100) / 100;
-                    if(isNaN(average)){average = '-';}
-                    $('.table.grade-sheet').find('tr.disciplines-average').append('<td><strong>'+average+'</strong></td>');
-                    
-             }
-         $('.table.grade-sheet').find('tr.disciplines-average').append('<td class="group-average bg-primary text-white"></td>')
-    }
-    /**
-    *   Подсчет среднего балла группы
-    * */
-    function calculateAverageGroup()
-    {
-    
-        var index = 0;
-        var sum = 0;
+                        });
+                        var average = Math.floor((sum/index) * 100) / 100;
+                        if(isNaN(average)){average = '-';}
+                        $(this.table).find('tr.disciplines-average').append('<td><strong>'+average+'</strong></td>');
+                        
+                 }
+             $(this.table).find('tr.disciplines-average').append('<td class="group-average bg-primary text-white"></td>')
+        }
         
-        $('.table.grade-sheet').find('td.average').each(function(){
-            var mark = Number.parseInt( $(this).text() );
-            if(!isNaN(mark))
-                {
-                    sum += mark;
-                }
-            index++;
-        });
-        var average = Math.floor((sum/index) * 100) / 100;
-        if(isNaN(average)){average = '-';}
-        $('.table.grade-sheet').find('td.group-average').html('<strong>'+average+'</strong>');
+        /**
+        *   Подсчет среднего балла группы
+        * */
+        calculateAverageGroup(){
+        
+            var index = 0;
+            var sum = 0;
+            
+            $(this.table).find('td.average').each(function(){
+                var mark = Number.parseInt( $(this).text() );
+                if(!isNaN(mark))
+                    {
+                        sum += mark;
+                    }
+                index++;
+            });
+            var average = Math.floor((sum/index) * 100) / 100;
+            if(isNaN(average)){average = '-';}
+            $(this.table).find('td.group-average').html('<strong>'+average+'</strong>');
+        } 
+        
+        countMarks()
+        {
+            $(this.table).find('td.marks').each(function(){
+                console.log($(this).find('span').text());
+            });
+        }
     }
+
     
-    calculateAverageMarks();
-    calculateDisciplinesAverage();
-    calculateAverageGroup();
+        let table = new GradeSheet('table.grade-sheet');
+        table.calculateAverageMarks();
+        table.calculateDisciplinesAverage();
+        table.calculateAverageGroup();
+        table.countMarks();
+    
+    
     
     /**
     * Отправка запроса на генерацию отчета
@@ -161,6 +180,9 @@ $(document).ready(function(){
         
     });
     
+    /**
+    * Удаление столбца оценок; 
+    */
     $('.table-row-discipline-remove').on('click',function(){
         var myIndex = $(this).parent('th').index();
         $(this).parents("table").find("tr").each(function(){
@@ -169,6 +191,9 @@ $(document).ready(function(){
         });
     });
     
+    /**
+    * Пересчет среднего балла при нажатии на кнопку .average-ball
+    */
     $('.average-ball').on('click',function(){
             calculateAverageMarks();
             calculateAverageGroup();
@@ -343,25 +368,6 @@ foreach($reports as $key => $value)
                     $index++;
 
                 }
-
-//                #
-//                # Ср. балл дисциплины
-//                #
-//
-//                $marksArr = $model->filterReMarks($model->filterMarks($model->marks, [$model->startDate , $model->endDate]));
-//                $sum = $model->getAverageMarksDiscipline($marksArr);
-//                ksort($sum);
-//
-//                echo '<tr><td></td><td></td>';
-//                foreach($sum as $discipline_key => $discipline_value)
-//                {
-//                    echo '<td>'.$discipline_value['average'].'</td>';
-//                }
-//
-//                echo '</tr>';
-
-
-
 
 
                 ?>
