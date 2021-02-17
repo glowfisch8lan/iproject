@@ -121,11 +121,70 @@ $(document).ready(function(){
             $(this.table).find('td.group-average').html('<strong>'+average+'</strong>');
         } 
         
-        countMarks()
-        {
+        /**
+        * Считаем количество оценок по типам 
+        */
+        countMarks(){
+            var arr = ['5'];
+            arr['5'] = 0;
+            arr['4'] = 0;
+            arr['3'] = 0;
+            arr['2'] = 0;
+            arr['2/'] = 0;
+            
+            /**
+            * Определяем, к каком массиву добавить ++ оценку 
+            * @param value
+            */
+            function add(value){
+                if(Number(value) === 5){arr['5']++;}
+                if(Number(value) === 4){arr['4']++;}
+                if(Number(value) === 3){arr['3']++;}
+                if(Number(value) === 2){arr['2']++;}
+            }
+            
+            /**
+            * Выводм в <td> количество оценок 
+            */
+            function showResult(){
+                $('.count-5').html(arr['5']);
+                $('.count-4').html(arr['4']);
+                $('.count-3').html(arr['3']);
+                $('.count-2').html(arr['2']);
+                $('.count-2-corrected').html(arr['2/']);
+            }
+            
+            
             $(this.table).find('td.marks').each(function(){
-                console.log($(this).find('span').text());
+                var mark = $(this).find('span').html();
+                
+                if(typeof mark != "undefined") {
+                    var result = mark.match(/(\d)/g);
+                    /**
+                    *  Если в массиве оценок более 1, то обрабатываем ее как отработанную
+                    */
+                    if(result.length > 1){
+                        /**
+                        * Если оценка отработана, обрабатываем каждую оценку
+                        */
+                        for (let i = 0; i < result.length; i++)
+                            {
+                                /**
+                                * Если оценка - 2, то причисляем ее к отработанным двойкам, иначе суммируем другие оценки как положено
+                                */
+                                if(Number(result[i]) === 2)
+                                {
+                                    arr['2/']++;
+                                }
+                                else{
+                                    add(mark)
+                                }
+                            }
+                    }
+                    add(mark);
+                }
             });
+            showResult();
         }
     }
 
@@ -195,8 +254,9 @@ $(document).ready(function(){
     * Пересчет среднего балла при нажатии на кнопку .average-ball
     */
     $('.average-ball').on('click',function(){
-            calculateAverageMarks();
-            calculateAverageGroup();
+            let table = new GradeSheet('table.grade-sheet');
+            table.calculateAverageMarks();
+            table.calculateAverageGroup();
         });
      });
 JS;
@@ -368,11 +428,18 @@ foreach($reports as $key => $value)
                     $index++;
 
                 }
-
+               
 
                 ?>
 
             <tr class="disciplines-average"></tr>
+            <tr class="count-marks"><td>Кол-во 5</td><td class="count-5"></td></tr>
+            <tr class="count-marks"><td>Кол-во 4</td><td class="count-4"></td></tr>
+            <tr class="count-marks"><td>Кол-во 3</td><td class="count-3"></td></tr>
+            <tr class="count-marks"><td>Кол-во 2</td><td class="count-2"></td></tr>
+            <tr class="count-marks"><td>Кол-во 2/</td><td class="count-2-corrected"></td></tr>
+
+
             </tbody>
         </table>
         </div>
