@@ -1,7 +1,5 @@
 <?php
 
-
-
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
 $db2 = require __DIR__ . '/db2.php';
@@ -61,7 +59,7 @@ $config = [
 //                'database' => 4,
 //            ]
 //        ],
-/*        //RBAC settings; У НАС СВОЙ RBAC
+        /*        //RBAC settings; У НАС СВОЙ RBAC
         'authManager' => [
             'class' => 'yii\rbac\DbManager',
             'itemTable'       => 'auth_item',
@@ -71,17 +69,17 @@ $config = [
             'defaultRoles'    => ['guest'],
         ],*/
 
-        'assetManager'=>array(  // руководит браузерными скриптами и CSS
-            'bundles' => array(
-                'yii\web\JqueryAsset' => [
-                    'sourcePath' => null,
-                    'js' => [
-                        '//ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js'
-                    ],
-                ],
-
-            )
-        ),
+//        'assetManager' => array(  // руководит браузерными скриптами и CSS
+//            'bundles' => array(
+//                'yii\web\JqueryAsset' => [
+//                    'sourcePath' => null,
+//                    'js' => [],
+//                    'depends' => [
+//                        'app\modules\system\assets\JqueryAsset'
+//                    ],
+//                ],
+//            )
+//        ),
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
@@ -117,11 +115,9 @@ $config = [
         ],
         'db' => $db,
         'db2' => $db2,
-
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
-
             'rules' => [
                 'my' => 'system',
                 'login' => 'system/default/login',
@@ -152,14 +148,10 @@ if (YII_ENV_DEV) {
         'class' => 'yii\debug\Module',
         // uncomment the following to add your IP if you are not connecting from localhost.
         'allowedIPs' => ['127.0.0.1'],
-
-
-                    'class' => \yii\debug\Module::class,
-                    'panels' => [
-                        'queue' => \yii\queue\debug\Panel::class,
-                    ],
-
-
+        'class' => \yii\debug\Module::class,
+        'panels' => [
+            'queue' => \yii\queue\debug\Panel::class,
+        ],
     ];
 
     $config['bootstrap'][] = 'gii';
@@ -169,7 +161,7 @@ if (YII_ENV_DEV) {
             'job' => [
                 'class' => \yii\queue\gii\Generator::class,
             ],
-          ],
+        ],
         // uncomment the following to add your IP if you are not connecting from localhost.
         'allowedIPs' => ['127.0.0.1'],
     ];

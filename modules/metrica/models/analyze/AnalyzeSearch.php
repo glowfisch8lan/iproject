@@ -11,6 +11,9 @@ use app\modules\metrica\models\analyze\Analyze;
  */
 class AnalyzeSearch extends Analyze
 {
+
+    public $pattern;
+
     /**
      * {@inheritdoc}
      */
@@ -18,7 +21,7 @@ class AnalyzeSearch extends Analyze
     {
         return [
             [['id', 'pattern_id', 'value', 'status'], 'integer'],
-            [['url'], 'safe'],
+            [['url', 'pattern'], 'safe'],
         ];
     }
 
@@ -41,12 +44,17 @@ class AnalyzeSearch extends Analyze
     public function search($params)
     {
         $query = Analyze::find();
-
+        $query->joinWith(['pattern']);
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
+
+        $dataProvider->sort->attributes['pattern'] = [
+            'asc' => ['metrica_patterns.name' => SORT_ASC],
+            'desc' => ['metrica_patterns.name' => SORT_DESC],
+        ];
 
         $this->load($params);
 

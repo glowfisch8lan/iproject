@@ -28,7 +28,7 @@ trait Cache
         return self::$_instance;
     }
 
-    public function set($id, $data)
+    private function set($id, $data)
     {
         if($this->_status)
             return $this->cache->set($id, $data, $this->duration);
@@ -37,7 +37,7 @@ trait Cache
 
     }
 
-    public function get($id)
+    private function get($id)
     {
         if($this->_status)
             return $this->cache->get($id);

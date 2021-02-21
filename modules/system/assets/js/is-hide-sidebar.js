@@ -1,6 +1,7 @@
+/*
+Проверка состояния меню-бара, свернуто или нет;
+ */
 $(document).ready(function(){
-
-
     var status =  localStorage.getItem('isHideSidebar');
 
     if( status == '1'){

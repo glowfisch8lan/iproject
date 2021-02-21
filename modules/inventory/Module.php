@@ -5,7 +5,7 @@ namespace app\modules\inventory;
 /**
  * inventory module definition class
  */
-class Module extends \yii\base\Module
+class Module extends \app\modules\system\Module
 {
     /**
      * {@inheritdoc}
@@ -18,6 +18,7 @@ class Module extends \yii\base\Module
     public $icon = 'fa fa-angle-double-right';
     public $visible = 'viewInventory';
     public $layout = '/main';
+    public $sort = 4;
     public $routes = [
         [   'route' => '/inventory/student/reports',
             'name' => 'Студент - Отчеты',

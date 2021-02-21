@@ -187,13 +187,12 @@ $(document).ready(function(){
             showResult();
         }
     }
-
     
-        let table = new GradeSheet('table.grade-sheet');
-        table.calculateAverageMarks();
-        table.calculateDisciplinesAverage();
-        table.calculateAverageGroup();
-        table.countMarks();
+    let table = new GradeSheet('table.grade-sheet');
+    table.calculateAverageMarks();
+    table.calculateDisciplinesAverage();
+    table.calculateAverageGroup();
+    table.countMarks();
     
     
     

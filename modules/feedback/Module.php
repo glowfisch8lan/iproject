@@ -15,9 +15,10 @@ class Module extends \app\modules\system\Module
     public $defaultController = 'index';
     public $modelNamespace = 'app\modules\feedback\models';
     public $link = 'feedback';
-    public $icon = 'fa fa-comments-o';
+    public $icon = 'fas fa-comments';
     public $visible = 'viewFeedback';
     public $description = "Модуль управления учетными записями и группами, контроля доступа и иным системным функционалом";
+    public $sort = 10;
 
     public $routes = [
         [   'route' => '/feedback/incoming',

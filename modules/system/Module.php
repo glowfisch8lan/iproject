@@ -19,10 +19,11 @@ class Module extends \yii\base\Module
     public $defaultController = 'index';
     public $modelNamespace = 'app\modules\system\models';
     public $link = 'system';
-    public $icon = 'fa fa-cog';
+    public $icon = 'fas fa-cogs';
     public $visible = 'viewSystem';
     public $description = "Описание отсутствует";
     public $layout = '@app/modules/system/views/layouts/main';
+    public $sort = 15;
 
 
     public $routes = [
@@ -37,8 +38,7 @@ class Module extends \yii\base\Module
             'name' => 'Обновление',
             'access' => 'viewSystemUpdates',
             'description' => 'Доступ к системе Обновлений',
-            'visible' => true
-
+            'visible' => false
         ],
         [   'route' => '/system/users',
             'name' => 'Пользователи',

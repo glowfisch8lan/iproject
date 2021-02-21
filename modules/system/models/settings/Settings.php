@@ -17,6 +17,8 @@ use Yii;
 class Settings extends \yii\db\ActiveRecord
 {
 
+    public $settings;
+
     //TODO Сделать кеширование Настроек;
 
     /**
@@ -71,7 +73,7 @@ class Settings extends \yii\db\ActiveRecord
      */
     public static function setValue($name, $value, $user_id = null)
     {
-        return Yii::$app->db->createCommand('INSERT INTO `system_settings` (`id`, `name`, `value`, `user_id`) VALUES (NULL, :name, :value, :user_id);')
+        return Yii::$app->db->createCommand('INSERT INTO `system_settings` (`id`, `name`, `value`, `user_id`) VALUES (NULL, :name, :value, :user_id) ON DUPLICATE KEY UPDATE name=:name, value=:value, user_id = :user_id;')
             ->bindValues([':name' => $name, ':value' => $value, ':user_id' => $user_id])
             ->execute();
     }
@@ -86,4 +88,41 @@ class Settings extends \yii\db\ActiveRecord
     {
         return self::find()->where(['name' => $name])->one()->value;
     }
+
+    public function formSettings($array)
+    {
+
+        /**
+         * Settings
+         */
+        $arr = [];
+        if(array_keys($array))
+            $this->arr($array);
+
+        return;
+    }
+
+    /**
+     * Формирует параметр name -> value из ключей вложенного массива;
+     *
+     * @param $array
+     * @param null $key_last
+     */
+    private function arr($array, $key_last = null)
+    {
+
+            foreach($array as $key => $value){
+                $_old_key = (is_null($key_last)) ? null : $key_last . '.' ;
+
+                if(!array_keys($value))
+                {
+                    $_old_key = (is_null($key_last)) ? null : $key_last . '.' ;
+                    $this->settings[$_old_key.$key] = $value;
+                }
+
+                $this->arr($value, $_old_key.$key);
+            }
+
+    }
+
 }

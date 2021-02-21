@@ -42,10 +42,19 @@ class Analyze extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'url' => 'URL',
+            'url' => 'ссылка',
             'pattern_id' => 'Паттерн',
-            'value' => 'Значение',
-            'status' => 'Состояние'
+            'value' => 'Идентификатор',
+            'status' => 'Состояние',
+            'pattern' => 'Паттерн'
         ];
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPattern()
+    {
+        return $this->hasOne(Patterns::className(), ['id' => 'pattern_id']);
     }
 }

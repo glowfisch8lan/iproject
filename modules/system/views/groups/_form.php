@@ -64,7 +64,6 @@ $this->registerJs( $js, $position = yii\web\View::POS_END, $key = null );
             'template' => '<div>{label}</div><div>{input}</div><small>Введите имя новой Группы</small>
             <div class="text-danger">{error}</div>'
         ])->textInput(['autofocus' => true]); ?>
-
     </div>
 
     <div class="form-group col-md-12">
@@ -78,42 +77,36 @@ $this->registerJs( $js, $position = yii\web\View::POS_END, $key = null );
     <div class="form-group field-users-groups">
         <input type="hidden" name="Groups[permissions]" value="">
         <div id="users-groups">
-
             <?
 
+            /**
+             * Формируем список разрешений;
+             */
             $index = 0;
             foreach(Modules::getAllModules() as $module ){
+
                     $label = null;
+                /**
+                 * Создаем группу Модуль
+                 */
                     $titleStatus = (!empty($model->usedPermissions) && (in_array($module->visible, $model->usedPermissions))) ? 'checked' : null;
 
-                    foreach($module->routes as $route){
-
+                /**
+                 * Наполняем Модуль разрешениями
+                 */
+                foreach($module->routes as $route){
                                 $boolean = (!empty($model->usedPermissions) && (in_array($route['access'], $model->usedPermissions))) ? 'checked' : null;
 
                                 $label .= '<dd><div class="custom-control custom-checkbox module-items" style="display: none;"><input type="checkbox" class="custom-control-input" name="Groups[permissions][]" id="switch' . $index . '" value="' . $route['access'] . '"' .$boolean .'><label class="custom-control-label" for="switch' . $index . '">' . $route['description'] . '</label></div></dd>';
                              $index++;
                             }
 
-
-                echo '<dl><dd><div class="custom-control custom-checkbox module-title"><input type="checkbox" class="custom-control-input" name="Groups[permissions][]" id="switch' . $index . '" value="' . $module->visible . '"' .$boolean .'><label class="custom-control-label" for="switch' . $index . '"><strong>' . $module->name . ' (Доступ к модулю)</strong></label>&nbsp;<a href="#" class="module-toggle"><i class="fa fa-arrow-circle-left" aria-hidden="true"></i></a>&nbsp;<a href="#" class="checkbox-toggle unknown"><i class="fa fa-square" aria-hidden="true"></i></a></div></dd>' . $label . '</dl>';
-                            $index++;
+                /**
+                 * Выводим сформированный модуль;
+                 */
+                echo '<dl><dd><div class="custom-control custom-checkbox module-title"><input type="checkbox" class="custom-control-input" name="Groups[permissions][]" id="switch' . $index . '" value="' . $module->visible . '"' .$titleStatus .'><label class="custom-control-label" for="switch' . $index . '"><strong>' . $module->name . ' (Доступ к модулю)</strong></label>&nbsp;<a href="#" class="module-toggle"><i class="fa fa-arrow-circle-left" aria-hidden="true"></i></a>&nbsp;<a href="#" class="checkbox-toggle unknown"><i class="fa fa-square" aria-hidden="true"></i></a></div></dd>' . $label . '</dl>';
+                $index++;
             }
-
-//            foreach($modules as $module){
-//                    $label = null;
-//
-//                    $titleStatus = (!empty($model->usedPermissions) && (in_array($module->visible, $model->usedPermissions))) ? 'checked' : null;
-//
-//                    foreach($module->routes as $route){
-//
-//                        $boolean = (!empty($model->usedPermissions) && (in_array($route['access'], $model->usedPermissions))) ? 'checked' : null;
-//
-//                        $label .= '<dd><label><input type="checkbox" name="Groups[permissions][]" value="' . $route['access'] . '" ' . $boolean . '> ' . $route['description'] . '</label></dd>';
-//                    }
-//
-//                echo '<dl><dt><label><input type="checkbox" name="Groups[permissions][]" value="' . $module->visible . '" ' . $titleStatus . '> ' . $module->name . ' (Доступ к модулю)</label></dt>' . $label . '</dl>';
-//
-//            }
             ?>
 
         </div>

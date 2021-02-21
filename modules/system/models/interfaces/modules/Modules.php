@@ -6,6 +6,7 @@ namespace app\modules\system\models\interfaces\modules;
 use Yii;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
+use yii\httpclient\Exception;
 use yii\web\NotFoundHttpException;
 use app\modules\system\models\users\Groups;
 use yii\web\ServerErrorHttpException;
@@ -80,45 +81,43 @@ class Modules extends \yii\base\Module
     {
 
         $module = self::findModule($id);
+        $permissions = Json::Decode(Groups::getPermissions(Yii::$app->user->id)['permissions']);
 
-        var_dump(Groups::getPermissions($id));
-        die();
-        //$permissions = Json::Decode(Groups::getPermissions($id)['permissions']);
         if(!in_array($module->visible, $permissions))
-        {
-                $permissions[] = $module->visible;
-        }
+            $permissions[] = $module->visible;
+
 
         foreach($module->routes as $route)
         {
             if(!in_array($route['access'], $permissions))
-            {
                 $permissions[] = $route['access'];
-            }
+
         }
 
         $group = Groups::findOne(1);
-        $group->permissions =  Json::encode($permissions);
 
-        if(!$group->save()) {
+        $group->permissions =  Json::encode($permissions);
+        if(!$group->save())
             throw new ServerErrorHttpException('При регистриации модуля возникли проблемы: ошибка обновления прав Администратора.');
-        }
+
 
         //Groups::removeAllGroupMember(1); //Удаляем все группы пользователя;
         //Groups::addMembers(ArrayHelper::indexMap($, 1)); //Добавляем список групп в system_users_groups заново;
 
-        if (!$module) {
+        if (!$module)
             throw new NotFoundHttpException('Модуль не установлен! Проверьте конфигурацию.');
-        }
 
-        if (self::checkRegister($module->id)) {
+
+        if (self::checkRegister($module->id))
             return true;
-        }
+
 
         $path = Yii::getAlias('@app') . '/modules/' . $module->id . '/';
-        if (!file_put_contents($path . md5($module->id), '')) {
+        $result = file_put_contents($path . md5($module->id), md5($module->id));
+
+        if (!$result)
             return false;
-        }
+
         return true;
     }
 
@@ -203,18 +202,20 @@ class Modules extends \yii\base\Module
     }
 
     /**
-     * Получение данныхвсех модулей.
+     * Получение данных всех модулей.
      *
      * @return array;
      */
     public static function getAllModules($includeDisabledModules = false): array
     {
-
         $modules = [];
         $list = self::getListModules($filter = !($includeDisabledModules) ? true : false);
         foreach ($list as $module) {
             $modules[] = Yii::$app->getModule($module);
         }
+        // uasort – сортирует массив, используя пользовательскую функцию
+        usort($modules,function($first,$second){ return $first->sort > $second->sort; });
+
         return $modules;
     }
 }

@@ -12,8 +12,6 @@ use app\modules\system\models\settings\Settings;
  */
 class AuthController extends Controller
 {
-
-
     public function actionIndex()
     {
 
@@ -24,10 +22,6 @@ class AuthController extends Controller
         return $this->render('index',
         ['model' => $model]
         );
-    }
-    public function actionSave()
-    {
-        var_dump(Yii::$app->request->post());
     }
 
 }

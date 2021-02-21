@@ -19,7 +19,10 @@ $this->params['breadcrumbs'][] = $this->title;
                     'id',
                     'url',
                 'value',
-                'pattern_id',
+                [
+                    'attribute' => 'pattern',
+                    'value' => 'pattern.name'
+                ],
                 'status',
 
             ],

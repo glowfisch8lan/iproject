@@ -125,9 +125,7 @@ class GroupsController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        $model->usedPermissions = Json::Decode(Groups::getPermissions($id)[0]['permissions']);
-
-
+        $model->usedPermissions = Json::Decode(Groups::getPermissions($id)['permissions']);
         if( $model->load(Yii::$app->request->post()) && $model->validate() ){
 
             $model->permissions = Json::encode($model->permissions); //в таблице system_users храним все разрешения группы в json

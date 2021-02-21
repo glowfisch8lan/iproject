@@ -15,9 +15,10 @@ class Module extends \app\modules\system\Module
     public $defaultController = 'index';
     public $modelNamespace = 'app\modules\typography\models';
     public $link = 'typography';
-    public $icon = 'fa fa-book';
+    public $icon = 'fas fa-book';
     public $visible = 'viewTypography';
     public $description = "Модуль обработки задач типографии";
+    public $sort = 6;
 
     public $routes = [
         [   'route' => '/typography/incoming',

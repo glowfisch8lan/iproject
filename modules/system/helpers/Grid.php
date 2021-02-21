@@ -48,7 +48,7 @@ class Grid extends GridView
 
         /* Вспомогательные функции */
         $headerCallback = function($url){
-            return Html::a('<i class="fa fa-plus" aria-hidden="true"></i></i>', $url,
+            return Html::a('<i class="fas fa-plus" aria-hidden="true"></i></i>', $url,
                 ['class' => 'btn btn-outline-info']);
         };
         $urlCreate = '/'. Yii::$app->controller->module->id . '/' . Yii::$app->controller->id .  '/create';
@@ -57,11 +57,11 @@ class Grid extends GridView
         /* Скелет Buttons */
         $ActionColumnButtonsDefault = [
             'view' => function ($url,$model) {
-                return Html::a('<i class="fa fa-eye"></i>', $url,
+                return Html::a('<i class="fas fa-eye"></i>', $url,
                     ['class' => 'btn btn-outline-info', 'data-method' => 'post']);
             },
             'update' => function ($url,$model) {
-                return Html::a('<i class="fa fa-pencil" aria-hidden="true"></i>', $url,
+                return Html::a('<i class="fas fa-pencil-alt" aria-hidden="true"></i>', $url,
                     ['class' => 'btn btn-outline-info',
                         'data' => [
                             'method' => 'post'
@@ -69,12 +69,12 @@ class Grid extends GridView
             },
 
             'ajax' => function ($url,$model) {
-                return Html::a('<i class="fa fa-pencil" aria-hidden="true"></i>', $url,
+                return Html::a('<i class="fas fa-pencil-alt" aria-hidden="true"></i>', $url,
                     ['class' => 'btn btn-outline-info',]);
             },
 
             'delete' => function ($url, $model){
-                return Html::a('<i class="fa fa-trash" aria-hidden="true"></i>', $url,
+                return Html::a('<i class="fas fa-trash" aria-hidden="true"></i>', $url,
                     ['class' => 'btn btn-outline-danger',
                         'data' => [
                             'confirm' => 'Вы действительно хотите удалить данную позицию?',

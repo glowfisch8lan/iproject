@@ -1,6 +1,9 @@
 <?php
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
+use app\modules\system\models\settings\Settings;
+
+$checked = (filter_var(Settings::getValue('system.auth.ldap.status'), FILTER_VALIDATE_BOOLEAN) === true) ? 'checked' : null;
 ?>
 <div class="box-body">
     <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -24,17 +27,28 @@ use yii\helpers\Html;
         <div class="tab-pane fade" id="adldap" role="tabpanel" aria-labelledby="adldap-tab">
             <div class="col-md-6">
                 <p class="text-muted">Настройки подключения и авторизации/аутенфикации через AD/LDAP</p>
+
                 <? $form = ActiveForm::begin([
-                    'action' => "/system/auth/save"
-                ]);
-                ?>
+                    'action' => "/system/settings/save"
+                ]); ?>
+
                 <div class="col-2">
-                    <div class="custom-control custom-switch"><input type="checkbox" class="custom-control-input" id="switch1" name="Settings[adldap_on]"><label class="custom-control-label" for="switch1">Статус</label></div>
+                        <div class="custom-control custom-switch">
+                            <input type = hidden  name="system[auth][ldap][status]" value = "false">
+                            <input type="checkbox" class="custom-control-input" id="switch1" name="system[auth][ldap][status]" value="true" <?=$checked?>>
+                            <label class="custom-control-label" for="switch1">Статус</label></div>
                 </div>
 
                 <div class="col-6">
-                    <?= $form->field($model, 'value')->input('text',['name' => 'system[adldap][server]'])->label('Сервер')?>
-                    <?= $form->field($model, 'value')->input('text',['name' => 'system[adldap][port]'])->label('Порт')->hint('Если используется более одного контроллера домена, укажите порт глобального каталога - 3268')?>
+                    <?= $form->field($model, 'value')->input('text',
+                        ['name' => 'system[auth][ldap][server]',
+                            'value' => Settings::getValue('system.auth.ldap.server')
+                        ]
+                    )->label('Сервер')?>
+                    <?= $form->field($model, 'value')->input('text',[
+                        'name' => 'system[auth][ldap][port]',
+                        'value' => Settings::getValue('system.auth.ldap.port')
+                    ])->label('Порт')->hint('Если используется более одного контроллера домена, укажите порт глобального каталога - 3268')?>
                 </div>
 
                 <div class="d-flex flex-row justify-content-end">

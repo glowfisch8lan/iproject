@@ -13,8 +13,23 @@ $this->params['breadcrumbs'][] = ['label' => Yii::$app->controller->module->name
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="box-body">
+
     <div class="col-md-12">
 
+
+        <?php if (Yii::$app->session->hasFlash('moduleStatus') && Yii::$app->session->hasFlash('moduleRegister')): ?>
+            <? $status = (Yii::$app->session->getFlash('moduleStatus')) ? 'Выполнено' : 'Ошибка';
+               $class = (Yii::$app->session->getFlash('moduleRegister')) ? 'success' : 'warning';
+            ?>
+
+            <div class="alert alert-<?=$class?> alert-dismissible fade show" role="alert">
+                <?=$status?>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        <?php else: ?>
+        <?php endif; ?>
         <?= Grid::initWidget([
             'dataProvider' => $dataProvider,
             'columns' => [

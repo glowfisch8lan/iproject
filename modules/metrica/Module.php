@@ -1,4 +1,12 @@
 <?php
+/**
+ * TODO:
+ * 1. Валидация url;
+ * 2. Связь с контроллером очередей;
+ *
+ *
+ *
+ */
 
 namespace app\modules\metrica;
 
@@ -12,9 +20,10 @@ class Module extends \app\modules\system\Module
     public $defaultController = 'index';
     public $modelNamespace = 'app\modules\metrica\models';
     public $link = 'metrica';
-    public $icon = 'fa fa-bar-chart';
+    public $icon = 'fas fa-arrow-right';
     public $visible = 'viewMetrica';
     public $description = 'Модуль поиска и анализа метрической информации';
+    public $sort = 3;
 
     public $routes = [
         [   'route' => '/metrica/analyze',

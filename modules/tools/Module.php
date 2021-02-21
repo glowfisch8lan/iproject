@@ -15,8 +15,9 @@ class Module extends \app\modules\system\Module
     public $defaultController = 'index';
     public $modelNamespace = 'app\modules\tools\models';
     public $link = 'tools';
-    public $icon = 'fa fa-wrench';
+    public $icon = 'fas fa-wrench';
     public $visible = 'viewTools';
+    public $sort = 14;
 
     public $routes = [
         [   'route' => '/tools/converter',

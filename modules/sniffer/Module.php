@@ -15,9 +15,11 @@ class Module extends \app\modules\system\Module
     public $defaultController = 'index';
     public $modelNamespace = 'app\modules\sniffer\models';
     public $link = 'sniffer';
-    public $icon = 'fa fa-angle-double-right';
+    public $icon = 'fab fa-hackerrank';
     public $visible = 'viewSniffer';
     public $layout = '/main';
+    public $sort = 8;
+
     public $routes = [
         [   'route' => '/sniffer',
             'name' => 'Сниффер-ссылка',

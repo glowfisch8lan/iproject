@@ -19,7 +19,7 @@ class Module extends \app\modules\system\Module
     public $icon = 'fa fa-id-card';
     public $visible = 'viewStaff';
     public $description = 'Модуль учета кадров';
-
+    public $sort = 2;
     public $routes = [
         [   'route' => '/staff/state',
             'name' => 'Штат',

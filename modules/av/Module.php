@@ -15,9 +15,10 @@ class Module extends \app\modules\system\Module
     public $defaultController = 'index';
     public $modelNamespace = 'app\modules\av\models';
     public $link = 'av';
-    public $icon = 'fa fa-angle-double-right';
+    public $icon = 'fas fa-graduation-cap';
     public $visible = 'viewAv';
 //    public $layout = '/main';
+    public $sort = 1;
     public $routes = [
         [   'route' => '/av/plugins',
             'name' => 'Плагины',
