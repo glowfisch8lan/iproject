@@ -11,5 +11,5 @@ db.json
 
 #Запретить загрузку modules, кроме system
 
-/modules/*
+/modules/**
 !/modules/system/*
