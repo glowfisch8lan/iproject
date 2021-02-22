@@ -10,6 +10,6 @@ composer.phar
 db.json
 
 #Запретить загрузку modules, кроме system
-
-!/modules/system/*
 /modules/*
+
+!/modules/system/
