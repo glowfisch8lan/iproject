@@ -3,7 +3,7 @@
 namespace app\modules\system\models\settings;
 
 use Yii;
-
+use app\modules\system\models\users\Users;
 /**
  * Это модель класса 'Settings' для "system_settings".
  *
@@ -18,6 +18,10 @@ class Settings extends \yii\db\ActiveRecord
 {
 
     public $settings;
+
+    private static $validotorRules = [
+
+    ];
 
     //TODO Сделать кеширование Настроек;
 
@@ -36,9 +40,10 @@ class Settings extends \yii\db\ActiveRecord
     {
         return [
             [['name', 'value'], 'required'],
-            [['user_id'], 'integer'],
-            [['name', 'value'], 'string', 'max' => 65],
-            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => SystemUsers::className(), 'targetAttribute' => ['user_id' => 'id']],
+            [['name', 'value'], 'validateSettings'],
+//            [['user_id'], 'integer'],
+//            [['name', 'value'], 'string', 'max' => 65],
+//            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => Users::className(), 'targetAttribute' => ['user_id' => 'id']],
         ];
     }
 
@@ -62,7 +67,7 @@ class Settings extends \yii\db\ActiveRecord
      */
     public function getUser()
     {
-        return $this->hasOne(SystemUsers::className(), ['id' => 'user_id']);
+        return $this->hasOne(Users::className(), ['id' => 'user_id']);
     }
 
     /**
@@ -123,6 +128,11 @@ class Settings extends \yii\db\ActiveRecord
                 $this->arr($value, $_old_key.$key);
             }
 
+    }
+
+    public function validateSettings($attribute, $params){
+        $this->addError('value', 'Имя слишsком слабый');
+        $this->addError('name', 'Имя слишsком слабый');
     }
 
 }

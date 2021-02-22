@@ -27,11 +27,5 @@ class DefaultController extends Controller
         $logger->getAll();
         return $this->renderPartial('index');
     }
-    public function actionJournal()
-    {
-        $data = Logger::getAll();
-        var_dump($data);
-        return $this->renderPartial('status');
-    }
 
 }

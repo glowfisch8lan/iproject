@@ -5,6 +5,8 @@ namespace app\modules\system\controllers;
 
 use Yii;
 
+use yii\widgets\ActiveForm;
+use yii\web\Response;
 use yii\db\Exception;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
@@ -29,15 +31,47 @@ class SettingsController extends Controller
 
     public function actionSave()
     {
-        $settings = null;
+        $model = new Settings();
         $req = Yii::$app->request->post();
+        $model->formSettings($req);
         unset($req['_csrf']);
 
-        $settings = new Settings();
-        $settings->formSettings($req);
-        foreach($settings->settings as $name => $value)
-            Settings::setValue($name,$value);
+        foreach($model->settings as $name => $value)
+        {
+            $model->name = $name;
+            $model->value = $value;
+            if($model->validate())
+                Settings::setValue($name,$value);
+        }
 
-        return $this->redirect(Yii::$app->request->referrer ?: Yii::$app->homeUrl);
+        //return $this->redirect(Yii::$app->request->referrer ?: Yii::$app->homeUrl);
+    }
+
+    public function actionValidateForm()
+    {
+        $model = new Settings();
+        $req = Yii::$app->request->post();
+
+        unset($req['_csrf']);
+        unset($req['ajax']);
+        if (Yii::$app->request->isAjax) {
+            $model->formSettings($req);
+            foreach($model->settings as $name => $value)
+            {
+                $model->name = $name;
+                $model->value = $value;
+                Yii::$app->response->format = Response::FORMAT_JSON;
+
+                if(!$model->validate())
+                    $arr[] =  ActiveForm::validate($model);
+
+
+            }
+            if(!empty($arr))
+                return $arr;
+
+            return true;
+        }
+        throw new \yii\web\BadRequestHttpException('Bad request!');
     }
 }

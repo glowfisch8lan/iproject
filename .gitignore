@@ -5,3 +5,11 @@ Thumbs.db
 
 # composer itself is not needed
 composer.phar
+
+# Не грузить базу от сниффера
+db.json
+
+#Запретить загрузку modules, кроме system
+
+/modules/*
+!/modules/system/*

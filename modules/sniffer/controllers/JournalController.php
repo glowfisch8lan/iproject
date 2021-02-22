@@ -9,6 +9,12 @@ use yii\data\ArrayDataProvider;
 use yii\web\Controller;
 class JournalController extends Controller
 {
+
+    /**
+     * Default action for JournalController
+     *
+     * @return string
+     */
     public function actionIndex()
     {
 

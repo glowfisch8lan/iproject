@@ -4,6 +4,29 @@ use yii\helpers\Html;
 use app\modules\system\models\settings\Settings;
 
 $checked = (filter_var(Settings::getValue('system.auth.ldap.status'), FILTER_VALIDATE_BOOLEAN) === true) ? 'checked' : null;
+
+$script = <<< JS
+    var urlNum = window.location.href.split('/').pop().split('#').pop();
+
+    if($('li > a.nav-link#'+urlNum+'-tab').length != 0 )
+    {
+        $('#general-tab').removeClass('active');
+        $('.tab-pane#general').removeClass('active show');
+    
+        $('#'+urlNum+'-tab').addClass('active');
+        $('.tab-pane#'+urlNum).removeClass('fade').addClass('show active');
+    }
+    
+  $('#settings-ldap').on('afterValidate', function (event, messages, errorAttributes) {
+      
+      console.log(messages);
+    $('#settings-ldap').on('beforeSubmit', function (e) {
+        return false;
+    });
+    });
+JS;
+$this->registerJs($script, $position = yii\web\View::POS_READY);
+
 ?>
 <div class="box-body">
     <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -29,7 +52,10 @@ $checked = (filter_var(Settings::getValue('system.auth.ldap.status'), FILTER_VAL
                 <p class="text-muted">Настройки подключения и авторизации/аутенфикации через AD/LDAP</p>
 
                 <? $form = ActiveForm::begin([
-                    'action' => "/system/settings/save"
+                        'id' => 'settings-ldap',
+                    'action' => "/system/settings/save",
+                    'enableAjaxValidation' => true,
+                    'validationUrl' => '/system/settings/validate-form'
                 ]); ?>
 
                 <div class="col-2">
