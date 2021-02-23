@@ -9,7 +9,5 @@ composer.phar
 # Не грузить базу от сниффера
 db.json
 
-#Запретить загрузку modules, кроме system
+#Запретить загрузку modules
 /modules/*
-
-!/modules/system/
