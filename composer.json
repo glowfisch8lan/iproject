@@ -33,7 +33,8 @@
 
         "bower-asset/font-awesome": "^5.15",
         "bower-asset/jquery": "3.4.1",
-        "bower-asset/air-datepicker": "~2.2.3"
+        "bower-asset/air-datepicker": "~2.2.3",
+        "izumi-kun/yii2-longpoll": "dev-master"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",

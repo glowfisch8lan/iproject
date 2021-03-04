@@ -6,13 +6,13 @@ use yii\helpers\Html;
 use app\assets\AppAsset;
 use  app\modules\system\SystemAsset;
 $bundle = AppAsset::register($this);
-$bundleSystem = SystemAsset::register($this);
+//$bundleSystem = SystemAsset::register($this);
 
 $options = [
     'position' => yii\web\View::POS_BEGIN,
     'depends' => 'app\assets\AppAsset'
 ];
-$this->registerCssFile($bundleSystem->baseUrl . '/css/file-upload.css', $options);
+//$this->registerCssFile($bundleSystem->baseUrl . '/css/file-upload.css', $options);
 ?>
 
 <?php $this->beginPage() ?>

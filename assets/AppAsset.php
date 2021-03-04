@@ -23,15 +23,18 @@ class AppAsset extends AssetBundle
 
     ];
     public $js = [
-//        'vendor/bootstrap4/js/bootstrap.bundle.min.js',
-//        'vendor/fontawesome5/js/solid.min.js',
-        'vendor/fontawesome5/js/fontawesome.min.js'
 
     ];
 
     public $depends = [
         'yii\web\YiiAsset',
-//        'app\modules\system\assets\FontAwesomeAsset'
+
+        'yii\bootstrap4\BootstrapPluginAsset',
+
+        'app\modules\system\assets\FontAwesomeAsset',
+        'app\modules\system\assets\PreloaderAsset',
+        'app\modules\system\assets\PopperAsset',
+        'app\modules\system\assets\FileUploadAsset',
 
     ];
 

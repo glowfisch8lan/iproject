@@ -36,7 +36,6 @@ $this->registerJs( $js, $position = yii\web\View::POS_END, $key = null );
             </a>
         </div>
     </div>
-
     <div class="row marketing">
         <div class="col-lg-6">
             <div class="link-icon" style="background-image: url('<?=$bundle->baseUrl?>/img/icon/4232eb9547f61ab68bba4dadff59216c.png');"></div>

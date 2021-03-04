@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "762269e0ef268ae33bce799f74983336",
+    "content-hash": "9b06b0a5327a3ad8805968b3bd1b4c26",
     "packages": [
         {
             "name": "adldap2/adldap2",
@@ -516,6 +516,62 @@
             "time": "2020-12-18T14:19:44+00:00"
         },
         {
+            "name": "izumi-kun/yii2-longpoll",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Izumi-kun/yii2-longpoll.git",
+                "reference": "92056922db492b36e063e6b747b341afab8b69c2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Izumi-kun/yii2-longpoll/zipball/92056922db492b36e063e6b747b341afab8b69c2",
+                "reference": "92056922db492b36e063e6b747b341afab8b69c2",
+                "shasum": ""
+            },
+            "require": {
+                "npm-asset/jquery-longpoll-client": "0.3.0",
+                "php": "^7.0",
+                "yiisoft/yii2": "~2.0.14"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~6.4.0",
+                "symfony/process": "*",
+                "yiisoft/yii2-httpclient": "^2.0"
+            },
+            "default-branch": true,
+            "type": "yii2-extension",
+            "autoload": {
+                "psr-4": {
+                    "izumi\\longpoll\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Viktor Khokhryakov",
+                    "email": "viktor.khokhryakov@gmail.com"
+                }
+            ],
+            "description": "Implements long polling connection",
+            "keywords": [
+                "comet",
+                "extension",
+                "longpoll",
+                "longpolling",
+                "server",
+                "yii2"
+            ],
+            "support": {
+                "issues": "https://github.com/Izumi-kun/yii2-longpoll/issues",
+                "source": "https://github.com/Izumi-kun/yii2-longpoll/tree/master"
+            },
+            "time": "2018-03-31T07:45:10+00:00"
+        },
+        {
             "name": "kartik-v/yii2-krajee-base",
             "version": "dev-master",
             "source": {
@@ -951,6 +1007,18 @@
             "type": "npm-asset",
             "license": [
                 "MIT"
+            ]
+        },
+        {
+            "name": "npm-asset/jquery-longpoll-client",
+            "version": "0.3.0",
+            "dist": {
+                "type": "tar",
+                "url": "https://registry.npmjs.org/jquery-longpoll-client/-/jquery-longpoll-client-0.3.0.tgz"
+            },
+            "type": "npm-asset",
+            "license": [
+                "BSD-3-Clause"
             ]
         },
         {
@@ -7114,7 +7182,8 @@
         "yiisoft/yii2-httpclient": 20,
         "phpoffice/phpspreadsheet": 20,
         "kartik-v/yii2-widget-select2": 20,
-        "adldap2/adldap2": 20
+        "adldap2/adldap2": 20,
+        "izumi-kun/yii2-longpoll": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
